@@ -1,0 +1,2 @@
+-keep class com.daliys.analytics.AnalyticsQueue { public *; }
+-keep class com.daliys.analytics.QueueResult { public *; }

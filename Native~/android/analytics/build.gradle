@@ -1,0 +1,28 @@
+plugins {
+    id "com.android.library"
+}
+
+android {
+    namespace "com.daliys.analytics"
+    compileSdk 35
+    buildToolsVersion "36.0.0"
+
+    defaultConfig {
+        minSdk 25
+        testInstrumentationRunner "com.daliys.analytics.AnalyticsQueueInstrumentationTest"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    buildFeatures {
+        buildConfig false
+    }
+}
+
+dependencies {
+    testImplementation "junit:junit:4.13.2"
+}

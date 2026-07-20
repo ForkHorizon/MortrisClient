@@ -1,0 +1,21 @@
+{
+  "name": "Daliys.Analytics.Tests",
+  "rootNamespace": "Daliys.Analytics.Tests",
+  "references": [
+    "Daliys.Analytics"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "valid": [
+    {
+      "name": "level_start",
+      "properties": {
+        "house_id": "rome_01",
+        "wave_index": 2,
+        "is_first": true
+      }
+    },
+    {
+      "name": "level_complete",
+      "properties": {
+        "duration_seconds": 12.5,
+        "move_count": 7,
+        "optional_value": null
+      }
+    }
+  ],
+  "invalid": [
+    { "name": "sys_session_start", "reason": "reserved_system_name" },
+    { "name": "LevelStart", "reason": "not_snake_case" },
+    { "name": "level__start", "reason": "double_underscore" },
+    { "name": "level_start", "properties": { "nested": { "value": 1 } }, "reason": "nested_property" }
+  ]
+}

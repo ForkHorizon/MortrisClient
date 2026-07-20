@@ -1,0 +1,51 @@
+# Unity-generated workspace state
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/MemoryCaptures/
+/Recordings/
+
+# IDE and generated project files
+.DS_Store
+/.vs/
+/.idea/
+/*.csproj
+/*.sln
+/*.user
+/*.pidb
+/*.booproj
+/*.svd
+/*.pdb
+/*.opendb
+*.VC.db
+
+# ProjectMem runtime and derived state (configuration and curated map/plan stay tracked)
+/.projectmem/events.jsonl
+/.projectmem/issues/
+/.projectmem/summary.md
+/.projectmem/structure.json
+/.projectmem/watch.pid
+/.projectmem/watch.log
+/.projectmem/CLAUDE.md
+
+# Local Serena state
+/.serena/cache/
+/.serena/project.local.yml
+
+# Graphify output is regenerated locally. Keep its own ignore rule versioned.
+/graphify-out/*
+!/graphify-out/.gitignore
+/graphify-out.meta
+
+# Android AAR build state
+/Native~/android/.gradle/
+/Native~/android/**/build/
+/Native~/android/local.properties
+
+# Local MCP connection files can contain credentials.
+/.mcp.json
+/.mcp.json.bak-*
