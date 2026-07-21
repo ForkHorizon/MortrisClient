@@ -6,8 +6,8 @@ namespace Daliys.Analytics.Internal
 {
     internal sealed class AnalyticsDeviceContext
     {
-        internal const string SdkName = "daliys-unity";
-        internal const string SdkVersion = "0.1.0";
+        internal const string SdkName = "mortris-unity";
+        internal const string SdkVersion = "0.1.4";
 
         internal AnalyticsDeviceContext(string appVersion, string buildNumber, string platform, string osVersion, string deviceClass, string locale, int timezoneOffsetMinutes)
         {

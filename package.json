@@ -1,12 +1,14 @@
 {
   "name": "com.daliys.analytics",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "displayName": "Mortris Analytics",
   "description": "Mortris offline-first, privacy-conscious analytics for Unity Android games.",
   "author": {
     "name": "Fork Horizon"
   },
   "unity": "6000.3",
+  "documentationUrl": "https://github.com/ForkHorizon/MortrisClient/blob/main/Documentation/IntegrationGuide.md",
+  "changelogUrl": "https://github.com/ForkHorizon/MortrisClient/blob/main/CHANGELOG.md",
   "keywords": [
     "analytics",
     "android",

@@ -1,51 +1,64 @@
 # Mortris Analytics
 
-`com.daliys.analytics` is a standalone Unity Package Manager package for safe,
-offline-first Android game analytics.
+`com.daliys.analytics` is an offline-first Unity Package Manager package for
+Mortris Android game analytics. It persists validated gameplay events locally,
+then registers and uploads them in the background when the network is usable.
 
-## Current milestone: U2 delivery path
+Start with the [integration guide](Documentation/IntegrationGuide.md). For an
+agent making the integration, use the concise
+[AI integration brief](Documentation/AIIntegration.md). SDK contributors can
+use the [development and validation guide](Documentation/Development.md).
 
-The package includes the U0 public contract, the Java 11 Android SQLite queue,
-and the U2 delivery path. On Android, a background C# worker serializes at most
-32 validated events into one JNI call to the owned AAR, then registers its
-persisted installation identity and uploads gzip batches. It removes a durable
-row only after the server acknowledges that event as accepted, duplicate, or
-rejected. Transport failures, malformed successes, rate limits, and 5xx
-responses leave rows queued and back off; a `413` halves the batch.
+## What it guarantees
 
-The server can pause upload or disable collection through `client_policy`.
-`FlushAsync` reports whether data was persisted, uploaded, or deferred. You may
-set `AppVersion` and `BuildNumber` in `AnalyticsOptions` to override Unity's
-runtime values when your build pipeline has a canonical version source.
+- Android-only durable SQLite queue in the app's no-backup storage.
+- At-least-once delivery: an event remains queued until the server acknowledges
+  it as accepted, duplicate, or permanently rejected.
+- Gzip batching, retry/backoff, `Retry-After`, one `401` re-registration, and
+  batch splitting for `413` responses.
+- Local consent always overrides server policy. Disabling collection clears
+  pending data by default.
+- No JSON, SQLite, JNI, or HTTP work on the Unity calling thread.
 
-The native queue is verified on a Pixel 8 API 37 emulator for persistence
-across reopen, stable installation identity, oldest-event eviction, corrupt
-database reset, and migration from schema v1 to v2 without event loss.
+## Install
 
-## Local package use
+In Unity Package Manager, choose **Add package from git URL** and use the
+current release tag:
 
-In a Unity project's `Packages/manifest.json`, add a local dependency while
-developing:
+```text
+git@github.com:ForkHorizon/MortrisClient.git#v0.1.4
+```
+
+For a local checkout during SDK development:
 
 ```json
 "com.daliys.analytics": "file:../Assets/MortrisClient"
 ```
 
-Initialize once during game bootstrap, then track only semantic gameplay events:
+## Minimal bootstrap
+
+The visible package name is **Mortris Analytics**. The stable technical package
+ID and C# namespace remain `com.daliys.analytics` and `Daliys.Analytics`.
 
 ```csharp
-Analytics.Initialize(new AnalyticsOptions {
-    ServerUrl = "https://analytics.example.com",
-    ProjectId = "puzzle-development",
-    Environment = "development"
-});
+using Daliys.Analytics;
 
-Analytics.Track("level_start", new Dictionary<string, object> {
-    ["house_id"] = "rome_01",
-    ["level_number"] = 1
+Analytics.Initialize(new AnalyticsOptions
+{
+    ServerUrl = "https://your-mortris-server.example",
+    ProjectId = "your-project-id",
+    Environment = "production"
 });
 ```
 
-`Track` accepts only flat, primitive properties and returns a `TrackResult`.
-It never encodes JSON, accesses SQLite/JNI, or performs networking on the
-calling thread; that work happens in the Android persistence worker.
+Call `Initialize` once during bootstrap, then call `Track` only at semantic
+gameplay boundaries such as level start and level completion. See the
+[integration guide](Documentation/IntegrationGuide.md) for property rules,
+consent, lifecycle, diagnostics, and Android validation.
+
+## Compatibility and proof
+
+The package targets Unity `6000.3` and Android API 25+. Its Android queue,
+uploader contract, IL2CPP/managed-stripping package build, ARMv7/ARM64 APK,
+and API 25/35/37 launches have been verified. The current delivery and future
+hardening plan is in [ExecutionPlan.md](Documentation/ExecutionPlan.md).

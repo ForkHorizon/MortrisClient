@@ -24,6 +24,7 @@
 *.VC.db
 
 # ProjectMem runtime and derived state (configuration and curated map/plan stay tracked)
+/.projectmem/.current_issue
 /.projectmem/events.jsonl
 /.projectmem/issues/
 /.projectmem/summary.md
