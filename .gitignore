@@ -36,9 +36,8 @@
 /.serena/cache/
 /.serena/project.local.yml
 
-# Graphify output is regenerated locally. Keep its own ignore rule versioned.
+# Graphify output is regenerated locally.
 /graphify-out/*
-!/graphify-out/.gitignore
 /graphify-out.meta
 
 # Android AAR build state
