@@ -1,4 +1,4 @@
-# Daliys Analytics
+# Mortris Analytics
 
 `com.daliys.analytics` is a standalone Unity Package Manager package for safe,
 offline-first Android game analytics.
