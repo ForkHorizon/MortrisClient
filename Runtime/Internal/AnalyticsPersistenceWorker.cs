@@ -106,7 +106,9 @@ namespace Daliys.Analytics.Internal
         private void PersistPending()
         {
             var status = FlushStatus.PersistedToDevice;
+#if UNITY_ANDROID && !UNITY_EDITOR
             var jniAttached = false;
+#endif
             try
             {
 #if UNITY_ANDROID && !UNITY_EDITOR
