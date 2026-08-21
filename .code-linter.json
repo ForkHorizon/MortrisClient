@@ -1,0 +1,19 @@
+{
+  "max_file_lines": 500,
+  "max_function_lines": 150,
+  "max_nesting_depth": 6,
+  "max_parameters": 8,
+  "max_comment_lines": 20,
+  "max_types_per_file": 10,
+  "include_extensions": [
+    ".cs",
+    ".java"
+  ],
+  "ignore": [
+    ".ci-gates",
+    ".git",
+    "Native~",
+    "Samples~",
+    "*.meta"
+  ]
+}
