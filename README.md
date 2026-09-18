@@ -62,3 +62,11 @@ The package targets Unity `6000.3` and Android API 25+. Its Android queue,
 uploader contract, IL2CPP/managed-stripping package build, ARMv7/ARM64 APK,
 and API 25/35/37 launches have been verified. The current delivery and future
 hardening plan is in [ExecutionPlan.md](Documentation/ExecutionPlan.md).
+
+## CI
+
+PRs run through a single unified `CI Scope / Checks` job
+(`.github/workflows/ci-scope-checks.yml` + `.ci-scope.json`) against
+ForkHorizon/ci-gates' shared executor for code-linter and slop-review
+(advisory). `unity-quality-gate.yml` stays separate — no unity adapter in
+the unified executor yet.
