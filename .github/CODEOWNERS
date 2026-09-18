@@ -1,0 +1,5 @@
+/.ci-scope.json @Daliys
+/.code-linter.json @Daliys
+/.unity-quality-gate.json @Daliys
+/.github/workflows/ @Daliys
+/.github/CODEOWNERS @Daliys
