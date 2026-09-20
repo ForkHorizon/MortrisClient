@@ -65,8 +65,4 @@ hardening plan is in [ExecutionPlan.md](Documentation/ExecutionPlan.md).
 
 ## CI
 
-PRs run through a single unified `CI Scope / Checks` job
-(`.github/workflows/ci-scope-checks.yml` + `.ci-scope.json`) against
-ForkHorizon/ci-gates' shared executor for code-linter and slop-review
-(advisory). `unity-quality-gate.yml` stays separate — no unity adapter in
-the unified executor yet.
+Pull requests run a single action, `CI Scope / Checks` (`.github/workflows/ci-scope-checks.yml`). What it runs is defined by `.ci-scope.json` and the gate configs in this repo, executed by ForkHorizon/ci-gates.
