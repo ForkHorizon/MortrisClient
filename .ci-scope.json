@@ -6,13 +6,6 @@
       "type": "code-linter",
       "config": ".code-linter.json",
       "params": {"mode": "auto"}
-    },
-    {
-      "id": "slop-review",
-      "type": "slop-review",
-      "events": ["pull_request", "workflow_dispatch"],
-      "resources": ["ollama"],
-      "params": {"model": "qwen3-coder:30b-a3b-q4_K_M"}
     }
   ]
 }
