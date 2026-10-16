@@ -1,0 +1,13 @@
+OpenSSL 4.0.3 29 Sep 2026 (Library: OpenSSL 4.0.3 29 Sep 2026)
+www.cloudflare.com tls1.3 groups=X25519MLKEM768:X25519 :: Negotiated TLS1.3 group: X25519MLKEM768 SSL handshake has read 3907 bytes and written 1504 bytes 
+www.cloudflare.com tls1.3 groups=X25519 :: SSL handshake has read 2819 bytes and written 318 bytes 
+www.cloudflare.com tls1.2 :: SSL handshake has read 2971 bytes and written 305 bytes
+www.google.com tls1.3 groups=X25519MLKEM768:X25519 :: Negotiated TLS1.3 group: X25519MLKEM768 SSL handshake has read 5163 bytes and written 1500 bytes 
+www.google.com tls1.3 groups=X25519 :: SSL handshake has read 4074 bytes and written 314 bytes 
+www.google.com tls1.2 :: SSL handshake has read 4264 bytes and written 301 bytes
+api2.amplitude.com tls1.3 groups=X25519MLKEM768:X25519 :: SSL handshake has read 4434 bytes and written 1728 bytes 
+api2.amplitude.com tls1.3 groups=X25519 :: SSL handshake has read 4341 bytes and written 302 bytes 
+api2.amplitude.com tls1.2 :: SSL handshake has read 4430 bytes and written 313 bytes
+app-measurement.com tls1.3 groups=X25519MLKEM768:X25519 :: Negotiated TLS1.3 group: X25519MLKEM768 SSL handshake has read 4471 bytes and written 1505 bytes 
+app-measurement.com tls1.3 groups=X25519 :: SSL handshake has read 3385 bytes and written 319 bytes 
+app-measurement.com tls1.2 :: SSL handshake has read 3574 bytes and written 306 bytes
