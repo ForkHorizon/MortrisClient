@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.0 - Unreleased
+
+- Started the 0.2.0 development line on `develop`.
+
+
 ## 0.1.4 - Unreleased
 
 - Added human and AI integration guides with lifecycle, consent, event-schema,

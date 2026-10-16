@@ -1,6 +1,6 @@
 {
   "name": "com.daliys.analytics",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "displayName": "Mortris Analytics",
   "description": "Mortris offline-first, privacy-conscious analytics for Unity Android games.",
   "author": {
