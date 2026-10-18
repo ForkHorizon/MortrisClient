@@ -57,8 +57,25 @@ STREAMS=$($Q "SELECT COUNT(*) FROM transport_streams WHERE project_id = 'synth_i
 PACKETS=$(grep -c '"route":"POST /v2/events/packet","status":200' "$TMP/server.log" || true)
 V1BATCHES=$(grep -c '"route":"POST /v1/events/batch","status":200' "$TMP/server.log" || true)
 ACK=$($Q "SELECT high_water || ' ' || received::text FROM transport_streams WHERE project_id = 'synth_indie_runner' ORDER BY epoch DESC LIMIT 1")
+# The V1 fallback row must carry the id the server derives for it (proves the SDK rewrote ids while a stream was open).
+if [ "$SCENARIO" != nocatalog ]; then
+  INSTALL=$($Q "SELECT install_id FROM events WHERE project_id = 'synth_indie_runner' LIMIT 1")
+  EPOCH=$($Q "SELECT epoch FROM transport_streams WHERE project_id = 'synth_indie_runner' ORDER BY epoch DESC LIMIT 1")
+  MYSTERY=$($Q "SELECT sequence || ' ' || event_id FROM events WHERE project_id = 'synth_indie_runner' AND properties ? 'mystery' LIMIT 1")
+  DERIVED=$(python3 - "$INSTALL" "$EPOCH" "${MYSTERY%% *}" <<'PY'
+import hashlib, sys, uuid
+def derive(ns, name):
+    h = bytearray(hashlib.sha1(ns + name.encode()).digest()[:16]); h[6] = (h[6] & 0x0f) | 0x40; h[8] = (h[8] & 0x3f) | 0x80; return bytes(h)
+install, epoch, seq = sys.argv[1:4]
+ns = derive(uuid.NAMESPACE_DNS.bytes, "transport-v7.mortris")
+project = "synth_indie_runner"
+print(uuid.UUID(bytes=derive(ns, f"{len(project)}:{project}|{len(install)}:{install}|{epoch}|{seq}")))
+PY
+)
+  [ "${MYSTERY#* }" = "$DERIVED" ] && echo "V1 fallback row carries its derived id ($DERIVED)" || { echo "FAIL: V1 fallback id ${MYSTERY#* } is not the derived id $DERIVED"; FAILID=1; }
+fi
 echo "events=$EVENTS sequences(distinct,min,max)=$SEQ unknown_shape_events=$UNKNOWN streams=$STREAMS v2_packets=$PACKETS v1_batches=$V1BATCHES stream_state='$ACK'"
-FAIL=0
+FAIL=${FAILID:-0}
 if [ "$SCENARIO" = normal ]; then
   [ "$EVENTS" = 121 ] || { echo "FAIL: expected 121 events"; FAIL=1; }
   [ "$SEQ" = "121,1,121" ] || { echo "FAIL: sequences are not exactly 1..121"; FAIL=1; }
