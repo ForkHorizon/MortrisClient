@@ -3,6 +3,9 @@
 ## 0.2.0 - Unreleased
 
 - Started the 0.2.0 development line on `develop`.
+- Android queue schema v3: a durable journal of locally dropped sequence ranges (evicted, expired, or cleared
+  events), a `stream_base` marker, and `AnalyticsQueue.getSequenceState()`. Foundation for the V7 sequence-identity
+  delivery contract; the wire format and server contract are unchanged.
 
 
 ## 0.1.4 - Unreleased

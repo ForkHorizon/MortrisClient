@@ -23,10 +23,13 @@ import java.util.UUID;
  */
 public final class AnalyticsQueue implements Closeable {
     static final String DATABASE_NAME = "daliys_analytics.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String META_INSTALL_ID = "install_id";
     private static final String META_CREDENTIAL = "installation_credential";
     private static final String META_NEXT_SEQUENCE = "next_sequence";
+    private static final String META_STREAM_BASE = "stream_base";
+    /** Older ranges are merged beyond this bound; a wider skip is safe because skips only mean "do not wait for". */
+    private static final int MAX_DROPPED_RANGES = 1024;
 
     private final Context context;
     private final File databaseFile;
@@ -46,6 +49,22 @@ public final class AnalyticsQueue implements Closeable {
     public synchronized QueueResult getState() {
         Identity identity = ensureIdentity();
         return result(identity, 0, 0, 0);
+    }
+
+    /**
+     * Sequence state for the delivery contract: the stream starts at {@code stream_base}, issued numbers end
+     * at {@code next_sequence - 1}, and {@code dropped} lists locally discarded (evicted, expired, cleared)
+     * inclusive ranges that the server must not wait for. Acknowledged rows are not listed.
+     */
+    public synchronized String getSequenceState() throws JSONException {
+        Identity identity = ensureIdentity();
+        JSONArray dropped = new JSONArray();
+        long[][] ranges = readDroppedRanges();
+        for (long[] range : ranges) dropped.put(new JSONArray().put(range[0]).put(range[1]));
+        return new JSONObject().put("install_id", identity.installationId)
+                .put("stream_base", Long.parseLong(requireMetadata(META_STREAM_BASE)))
+                .put("next_sequence", Long.parseLong(requireMetadata(META_NEXT_SEQUENCE)))
+                .put("dropped", dropped).toString();
     }
 
     /** Replaces only an invalid credential/identity pair; queued events remain durable. */
@@ -133,7 +152,14 @@ public final class AnalyticsQueue implements Closeable {
 
     /** Removes every durable event when collection is revoked with clear-pending enabled. */
     public synchronized void clearAllPendingEvents() {
-        database.delete("pending_events", null, null);
+        database.beginTransaction();
+        try {
+            recordDroppedWhere(null, null);
+            database.delete("pending_events", null, null);
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
     }
 
     @Override public synchronized void close() {
@@ -227,21 +253,28 @@ public final class AnalyticsQueue implements Closeable {
         putMetadata(META_INSTALL_ID, installId);
         putMetadata(META_CREDENTIAL, credential);
         putMetadata(META_NEXT_SEQUENCE, Long.toString(nextSequence));
+        // The new stream starts at the lowest queued row (rows keep their numbers) or at the next number.
+        long streamBase = android.database.DatabaseUtils.longForQuery(database,
+                "SELECT COALESCE(MIN(sequence), ?) FROM pending_events", new String[]{Long.toString(nextSequence)});
+        putMetadata(META_STREAM_BASE, Long.toString(streamBase));
+        database.delete("dropped_ranges", null, null);
         putMetadata("registered", "false");
         return new Identity(installId, credential);
     }
 
     private int deleteExpired(long cutoffEpochMillis) {
-        return database.delete("pending_events", "created_at_epoch_ms < ?",
-                new String[]{Long.toString(cutoffEpochMillis)});
+        String[] args = {Long.toString(cutoffEpochMillis)};
+        recordDroppedWhere("created_at_epoch_ms < ?", args);
+        return database.delete("pending_events", "created_at_epoch_ms < ?", args);
     }
 
     private int enforceBounds(int eventLimit, long byteLimit) {
         int evicted = 0;
         while (pendingCount() > eventLimit || pendingBytes() > byteLimit) {
-            try (Cursor cursor = database.query("pending_events", new String[]{"row_id"}, null,
+            try (Cursor cursor = database.query("pending_events", new String[]{"row_id", "sequence"}, null,
                     null, null, null, "row_id ASC", "1")) {
                 if (!cursor.moveToFirst()) return evicted;
+                recordDropped(cursor.getLong(1));
                 evicted += database.delete("pending_events", "row_id = ?",
                         new String[]{Long.toString(cursor.getLong(0))});
             }
@@ -252,6 +285,53 @@ public final class AnalyticsQueue implements Closeable {
     private QueueResult result(Identity identity, int inserted, int evicted, int expired) {
         return new QueueResult(identity.installationId, identity.credential, inserted, evicted,
                 expired, pendingCount(), pendingBytes());
+    }
+
+    /** Journals the sequences of rows about to be deleted without acknowledgement. */
+    private void recordDroppedWhere(String where, String[] args) {
+        try (Cursor cursor = database.query("pending_events", new String[]{"sequence"}, where, args,
+                null, null, "sequence ASC")) {
+            while (cursor.moveToNext()) recordDropped(cursor.getLong(0));
+        }
+    }
+
+    private void recordDropped(long sequence) {
+        ContentValues extend = new ContentValues();
+        extend.put("to_sequence", sequence);
+        if (database.update("dropped_ranges", extend, "to_sequence = ?", new String[]{Long.toString(sequence - 1)}) > 0)
+            return;
+        ContentValues range = new ContentValues();
+        range.put("from_sequence", sequence);
+        range.put("to_sequence", sequence);
+        database.insertWithOnConflict("dropped_ranges", null, range, SQLiteDatabase.CONFLICT_IGNORE);
+        if (android.database.DatabaseUtils.queryNumEntries(database, "dropped_ranges") > MAX_DROPPED_RANGES)
+            mergeOldestDroppedRanges();
+    }
+
+    private void mergeOldestDroppedRanges() {
+        try (Cursor cursor = database.query("dropped_ranges", new String[]{"from_sequence", "to_sequence"}, null,
+                null, null, null, "from_sequence ASC", "2")) {
+            if (cursor.getCount() < 2) return;
+            cursor.moveToFirst();
+            long firstFrom = cursor.getLong(0);
+            cursor.moveToNext();
+            long secondFrom = cursor.getLong(0);
+            long secondTo = cursor.getLong(1);
+            ContentValues widened = new ContentValues();
+            widened.put("to_sequence", secondTo);
+            database.update("dropped_ranges", widened, "from_sequence = ?", new String[]{Long.toString(firstFrom)});
+            database.delete("dropped_ranges", "from_sequence = ?", new String[]{Long.toString(secondFrom)});
+        }
+    }
+
+    private long[][] readDroppedRanges() {
+        try (Cursor cursor = database.query("dropped_ranges", new String[]{"from_sequence", "to_sequence"}, null,
+                null, null, null, "from_sequence ASC")) {
+            long[][] ranges = new long[cursor.getCount()][];
+            int index = 0;
+            while (cursor.moveToNext()) ranges[index++] = new long[]{cursor.getLong(0), cursor.getLong(1)};
+            return ranges;
+        }
     }
 
     private int pendingCount() { return (int) android.database.DatabaseUtils.longForQuery(database, "SELECT COUNT(*) FROM pending_events", null); }
@@ -287,10 +367,18 @@ public final class AnalyticsQueue implements Closeable {
             database.execSQL("CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL)");
             database.execSQL("CREATE TABLE pending_events (row_id INTEGER PRIMARY KEY AUTOINCREMENT, event_id TEXT NOT NULL UNIQUE, install_id TEXT NOT NULL, session_id TEXT NOT NULL, sequence INTEGER NOT NULL, session_elapsed_ms INTEGER NOT NULL, name TEXT NOT NULL, occurred_at_client TEXT NOT NULL, properties_json TEXT NOT NULL, properties_bytes INTEGER NOT NULL, payload_json TEXT NOT NULL, created_at_epoch_ms INTEGER NOT NULL, attempt_count INTEGER NOT NULL DEFAULT 0)");
             database.execSQL("CREATE INDEX pending_events_created_at ON pending_events(created_at_epoch_ms)");
+            database.execSQL("CREATE TABLE dropped_ranges (from_sequence INTEGER PRIMARY KEY, to_sequence INTEGER NOT NULL)");
         }
         @Override public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
             if (oldVersion < 2)
                 database.execSQL("ALTER TABLE pending_events ADD COLUMN attempt_count INTEGER NOT NULL DEFAULT 0");
+            if (oldVersion < 3) {
+                database.execSQL("CREATE TABLE dropped_ranges (from_sequence INTEGER PRIMARY KEY, to_sequence INTEGER NOT NULL)");
+                // Queues written before the journal have no drop history: the stream starts at the oldest queued row.
+                database.execSQL("INSERT OR IGNORE INTO metadata(key, value) SELECT 'stream_base', CAST(COALESCE("
+                        + "(SELECT MIN(sequence) FROM pending_events), (SELECT value FROM metadata WHERE key = 'next_sequence'), 1) AS TEXT) "
+                        + "WHERE EXISTS (SELECT 1 FROM metadata WHERE key = 'install_id')");
+            }
         }
         private static void applyPragma(SQLiteDatabase database, String statement) {
             try (Cursor ignored = database.rawQuery(statement, null)) { ignored.moveToFirst(); }

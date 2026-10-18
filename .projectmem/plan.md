@@ -17,6 +17,7 @@
 - [x] U2: Android device delivery passed against `mortris-prod` and all controlled `mortris-sdk-test` retry, acknowledgement, and policy scenarios.
 - [x] U3: Unity `6000.3.16f1` Android IL2CPP/managed-stripping build, custom Gradle-template dual ABI (ARMv7/ARM64) package proof, and API 25/35 device launches passed; project settings restored.
 - [ ] Implement the self-hosted ingestion contract and integrate the package into a first game consumer later.
+- [ ] V7 transport (0.2.0): V7-1 queue foundation done (dropped-range journal, stream_base, getSequenceState, schema v3, emulator-verified); next V7-2 contract with the server owner, V7-3 ack by sequence, V7-4 C# M7 codec + native zstd, V7-5 asset delivery, V7-6 physical-phone proof. See Documentation/ExecutionPlan.md.
 
 ## Next
 - U4: choose the first game consumer and map its semantic start/complete calls to the SDK for a measured parity comparison.

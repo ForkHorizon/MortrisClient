@@ -36,6 +36,8 @@ public final class AnalyticsQueueInstrumentationTest extends Instrumentation {
             testCorruptDatabaseIsResetWithNewIdentity(getTargetContext());
             testVersionOneDatabaseUpgradesWithoutDroppingQueuedEvent(getTargetContext());
             testResetIdentityKeepsQueuedEventsAndAdvancesSequence(getTargetContext());
+            testLocallyDroppedSequencesAreJournaledButAcknowledgedOnesAreNot(getTargetContext());
+            testResetIdentityStartsANewStreamAtTheLowestQueuedSequence(getTargetContext());
             result.putString(REPORT_KEY_STREAMRESULT, "U1 device queue tests passed.\n");
             finish(Activity.RESULT_OK, result);
         } catch (Throwable failure) {
@@ -117,6 +119,10 @@ public final class AnalyticsQueueInstrumentationTest extends Instrumentation {
         assertEquals("55555555-5555-4555-8555-555555555555", pending.getJSONObject(0).getString("event_id"));
         assertEquals(false, pending.getJSONObject(0).has("install_id"));
         assertEquals(true, hasAttemptCountColumn(databaseFile));
+        JSONObject state = new JSONObject(queue.getSequenceState());
+        assertEquals(7L, state.getLong("stream_base"));
+        assertEquals(8L, state.getLong("next_sequence"));
+        assertEquals("[]", state.getJSONArray("dropped").toString());
         queue.close();
     }
 
@@ -134,6 +140,61 @@ public final class AnalyticsQueueInstrumentationTest extends Instrumentation {
         assertEquals(2, pending.length());
         assertEquals(firstSequence + 1L, pending.getJSONObject(1).getLong("sequence"));
         queue.close();
+    }
+
+    private static void testLocallyDroppedSequencesAreJournaledButAcknowledgedOnesAreNot(Context context) throws Exception {
+        AnalyticsQueue queue = freshQueue(context);
+        // Eviction: five events, room for two -> sequences 1..3 are dropped as one range.
+        queue.enqueueBatch(events(id(1), id(2), id(3), id(4), id(5)), 2, BYTE_LIMIT, MAX_AGE_MILLIS);
+        JSONObject state = new JSONObject(queue.getSequenceState());
+        assertEquals(1L, state.getLong("stream_base"));
+        assertEquals(6L, state.getLong("next_sequence"));
+        assertEquals("[[1,3]]", state.getJSONArray("dropped").toString());
+
+        // Acknowledged rows are delivered, never journaled as dropped.
+        queue.deleteAcknowledged(new JSONArray().put(id(4)).toString());
+        assertEquals("[[1,3]]", new JSONObject(queue.getSequenceState()).getJSONArray("dropped").toString());
+
+        // Clearing pending data (consent revoked) journals what was still queued and merges adjacent ranges.
+        queue.clearAllPendingEvents();
+        state = new JSONObject(queue.getSequenceState());
+        assertEquals("[[1,3],[5,5]]", state.getJSONArray("dropped").toString());
+        assertEquals(6L, state.getLong("next_sequence"));
+        queue.close();
+
+        // Expiry: the older row is deleted by age while the newest survives.
+        queue = freshQueue(context);
+        queue.enqueueBatch(events(id(6)), EVENT_LIMIT, BYTE_LIMIT, MAX_AGE_MILLIS);
+        Thread.sleep(40);
+        queue.enqueueBatch(events(id(7)), EVENT_LIMIT, BYTE_LIMIT, 20L);
+        assertEquals("[[1,1]]", new JSONObject(queue.getSequenceState()).getJSONArray("dropped").toString());
+        queue.close();
+    }
+
+    private static void testResetIdentityStartsANewStreamAtTheLowestQueuedSequence(Context context) throws Exception {
+        AnalyticsQueue queue = freshQueue(context);
+        queue.enqueueBatch(events(id(8), id(9), id(10)), 2, BYTE_LIMIT, MAX_AGE_MILLIS); // sequence 1 evicted
+        QueueResult before = queue.getState();
+        assertEquals("[[1,1]]", new JSONObject(queue.getSequenceState()).getJSONArray("dropped").toString());
+
+        QueueResult after = queue.resetIdentity();
+        JSONObject state = new JSONObject(queue.getSequenceState());
+
+        assertNotEquals(before.getInstallationId(), after.getInstallationId());
+        assertEquals(2L, state.getLong("stream_base"));
+        assertEquals(4L, state.getLong("next_sequence"));
+        assertEquals("[]", state.getJSONArray("dropped").toString());
+        assertEquals(2, new JSONArray(queue.readOldestBatch(EVENT_LIMIT)).length());
+        queue.close();
+    }
+
+    private static AnalyticsQueue freshQueue(Context context) {
+        deleteDatabaseFiles(databaseFile(context));
+        return new AnalyticsQueue(context);
+    }
+
+    private static String id(int n) {
+        return String.format("%08x-aaaa-4aaa-8aaa-%012x", n, n);
     }
 
     private static String events(String... eventIds) throws Exception {
