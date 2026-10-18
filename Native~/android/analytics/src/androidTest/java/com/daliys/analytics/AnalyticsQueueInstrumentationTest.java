@@ -42,6 +42,7 @@ public final class AnalyticsQueueInstrumentationTest extends Instrumentation {
             testV1AcknowledgementIsJournaledOnlyWhileAStreamIsOpen(getTargetContext());
             testBeginNewStreamForgetsTheOldEpochAndRangesBelowTheLowestRow(getTargetContext());
             testSequenceStateReportsEpochAndDroppedVersion(getTargetContext());
+            testCompactingTheDroppedJournalNeverCoversALiveRow(getTargetContext());
             result.putString(REPORT_KEY_STREAMRESULT, "U1 device queue tests passed.\n");
             finish(Activity.RESULT_OK, result);
         } catch (Throwable failure) {
@@ -246,6 +247,32 @@ public final class AnalyticsQueueInstrumentationTest extends Instrumentation {
         assertEquals("[]", state.getJSONArray("dropped").toString());
         assertEquals(true, state.getLong("dropped_version") > before);
         assertEquals(2, new JSONArray(queue.readOldestBatch(EVENT_LIMIT)).length());
+        queue.close();
+    }
+
+    private static void testCompactingTheDroppedJournalNeverCoversALiveRow(Context context) throws Exception {
+        AnalyticsQueue queue = freshQueue(context);
+        String[] ids = new String[2050];
+        for (int i = 0; i < ids.length; i++) ids[i] = id(1000 + i);
+        queue.enqueueBatch(events(ids), 5000, 64L * BYTE_LIMIT, MAX_AGE_MILLIS); // sequences 1..2050
+        queue.setStreamEpoch(1);
+        JSONArray odd = new JSONArray();
+        for (int i = 0; i < ids.length; i += 2) odd.put(ids[i]); // sequences 1,3,5,...: 1025 separate ranges
+        queue.deleteAcknowledged(odd.toString());
+
+        JSONArray dropped = new JSONObject(queue.getSequenceState()).getJSONArray("dropped");
+        assertEquals(true, dropped.length() <= 1024);
+        JSONArray pending = new JSONArray(queue.readOldestBatch(5000));
+        for (int i = 0; i < pending.length(); i++) {
+            long sequence = pending.getJSONObject(i).getLong("sequence");
+            for (int r = 0; r < dropped.length(); r++)
+                assertEquals(false, sequence >= dropped.getJSONArray(r).getLong(0) && sequence <= dropped.getJSONArray(r).getLong(1));
+        }
+        // An ack up to the first range's end must not delete any row the queue still reports as live.
+        long ack = dropped.getJSONArray(0).getLong(1);
+        int live = new JSONArray(queue.readOldestBatch(5000)).length();
+        int deleted = queue.deleteThroughSequence(ack);
+        assertEquals(live - deleted, new JSONArray(queue.readOldestBatch(5000)).length());
         queue.close();
     }
 

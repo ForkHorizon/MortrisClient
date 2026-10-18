@@ -392,9 +392,14 @@ public final class AnalyticsQueue implements Closeable {
             if (cursor.getCount() < 2) return;
             cursor.moveToFirst();
             long firstFrom = cursor.getLong(0);
+            long firstTo = cursor.getLong(1);
             cursor.moveToNext();
             long secondFrom = cursor.getLong(0);
             long secondTo = cursor.getLong(1);
+            // The widened range declares the gap settled, so rows still queued in it must go with it (an honest,
+            // journaled drop) instead of being silently removed by the next ack.
+            database.delete("pending_events", "sequence > ? AND sequence < ?",
+                    new String[]{Long.toString(firstTo), Long.toString(secondFrom)});
             ContentValues widened = new ContentValues();
             widened.put("to_sequence", secondTo);
             database.update("dropped_ranges", widened, "from_sequence = ?", new String[]{Long.toString(firstFrom)});
