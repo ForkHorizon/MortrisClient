@@ -98,21 +98,16 @@ Goal: replace per-event random UUIDs with a durable sequence identity and ship t
 (catalog + zstd dictionary). Research status and the accepted decision: `Theory~/transport-v7/12-sequence-identity-architecture.md`.
 The research harness found five gaps in that ADR; each step below closes them in order.
 
-- [x] V7-1 queue foundation: the queue already assigns sequence numbers in the same transaction as the insert.
-  Added schema v3 with a journal of locally dropped sequence ranges, `stream_base`, and `getSequenceState()` so that
-  continuous acknowledgement can skip evicted/expired/cleared events. Device-verified on the API 35 emulator
-  (eviction, clear, expiry, acknowledged rows are not journaled, identity reset starts a new stream, v1 -> v3 upgrade).
-  Wire format and server contract unchanged.
-- [~] V7-2 contract: the server side is implemented on branch `feat/v7-transport` of MortrisServer (worktree `../MortrisServer-v7`): `docs/v7-transport.md` is the contract (`POST /v2/streams/sync`, `PUT /v2/streams/aliases`, `POST /v2/events/packet`, `GET /v2/assets/...`), derived event ids, acknowledgement by sequence with dropped ranges, epoch handshake and rollback detection; verified with golden packets from the Python reference encoder and PostgreSQL end-to-end tests. Remaining on the client: use it. Original description: composite key `project/origin/epoch/sequence`; the client sends
-  `stream_base`, dropped ranges and a high-water mark so the server can acknowledge by sequence and detect tail loss;
-  a restored/rolled-back counter is detected by a server handshake that returns its high-water mark; UUID aliases for
-  legacy consumers include project and epoch in the namespace. The queue is in `noBackupFilesDir`, so Android backup restore
-  does not bring back an old counter.
-- [ ] V7-3 acknowledgement by sequence in the uploader (keep event-id acknowledgement while both are supported).
-- [ ] V7-4 M7 codec in C#: port `Theory~/transport-v7/06-experiments/native` (columns, frame, catalog, aliases) with byte-exact fixtures;
-  native zstd per ABI (ARMv7/ARM64, 4 KB and 16 KB pages).
-- [ ] V7-5 catalog/dictionary delivery (cold start costs about 42 KB per install; compare before enabling by default).
-- [ ] V7-6 device proof: Release IL2CPP on a physical phone (p95 packing, GC, frame time), then a delivery soak.
+- [x] V7-1 queue foundation: sequence assigned in the enqueue transaction; schema v3 journal of dropped ranges, `stream_base`,
+  `getSequenceState()`; epoch, dropped-version counter, `deleteThroughSequence`, `beginNewStream`; V1 acknowledgements journaled
+  while a stream is open. Device-verified (instrumentation tests).
+- [x] V7-2 contract: implemented in MortrisServer branch `feat/v7-transport` (`docs/v7-transport.md`), not merged to main.
+- [x] V7-3 acknowledgement by sequence in the uploader path (`V7Session`), with V1 fallback.
+- [x] V7-4 M7 codec in C#: native zstd per ABI (ARM64/ARMv7, 16 KB pages) and macOS Editor; parity with the Python reference decoder and
+  the server's Go decoder.
+- [x] V7-5 catalog/dictionary delivery with content-id verification and on-disk cache.
+- [~] V7-6 device proof: IL2CPP emulator run against the local server (see `Native~/transport-tests/e2e/run-device.sh`); physical phone
+  (p95 packing, GC, frame time) and a delivery soak are still open. Default stays `UseTransportV7 = false` until then.
 
 Durability note: the queue runs WAL with `synchronous=NORMAL`: a process crash does not lose committed rows, a power loss
 may lose the most recent transactions. Raise to FULL only after measuring the cost per 32-event batch.

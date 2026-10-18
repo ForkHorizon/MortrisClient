@@ -3,6 +3,8 @@
 ## 0.2.0 - Unreleased
 
 - Started the 0.2.0 development line on `develop`.
+- V7 transport (opt-in `AnalyticsOptions.UseTransportV7`): native zstd plugin (arm64-v8a, armeabi-v7a, macOS Editor), C# M7 encoder,
+  sequence streams with acknowledgement by sequence, asset/alias handling and automatic V1 fallback. See `Documentation/V7Transport.md`.
 - Android queue schema v3: a durable journal of locally dropped sequence ranges (evicted, expired, or cleared
   events), a `stream_base` marker, and `AnalyticsQueue.getSequenceState()`. Foundation for the V7 sequence-identity
   delivery contract; the wire format and server contract are unchanged.
