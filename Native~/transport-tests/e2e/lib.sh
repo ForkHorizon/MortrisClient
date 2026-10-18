@@ -21,7 +21,7 @@ start_stack() {
   export MORTRIS_MIGRATOR_DSN=$DSN MORTRIS_WRITER_DSN=$DSN MORTRIS_READER_DSN=$DSN LISTEN_ADDR=127.0.0.1:$HTTP_PORT
   (cd "$SERVER_REPO" && "$TMP/analytics-server" migrate >/dev/null)
   $PSQL -d mortris_e2e -c "INSERT INTO projects (id, environment, display_name, strict_catalog, enabled) VALUES ('synth_indie_runner', 'test', 'synth', false, true)"
-  (cd "$SERVER_REPO" && "$TMP/analytics-server" import-transport-assets --project synth_indie_runner --catalog "$HERE/fixtures/catalog-plain.json" --dictionary "$HERE/fixtures/dictionary-plain.bin")
+  [ "${M7_SKIP_ASSETS:-0}" = 1 ] || (cd "$SERVER_REPO" && "$TMP/analytics-server" import-transport-assets --project synth_indie_runner --catalog "$HERE/fixtures/catalog-plain.json" --dictionary "$HERE/fixtures/dictionary-plain.bin")
   (cd "$SERVER_REPO" && "$TMP/analytics-server" serve >"$TMP/server.log" 2>&1 &); sleep 2
   SERVER_PID=$(pgrep -f "$TMP/analytics-server serve" | head -1)
   for i in 1 2 3 4 5 6 7 8 9 10; do curl -fsS "http://127.0.0.1:$HTTP_PORT/health/live" >/dev/null 2>&1 && break; sleep 1; done

@@ -2,6 +2,7 @@
 # Device proof: builds an isolated Unity project (IL2CPP, ARM64+ARMv7) that uses this package, runs it on an Android emulator against a local
 # MortrisServer + PostgreSQL, and checks the database: V7 packets stored, a V1 fallback event stored, no gaps in the sequence stream.
 # Usage: run-device.sh [path-to-prebuilt.apk]   (set V7_DEVICE_WORK to keep the Unity project between runs)
+# SCENARIO=normal (default) | nocatalog (project without V7 assets: everything must go through V1) | kill (app is killed mid-run and restarted)
 set -eu
 . "$(dirname "$0")/lib.sh"
 UNITY=${UNITY:-/Applications/Unity/Hub/Editor/6000.3.16f1/Unity.app/Contents/MacOS/Unity}
@@ -26,11 +27,18 @@ PY
 fi
 [ -f "$APK" ]
 "$ADB" devices | grep -q "device$" || { echo "no Android emulator/device is connected"; exit 1; }
+SCENARIO=${SCENARIO:-normal}
+[ "$SCENARIO" = nocatalog ] && M7_SKIP_ASSETS=1
 start_stack
 "$ADB" install -r "$APK" >/dev/null
 "$ADB" shell pm clear com.daliys.v7device >/dev/null
 "$ADB" logcat -c
-"$ADB" shell am start -n com.daliys.v7device/com.unity3d.player.UnityPlayerGameActivity >/dev/null
+LAUNCH() { "$ADB" shell am start -n com.daliys.v7device/com.unity3d.player.UnityPlayerGameActivity >/dev/null; }
+LAUNCH
+if [ "$SCENARIO" = kill ]; then
+  sleep 5; "$ADB" shell am force-stop com.daliys.v7device    # mid-run: events still in the in-memory handoff are lost, queued ones must survive
+  sleep 2; "$ADB" logcat -c; LAUNCH
+fi
 DONE=0
 for i in $(seq 1 90); do
   if "$ADB" logcat -d -s Unity | grep -q "V7DEVICE finished"; then DONE=1; break; fi
@@ -51,10 +59,22 @@ V1BATCHES=$(grep -c '"route":"POST /v1/events/batch","status":200' "$TMP/server.
 ACK=$($Q "SELECT high_water || ' ' || received::text FROM transport_streams WHERE project_id = 'synth_indie_runner' ORDER BY epoch DESC LIMIT 1")
 echo "events=$EVENTS sequences(distinct,min,max)=$SEQ unknown_shape_events=$UNKNOWN streams=$STREAMS v2_packets=$PACKETS v1_batches=$V1BATCHES stream_state='$ACK'"
 FAIL=0
-[ "$EVENTS" = 121 ] || { echo "FAIL: expected 121 events"; FAIL=1; }
-[ "$SEQ" = "121,1,121" ] || { echo "FAIL: sequences are not exactly 1..121"; FAIL=1; }
-[ "$UNKNOWN" = 1 ] || { echo "FAIL: the unknown-shape event did not arrive"; FAIL=1; }
-[ "$STREAMS" -ge 1 ] || { echo "FAIL: no V7 stream was opened"; FAIL=1; }
-[ "$PACKETS" -ge 1 ] || { echo "FAIL: no V7 packet was accepted"; FAIL=1; }
-[ "$V1BATCHES" -ge 1 ] || { echo "FAIL: the V1 fallback never ran"; FAIL=1; }
-[ "$FAIL" = 0 ] && echo "DEVICE PROOF PASSED" || { echo "server log tail:"; tail -5 "$TMP/server.log"; exit 1; }
+if [ "$SCENARIO" = normal ]; then
+  [ "$EVENTS" = 121 ] || { echo "FAIL: expected 121 events"; FAIL=1; }
+  [ "$SEQ" = "121,1,121" ] || { echo "FAIL: sequences are not exactly 1..121"; FAIL=1; }
+  [ "$UNKNOWN" = 1 ] || { echo "FAIL: the unknown-shape event did not arrive"; FAIL=1; }
+  [ "$STREAMS" -ge 1 ] || { echo "FAIL: no V7 stream was opened"; FAIL=1; }
+  [ "$PACKETS" -ge 1 ] || { echo "FAIL: no V7 packet was accepted"; FAIL=1; }
+  [ "$V1BATCHES" -ge 1 ] || { echo "FAIL: the V1 fallback never ran"; FAIL=1; }
+elif [ "$SCENARIO" = nocatalog ]; then
+  [ "$EVENTS" = 121 ] || { echo "FAIL: expected 121 events through V1"; FAIL=1; }
+  [ "$PACKETS" = 0 ] || { echo "FAIL: V7 packets were sent although the project has no catalog"; FAIL=1; }
+  [ "$V1BATCHES" -ge 1 ] || { echo "FAIL: V1 never ran"; FAIL=1; }
+else
+  DISTINCT=$(echo "$SEQ" | cut -d, -f1); MIN=$(echo "$SEQ" | cut -d, -f2); MAX=$(echo "$SEQ" | cut -d, -f3)
+  [ "$EVENTS" = "$DISTINCT" ] || { echo "FAIL: duplicate sequence numbers stored"; FAIL=1; }
+  [ "$MIN" = 1 ] && [ "$MAX" = "$DISTINCT" ] || { echo "FAIL: the sequence has gaps ($SEQ)"; FAIL=1; }
+  [ "$EVENTS" -ge 121 ] || { echo "FAIL: fewer events than the restarted run alone should deliver"; FAIL=1; }
+  [ "$PACKETS" -ge 1 ] || { echo "FAIL: no V7 packet was accepted"; FAIL=1; }
+fi
+[ "$FAIL" = 0 ] && echo "DEVICE PROOF PASSED ($SCENARIO)" || { echo "server log tail:"; tail -5 "$TMP/server.log"; exit 1; }
