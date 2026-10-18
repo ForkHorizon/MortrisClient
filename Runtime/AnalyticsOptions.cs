@@ -10,6 +10,11 @@ namespace Daliys.Analytics
         public string AppVersion { get; set; }
         public string BuildNumber { get; set; }
         public bool DebugLogging { get; set; }
+        /// <summary>
+        /// Opt in to the V7 binary transport (sequence streams, catalog + dictionary, zstd). The SDK asks the server whether the
+        /// project supports it and silently keeps using V1 batches when it does not, or when the native library is unavailable.
+        /// </summary>
+        public bool UseTransportV7 { get; set; }
         public TimeSpan UploadInterval { get; set; } = TimeSpan.FromSeconds(30);
         public int UploadEventThreshold { get; set; } = 50;
         public int DurableEventLimit { get; set; } = 10000;
@@ -20,7 +25,7 @@ namespace Daliys.Analytics
         {
             if (string.IsNullOrWhiteSpace(ServerUrl) ||
                 !Uri.TryCreate(ServerUrl, UriKind.Absolute, out var serverUri) ||
-                serverUri.Scheme != Uri.UriSchemeHttps)
+                (serverUri.Scheme != Uri.UriSchemeHttps && !IsLoopbackDevelopmentHttp(serverUri)))
             {
                 throw new ArgumentException("ServerUrl must be an absolute HTTPS URL.", nameof(ServerUrl));
             }
@@ -40,6 +45,10 @@ namespace Daliys.Analytics
             if (DurableEventLimit <= 0 || DurableByteLimit <= 0 || MaxEventAge <= TimeSpan.Zero)
                 throw new ArgumentOutOfRangeException("Durable queue limits must be positive.");
         }
+
+        /// <summary>Plain HTTP is accepted only for the development host itself (loopback or the Android emulator's host alias), never a routable address.</summary>
+        private static bool IsLoopbackDevelopmentHttp(Uri uri) =>
+            uri.Scheme == Uri.UriSchemeHttp && (uri.IsLoopback || uri.Host == "10.0.2.2");
 
         internal bool HasSameEndpointAs(AnalyticsOptions other)
         {

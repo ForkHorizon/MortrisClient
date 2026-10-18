@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -24,6 +25,23 @@ namespace M7Transport.Tests
                 var dylib = Environment.GetEnvironmentVariable("DALIYS_ZSTD") ?? Path.GetFullPath(Path.Combine(Root, "../../../../../Runtime/Plugins/macOS/libdaliys_zstd.dylib"));
                 return NativeLibrary.Load(dylib);
             });
+        }
+
+        internal static string Serialize(object value)
+        {
+            switch (value)
+            {
+                case null: return "null";
+                case bool b: return b ? "true" : "false";
+                case string text: return MiniJson.Escape(text);
+                case JsonNumber number: return number.Lexeme;
+                case List<object> list: return "[" + string.Join(",", list.ConvertAll(Serialize)) + "]";
+                case Dictionary<string, object> map:
+                    var parts = new List<string>();
+                    foreach (var pair in map) parts.Add(MiniJson.Escape(pair.Key) + ":" + Serialize(pair.Value));
+                    return "{" + string.Join(",", parts) + "}";
+                default: throw new InvalidOperationException();
+            }
         }
 
         /// <summary>Runs the research Python decoder over a frame; returns its stdout, or null when no interpreter is configured.</summary>

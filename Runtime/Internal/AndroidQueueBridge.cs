@@ -10,6 +10,13 @@ namespace Daliys.Analytics.Internal
         string ReadOldestBatch(int maxEvents);
         int DeleteAcknowledged(string eventIdsJson);
         void ClearAllPendingEvents();
+        /// <summary>JSON: install_id, stream_base, next_sequence, stream_epoch, dropped_version and the dropped [from, to] ranges.</summary>
+        string GetSequenceState();
+        void SetStreamEpoch(long epoch);
+        /// <summary>Deletes queued rows with sequence &lt;= ackThrough (settled by the server). Returns the number deleted.</summary>
+        int DeleteThroughSequence(long ackThrough);
+        /// <summary>Starts a fresh stream at the lowest queued sequence (epoch cleared, older ranges forgotten).</summary>
+        void BeginNewStream();
     }
 
     internal sealed class AnalyticsQueueState
@@ -76,6 +83,14 @@ namespace Daliys.Analytics.Internal
             {
                 _queue.Call("clearAllPendingEvents");
             }
+
+            public string GetSequenceState() => _queue.Call<string>("getSequenceState");
+
+            public void SetStreamEpoch(long epoch) => _queue.Call("setStreamEpoch", epoch);
+
+            public int DeleteThroughSequence(long ackThrough) => _queue.Call<int>("deleteThroughSequence", ackThrough);
+
+            public void BeginNewStream() => _queue.Call("beginNewStream");
 
             public void Dispose()
             {

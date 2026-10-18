@@ -28,6 +28,8 @@ public final class AnalyticsQueue implements Closeable {
     private static final String META_CREDENTIAL = "installation_credential";
     private static final String META_NEXT_SEQUENCE = "next_sequence";
     private static final String META_STREAM_BASE = "stream_base";
+    private static final String META_STREAM_EPOCH = "stream_epoch";
+    private static final String META_DROPPED_VERSION = "dropped_version";
     /** Older ranges are merged beyond this bound; a wider skip is safe because skips only mean "do not wait for". */
     private static final int MAX_DROPPED_RANGES = 1024;
 
@@ -64,7 +66,66 @@ public final class AnalyticsQueue implements Closeable {
         return new JSONObject().put("install_id", identity.installationId)
                 .put("stream_base", Long.parseLong(requireMetadata(META_STREAM_BASE)))
                 .put("next_sequence", Long.parseLong(requireMetadata(META_NEXT_SEQUENCE)))
+                .put("stream_epoch", longMetadata(META_STREAM_EPOCH, 0))
+                .put("dropped_version", longMetadata(META_DROPPED_VERSION, 0))
                 .put("dropped", dropped).toString();
+    }
+
+    /** Records the epoch the server issued for this installation's V7 stream (0 clears it). */
+    public synchronized void setStreamEpoch(long epoch) {
+        if (epoch < 0) throw new IllegalArgumentException("epoch must not be negative");
+        putMetadata(META_STREAM_EPOCH, Long.toString(epoch));
+    }
+
+    /**
+     * Starts a new stream for the rows still queued (after the server refused the old one, e.g. a rolled-back counter):
+     * the stream begins at the lowest queued sequence, ranges below it are forgotten and the epoch is cleared so the next
+     * sync opens a fresh one. Queued rows keep their numbers.
+     */
+    public synchronized void beginNewStream() {
+        database.beginTransaction();
+        try {
+            long next = Long.parseLong(requireMetadata(META_NEXT_SEQUENCE));
+            long base = android.database.DatabaseUtils.longForQuery(database,
+                    "SELECT COALESCE(MIN(sequence), ?) FROM pending_events", new String[]{Long.toString(next)});
+            putMetadata(META_STREAM_BASE, Long.toString(base));
+            putMetadata(META_STREAM_EPOCH, "0");
+            database.delete("dropped_ranges", null, null);
+            bumpDroppedVersion();
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
+    }
+
+    /**
+     * Deletes every queued row with sequence <= ackThrough: the server confirmed that range as received, rejected or
+     * announced dropped. The rows are NOT journaled as dropped (they were delivered). Journal ranges the server has now
+     * settled are pruned. Returns the number of deleted rows.
+     */
+    public synchronized int deleteThroughSequence(long ackThrough) {
+        int deleted;
+        database.beginTransaction();
+        try {
+            deleted = database.delete("pending_events", "sequence <= ?", new String[]{Long.toString(ackThrough)});
+            database.delete("dropped_ranges", "to_sequence <= ?", new String[]{Long.toString(ackThrough)});
+            // A range straddling the ack keeps only its unsettled tail (from_sequence is the key: rewrite it).
+            try (Cursor cursor = database.query("dropped_ranges", new String[]{"from_sequence", "to_sequence"}, "from_sequence <= ?",
+                    new String[]{Long.toString(ackThrough)}, null, null, null)) {
+                while (cursor.moveToNext()) {
+                    long to = cursor.getLong(1);
+                    database.delete("dropped_ranges", "from_sequence = ?", new String[]{Long.toString(cursor.getLong(0))});
+                    ContentValues tail = new ContentValues();
+                    tail.put("from_sequence", ackThrough + 1);
+                    tail.put("to_sequence", to);
+                    database.insertWithOnConflict("dropped_ranges", null, tail, SQLiteDatabase.CONFLICT_REPLACE);
+                }
+            }
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
+        return deleted;
     }
 
     /** Replaces only an invalid credential/identity pair; queued events remain durable. */
@@ -141,8 +202,13 @@ public final class AnalyticsQueue implements Closeable {
         int deleted = 0;
         database.beginTransaction();
         try {
-            for (int index = 0; index < ids.length(); index++)
-                deleted += database.delete("pending_events", "event_id = ?", new String[]{ids.getString(index)});
+            // Rows delivered through V1 bypass the V7 stream: once a stream is open, tell the server not to wait for them.
+            boolean streamOpen = longMetadata(META_STREAM_EPOCH, 0) > 0;
+            for (int index = 0; index < ids.length(); index++) {
+                String[] id = new String[]{ids.getString(index)};
+                if (streamOpen) recordDroppedWhere("event_id = ?", id);
+                deleted += database.delete("pending_events", "event_id = ?", id);
+            }
             database.setTransactionSuccessful();
         } finally {
             database.endTransaction();
@@ -273,12 +339,13 @@ public final class AnalyticsQueue implements Closeable {
         while (pendingCount() > eventLimit || pendingBytes() > byteLimit) {
             try (Cursor cursor = database.query("pending_events", new String[]{"row_id", "sequence"}, null,
                     null, null, null, "row_id ASC", "1")) {
-                if (!cursor.moveToFirst()) return evicted;
+                if (!cursor.moveToFirst()) break;
                 recordDropped(cursor.getLong(1));
                 evicted += database.delete("pending_events", "row_id = ?",
                         new String[]{Long.toString(cursor.getLong(0))});
             }
         }
+        if (evicted > 0) bumpDroppedVersion();
         return evicted;
     }
 
@@ -291,8 +358,19 @@ public final class AnalyticsQueue implements Closeable {
     private void recordDroppedWhere(String where, String[] args) {
         try (Cursor cursor = database.query("pending_events", new String[]{"sequence"}, where, args,
                 null, null, "sequence ASC")) {
-            while (cursor.moveToNext()) recordDropped(cursor.getLong(0));
+            boolean any = false;
+            while (cursor.moveToNext()) { recordDropped(cursor.getLong(0)); any = true; }
+            if (any) bumpDroppedVersion();
         }
+    }
+
+    private void bumpDroppedVersion() {
+        putMetadata(META_DROPPED_VERSION, Long.toString(longMetadata(META_DROPPED_VERSION, 0) + 1));
+    }
+
+    private long longMetadata(String key, long fallback) {
+        String value = getMetadata(key);
+        return value == null ? fallback : Long.parseLong(value);
     }
 
     private void recordDropped(long sequence) {

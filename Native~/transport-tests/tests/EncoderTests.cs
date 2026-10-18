@@ -129,7 +129,7 @@ namespace M7Transport.Tests
                 var events = MiniJson.ParseArray(s.Batch);
                 var reversed = new List<object>(events);
                 reversed.Reverse();
-                Assert.False(s.Encoder.Encode(Serialize(reversed)).Ok);
+                Assert.False(s.Encoder.Encode(TestSupport.Serialize(reversed)).Ok);
                 var zero = s.Batch.Replace("\"sequence\":1}", "\"sequence\":0}");
                 Assert.False(s.Encoder.Encode(zero).Ok);
             }
@@ -168,25 +168,8 @@ namespace M7Transport.Tests
                         clone["properties"] = properties;
                         many.Add(clone);
                     }
-                var result = s.Encoder.Encode(Serialize(many));
+                var result = s.Encoder.Encode(TestSupport.Serialize(many));
                 Assert.False(result.Ok);
-            }
-        }
-
-        private static string Serialize(object value)
-        {
-            switch (value)
-            {
-                case null: return "null";
-                case bool b: return b ? "true" : "false";
-                case string text: return MiniJson.Escape(text);
-                case JsonNumber number: return number.Lexeme;
-                case List<object> list: return "[" + string.Join(",", list.ConvertAll(Serialize)) + "]";
-                case Dictionary<string, object> map:
-                    var parts = new List<string>();
-                    foreach (var pair in map) parts.Add(MiniJson.Escape(pair.Key) + ":" + Serialize(pair.Value));
-                    return "{" + string.Join(",", parts) + "}";
-                default: throw new InvalidOperationException();
             }
         }
 

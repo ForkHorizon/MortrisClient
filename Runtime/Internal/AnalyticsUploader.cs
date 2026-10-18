@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using Daliys.Analytics.Internal.Transport;
 using UnityEngine;
 
 namespace Daliys.Analytics.Internal
@@ -43,6 +44,7 @@ namespace Daliys.Analytics.Internal
         private bool _installConflict;
         private bool _permanentFailure;
         private ServerPolicy _currentPolicy;
+        private readonly V7Session _v7;
 
         internal AnalyticsUploader(AnalyticsOptions options, AnalyticsDeviceContext device, Action<ServerPolicy> policyChanged)
         {
@@ -50,6 +52,34 @@ namespace Daliys.Analytics.Internal
             _device = device;
             _policyChanged = policyChanged;
             _nextUploadAt = DateTimeOffset.UtcNow.Add(options.UploadInterval);
+            _v7 = CreateV7Session();
+        }
+
+        /// <summary>Test seam: a session with injected HTTP, storage and compressor.</summary>
+        internal AnalyticsUploader(AnalyticsOptions options, AnalyticsDeviceContext device, Action<ServerPolicy> policyChanged, V7Session v7) 
+        {
+            _options = options;
+            _device = device;
+            _policyChanged = policyChanged;
+            _nextUploadAt = DateTimeOffset.UtcNow.Add(options.UploadInterval);
+            _v7 = v7;
+        }
+
+        private V7Session CreateV7Session()
+        {
+            if (!_options.UseTransportV7) return null;
+            try
+            {
+                // Created on the Unity main thread (the worker is constructed by Analytics.Initialize), where persistentDataPath is legal.
+                var directory = Path.Combine(Application.persistentDataPath, "daliys-analytics", "v7");
+                var settings = new V7Settings { ProjectId = _options.ProjectId, SdkName = AnalyticsDeviceContext.SdkName, SdkVersion = AnalyticsDeviceContext.SdkVersion };
+                return new V7Session(settings, new HttpV7Transport(_client, _options.ServerUrl), new FileV7AssetStore(directory));
+            }
+            catch (Exception exception)
+            {
+                if (_options.DebugLogging) Debug.LogException(exception);
+                return null;
+            }
         }
 
         internal UploadResult Flush(IAnalyticsQueueBridge queue, bool force)
@@ -108,6 +138,48 @@ namespace Daliys.Analytics.Internal
                 var batchSize = MaximumBatchSize;
                 while (true)
                 {
+                    if (_v7 != null && !_v7.Disabled)
+                    {
+                        var v7 = _v7.Send(queue, state, () => queue.ReadOldestBatch(batchSize));
+                        switch (v7.Kind)
+                        {
+                            case V7ResultKind.Delivered:
+                            {
+                                var policyResultAfterPacket = ApplyPolicy(new ServerPolicy(PolicyMode(v7.PolicyMode), v7.DiscardPending, v7.NextCheckSeconds));
+                                if (policyResultAfterPacket != null)
+                                    return policyResultAfterPacket;
+                                continue;
+                            }
+                            case V7ResultKind.Empty:
+                                ResetBackoff();
+                                return UploadResult.Uploaded;
+                            case V7ResultKind.Retry:
+                                return BackOff(now, v7.RetryAfter);
+                            case V7ResultKind.Unauthorized:
+                            {
+                                _registered = false;
+                                var registration = RegisterWithCredentialRecovery(queue, state);
+                                state = registration.State;
+                                if (!registration.Response.IsSuccess)
+                                    return HandleFailure(registration.Response, now);
+                                _registered = true;
+                                var policyResult = ApplyPolicy(ParseRegistrationPolicy(registration.Response.Body));
+                                if (policyResult != null)
+                                    return policyResult;
+                                continue;
+                            }
+                            case V7ResultKind.PayloadTooLarge:
+                                if (batchSize > 1)
+                                {
+                                    batchSize = Math.Max(1, batchSize / 2);
+                                    continue;
+                                }
+                                break; // one event that cannot fit a packet: V1 decides what to do with it
+                            default:
+                                break; // Fallback: this batch goes through V1
+                        }
+                    }
+
                     var events = ParseQueuedEvents(queue.ReadOldestBatch(batchSize));
                     if (events.events == null || events.events.Length == 0)
                     {
@@ -160,7 +232,11 @@ namespace Daliys.Analytics.Internal
             }
         }
 
-        public void Dispose() => _client.Dispose();
+        public void Dispose()
+        {
+            _v7?.Dispose();
+            _client.Dispose();
+        }
 
         private ServerResponse Register(AnalyticsQueueState state) => PostJson("/v1/installs/register", JsonUtility.ToJson(new RegisterRequest
         {
@@ -340,6 +416,9 @@ namespace Daliys.Analytics.Internal
                 if (string.Equals(values[index], candidate, StringComparison.Ordinal)) return true;
             return false;
         }
+
+        private static ServerPolicyMode PolicyMode(string mode) =>
+            mode == "active" ? ServerPolicyMode.Active : mode == "pause_upload" ? ServerPolicyMode.PauseUpload : mode == "disable_collection" ? ServerPolicyMode.DisableCollection : throw new InvalidDataException("Unknown client policy mode.");
 
         private static ServerPolicy ParseRegistrationPolicy(string body)
         {

@@ -38,6 +38,10 @@ public final class AnalyticsQueueInstrumentationTest extends Instrumentation {
             testResetIdentityKeepsQueuedEventsAndAdvancesSequence(getTargetContext());
             testLocallyDroppedSequencesAreJournaledButAcknowledgedOnesAreNot(getTargetContext());
             testResetIdentityStartsANewStreamAtTheLowestQueuedSequence(getTargetContext());
+            testDeleteThroughSequenceSettlesRowsWithoutJournalingAndPrunesTheJournal(getTargetContext());
+            testV1AcknowledgementIsJournaledOnlyWhileAStreamIsOpen(getTargetContext());
+            testBeginNewStreamForgetsTheOldEpochAndRangesBelowTheLowestRow(getTargetContext());
+            testSequenceStateReportsEpochAndDroppedVersion(getTargetContext());
             result.putString(REPORT_KEY_STREAMRESULT, "U1 device queue tests passed.\n");
             finish(Activity.RESULT_OK, result);
         } catch (Throwable failure) {
@@ -185,6 +189,82 @@ public final class AnalyticsQueueInstrumentationTest extends Instrumentation {
         assertEquals(4L, state.getLong("next_sequence"));
         assertEquals("[]", state.getJSONArray("dropped").toString());
         assertEquals(2, new JSONArray(queue.readOldestBatch(EVENT_LIMIT)).length());
+        queue.close();
+    }
+
+    private static void testDeleteThroughSequenceSettlesRowsWithoutJournalingAndPrunesTheJournal(Context context) throws Exception {
+        AnalyticsQueue queue = freshQueue(context);
+        queue.enqueueBatch(events(id(20), id(21), id(22), id(23), id(24), id(25)), 4, BYTE_LIMIT, MAX_AGE_MILLIS); // 1,2 evicted
+        assertEquals("[[1,2]]", new JSONObject(queue.getSequenceState()).getJSONArray("dropped").toString());
+
+        int deleted = queue.deleteThroughSequence(4); // rows 3 and 4 are settled by the server
+        JSONObject state = new JSONObject(queue.getSequenceState());
+        JSONArray pending = new JSONArray(queue.readOldestBatch(EVENT_LIMIT));
+
+        assertEquals(2, deleted);
+        assertEquals(2, pending.length());
+        assertEquals(5L, pending.getJSONObject(0).getLong("sequence"));
+        assertEquals("[]", state.getJSONArray("dropped").toString()); // [1,2] is below the ack: the server already settled it
+
+        // A range that straddles the ack keeps only its unsettled tail.
+        queue.close();
+        queue = freshQueue(context);
+        queue.enqueueBatch(events(id(30), id(31), id(32), id(33), id(34)), 1, BYTE_LIMIT, MAX_AGE_MILLIS); // 1..4 evicted, 5 pending
+        assertEquals("[[1,4]]", new JSONObject(queue.getSequenceState()).getJSONArray("dropped").toString());
+        queue.deleteThroughSequence(2);
+        assertEquals("[[3,4]]", new JSONObject(queue.getSequenceState()).getJSONArray("dropped").toString());
+        assertEquals(1, new JSONArray(queue.readOldestBatch(EVENT_LIMIT)).length());
+        queue.close();
+    }
+
+    private static void testV1AcknowledgementIsJournaledOnlyWhileAStreamIsOpen(Context context) throws Exception {
+        AnalyticsQueue queue = freshQueue(context);
+        queue.enqueueBatch(events(id(40), id(41), id(42)), EVENT_LIMIT, BYTE_LIMIT, MAX_AGE_MILLIS);
+        queue.deleteAcknowledged(new JSONArray().put(id(40)).toString()); // no V7 stream: nothing to tell the server
+        assertEquals("[]", new JSONObject(queue.getSequenceState()).getJSONArray("dropped").toString());
+
+        queue.setStreamEpoch(3);
+        queue.deleteAcknowledged(new JSONArray().put(id(41)).toString()); // delivered through V1 while a stream is open
+        JSONObject state = new JSONObject(queue.getSequenceState());
+        assertEquals("[[2,2]]", state.getJSONArray("dropped").toString());
+        assertEquals(3L, state.getLong("stream_epoch"));
+        queue.close();
+    }
+
+    private static void testBeginNewStreamForgetsTheOldEpochAndRangesBelowTheLowestRow(Context context) throws Exception {
+        AnalyticsQueue queue = freshQueue(context);
+        queue.enqueueBatch(events(id(50), id(51), id(52), id(53)), 2, BYTE_LIMIT, MAX_AGE_MILLIS); // 1,2 evicted; 3,4 pending
+        queue.setStreamEpoch(5);
+        long before = new JSONObject(queue.getSequenceState()).getLong("dropped_version");
+
+        queue.beginNewStream();
+        JSONObject state = new JSONObject(queue.getSequenceState());
+
+        assertEquals(0L, state.getLong("stream_epoch"));
+        assertEquals(3L, state.getLong("stream_base"));
+        assertEquals(5L, state.getLong("next_sequence"));
+        assertEquals("[]", state.getJSONArray("dropped").toString());
+        assertEquals(true, state.getLong("dropped_version") > before);
+        assertEquals(2, new JSONArray(queue.readOldestBatch(EVENT_LIMIT)).length());
+        queue.close();
+    }
+
+    private static void testSequenceStateReportsEpochAndDroppedVersion(Context context) throws Exception {
+        AnalyticsQueue queue = freshQueue(context);
+        JSONObject fresh = new JSONObject(queue.getSequenceState());
+        assertEquals(0L, fresh.getLong("stream_epoch"));
+        assertEquals(0L, fresh.getLong("dropped_version"));
+        queue.enqueueBatch(events(id(60), id(61), id(62)), 1, BYTE_LIMIT, MAX_AGE_MILLIS); // two evictions: one version bump
+        assertEquals(1L, new JSONObject(queue.getSequenceState()).getLong("dropped_version"));
+        queue.close();
+        // The epoch survives a reopen, and a credential reset forgets it (a new installation has no stream).
+        queue = new AnalyticsQueue(context);
+        queue.setStreamEpoch(9);
+        queue.close();
+        queue = new AnalyticsQueue(context);
+        assertEquals(9L, new JSONObject(queue.getSequenceState()).getLong("stream_epoch"));
+        queue.resetIdentity();
+        assertEquals(0L, new JSONObject(queue.getSequenceState()).getLong("stream_epoch"));
         queue.close();
     }
 

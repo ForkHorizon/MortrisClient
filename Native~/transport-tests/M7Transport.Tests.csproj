@@ -11,6 +11,7 @@
   <ItemGroup>
     <!-- The package sources under test, compiled directly so internal types are visible. -->
     <Compile Include="../../Runtime/Internal/Transport/*.cs" Link="Runtime/Transport/%(Filename)%(Extension)" />
+    <Compile Include="../../Runtime/Internal/AndroidQueueBridge.cs" Link="Runtime/AndroidQueueBridge.cs" />
     <Compile Include="tests/*.cs" />
   </ItemGroup>
   <ItemGroup>
