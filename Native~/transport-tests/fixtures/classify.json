@@ -1,0 +1,162 @@
+[
+ {
+  "json": "0",
+  "type": 0
+ },
+ {
+  "json": "-0",
+  "type": 0
+ },
+ {
+  "json": "1",
+  "type": 0
+ },
+ {
+  "json": "-1",
+  "type": 0
+ },
+ {
+  "json": "9223372036854775807",
+  "type": 0
+ },
+ {
+  "json": "-9223372036854775808",
+  "type": 0
+ },
+ {
+  "json": "9223372036854775808",
+  "type": 10
+ },
+ {
+  "json": "18446744073709551615",
+  "type": 10
+ },
+ {
+  "json": "1.0",
+  "type": 3
+ },
+ {
+  "json": "-0.0",
+  "type": 3
+ },
+ {
+  "json": "0.5",
+  "type": 3
+ },
+ {
+  "json": "0.1",
+  "type": 4
+ },
+ {
+  "json": "3.14",
+  "type": 4
+ },
+ {
+  "json": "1e3",
+  "type": 3
+ },
+ {
+  "json": "1E+20",
+  "type": 4
+ },
+ {
+  "json": "1.5e-7",
+  "type": 4
+ },
+ {
+  "json": "123456789.123456789",
+  "type": 4
+ },
+ {
+  "json": "16777216",
+  "type": 0
+ },
+ {
+  "json": "16777217",
+  "type": 0
+ },
+ {
+  "json": "16777216.0",
+  "type": 3
+ },
+ {
+  "json": "0.000001",
+  "type": 4
+ },
+ {
+  "json": "340282346638528859811704183484516925440.0",
+  "type": 3
+ },
+ {
+  "json": "1e39",
+  "type": 4
+ },
+ {
+  "json": "4.9e-324",
+  "type": 4
+ },
+ {
+  "json": "\"\"",
+  "type": 1
+ },
+ {
+  "json": "\"a\"",
+  "type": 1
+ },
+ {
+  "json": "\"hello world\"",
+  "type": 1
+ },
+ {
+  "json": "\"0123456789abcdef\"",
+  "type": 6
+ },
+ {
+  "json": "\"0123456789abcdeF\"",
+  "type": 1
+ },
+ {
+  "json": "\"0123456789abcde\"",
+  "type": 1
+ },
+ {
+  "json": "\"0123456789abcdef0\"",
+  "type": 1
+ },
+ {
+  "json": "\"e40c2fc4-e158-4b57-a6e0-4b647a9d9691\"",
+  "type": 5
+ },
+ {
+  "json": "\"E40C2FC4-E158-4B57-A6E0-4B647A9D9691\"",
+  "type": 1
+ },
+ {
+  "json": "\"e40c2fc4-e158-4b57-a6e0-4b647a9d969\"",
+  "type": 1
+ },
+ {
+  "json": "\"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\"",
+  "type": 6
+ },
+ {
+  "json": "\"\\u5149\"",
+  "type": 1
+ },
+ {
+  "json": "\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"",
+  "type": 1
+ },
+ {
+  "json": "true",
+  "type": 2
+ },
+ {
+  "json": "false",
+  "type": 2
+ },
+ {
+  "json": "null",
+  "type": 7
+ }
+]
