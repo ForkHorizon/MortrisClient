@@ -75,3 +75,13 @@ under a new epoch. Because the queue lives in `noBackupFilesDir`, Android backup
 | Java queue (journal, epoch, settle by sequence) | `AnalyticsQueueInstrumentationTest` on an emulator |
 | IL2CPP player on an emulator against a local server | `Native~/transport-tests/e2e/run-device.sh` |
 | Unity Editor (Mono) | `Tests/Runtime/V7TransportTests.cs` |
+
+## Known gaps (state of the branch)
+
+- **Physical phone:** nothing here ran on real hardware. Emulator runs (Android 15 arm64 with 4 KB pages, Android 17 arm64 with 16 KB pages)
+  cover IL2CPP, the Java queue, native zstd and the server end to end; p95 packing time, GC, frame time and battery are unmeasured on a device.
+- **ARMv7:** `libdaliys_zstd.so` for `armeabi-v7a` is built, 16 KB aligned and packaged, but no available emulator can execute 32-bit ARM, so it has
+  not been run. Until it has, treat 32-bit devices as V1-only (`UseTransportV7` falls back automatically if the library fails to load).
+- **Default is off.** `UseTransportV7` stays `false` until a physical-device soak and a server rollout are done.
+- Float values are written as raw IEEE numbers (the research encoder's fixed-point float mode is not ported); integer and string models are on.
+- A new installation pays the asset download described above; delivery of assets inside the app build is not implemented.

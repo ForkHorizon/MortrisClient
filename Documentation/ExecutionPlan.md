@@ -106,8 +106,9 @@ The research harness found five gaps in that ADR; each step below closes them in
 - [x] V7-4 M7 codec in C#: native zstd per ABI (ARM64/ARMv7, 16 KB pages) and macOS Editor; parity with the Python reference decoder and
   the server's Go decoder.
 - [x] V7-5 catalog/dictionary delivery with content-id verification and on-disk cache.
-- [~] V7-6 device proof: IL2CPP emulator run against the local server (see `Native~/transport-tests/e2e/run-device.sh`); physical phone
-  (p95 packing, GC, frame time) and a delivery soak are still open. Default stays `UseTransportV7 = false` until then.
+- [~] V7-6 device proof: IL2CPP emulator runs (4 KB and 16 KB pages; normal, no-catalog and kill/restart scenarios) against the local server, see
+  `Native~/transport-tests/e2e/run-device.sh`. Still open: a physical phone (p95 packing, GC, frame time), executing the ARMv7 library on a
+  32-bit-capable device, and a delivery soak. Default stays `UseTransportV7 = false` until then.
 
 Durability note: the queue runs WAL with `synchronous=NORMAL`: a process crash does not lose committed rows, a power loss
 may lose the most recent transactions. Raise to FULL only after measuring the cost per 32-event batch.
