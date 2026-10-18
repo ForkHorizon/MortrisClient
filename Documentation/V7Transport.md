@@ -47,6 +47,11 @@ when it does not: no catalog imported for the project, an older server, the nati
 | Network errors, 408, 429, 5xx | same retry and backoff as V1 (`Retry-After` honoured) |
 | 401 | re-registration, as for V1 |
 
+**Duplicates across transports.** While a V7 stream is open, V1 batches carry each row's *derived* event id instead of its random one
+(the same id the server derives from installation, epoch and sequence). If V7 already stored a row and its acknowledgement was lost,
+a later V1 send of that row is recognised by the server as a duplicate instead of being stored twice. Acknowledgements are mapped back
+to the queue's own ids before rows are deleted.
+
 A counter that went backwards (a restored old queue) is detected by the server at sync (`409 stream_rollback`): the SDK continues
 under a new epoch. Because the queue lives in `noBackupFilesDir`, Android backups do not restore it.
 

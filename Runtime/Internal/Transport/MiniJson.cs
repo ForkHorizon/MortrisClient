@@ -38,6 +38,43 @@ namespace Daliys.Analytics.Internal.Transport
         internal static List<object> ParseArray(string json) =>
             Parse(json) as List<object> ?? throw new FormatException("JSON array expected.");
 
+        /// <summary>Writes a value produced by <see cref="Parse"/> back as compact JSON (number lexemes are kept verbatim).</summary>
+        internal static string Serialize(object value)
+        {
+            var builder = new StringBuilder();
+            Write(builder, value);
+            return builder.ToString();
+        }
+
+        private static void Write(StringBuilder builder, object value)
+        {
+            switch (value)
+            {
+                case null: builder.Append("null"); break;
+                case bool flag: builder.Append(flag ? "true" : "false"); break;
+                case string text: builder.Append(Escape(text)); break;
+                case JsonNumber number: builder.Append(number.Lexeme); break;
+                case List<object> list:
+                    builder.Append('[');
+                    for (var i = 0; i < list.Count; i++) { if (i > 0) builder.Append(','); Write(builder, list[i]); }
+                    builder.Append(']');
+                    break;
+                case Dictionary<string, object> map:
+                    builder.Append('{');
+                    var first = true;
+                    foreach (var pair in map)
+                    {
+                        if (!first) builder.Append(',');
+                        first = false;
+                        builder.Append(Escape(pair.Key)).Append(':');
+                        Write(builder, pair.Value);
+                    }
+                    builder.Append('}');
+                    break;
+                default: throw new InvalidOperationException("Unsupported JSON value " + value.GetType().Name);
+            }
+        }
+
         internal static string Escape(string value)
         {
             var builder = new StringBuilder(value.Length + 2);

@@ -84,6 +84,34 @@ namespace M7Transport.Tests
                 finally { File.Delete(file); }
             }
 
+            /// <summary>Sends the queue's oldest rows through V1 exactly like the uploader does while a stream is open (derived ids); returns the parsed response.</summary>
+            internal Dictionary<string, object> PostV1(int max, out List<KeyValuePair<string, string>> ids)
+            {
+                var batch = Queue.ReadOldestBatch(max);
+                ids = new List<KeyValuePair<string, string>>();
+                var rewritten = batch;
+                if (Queue.StreamEpoch > 0) rewritten = V7Identity.RewriteEventIds(batch, Project, Queue.InstallId, Queue.StreamEpoch, out ids);
+                var v1 = "{\"schema_version\":1,\"project_id\":\"" + Project + "\",\"install_id\":\"" + Queue.InstallId + "\",\"sdk\":{\"name\":\"e2e\",\"version\":\"1\"}," +
+                         "\"sent_at_client\":\"" + DateTimeOffset.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'", CultureInfo.InvariantCulture) + "\",\"events\":" + rewritten + "}";
+                using (var bytes = new MemoryStream())
+                {
+                    using (var gzip = new GZipStream(bytes, CompressionLevel.Fastest, true)) gzip.Write(Encoding.UTF8.GetBytes(v1), 0, Encoding.UTF8.GetByteCount(v1));
+                    var content = new ByteArrayContent(bytes.ToArray());
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    content.Headers.ContentEncoding.Add("gzip");
+                    var request = new HttpRequestMessage(HttpMethod.Post, Url + "/v1/events/batch") { Content = content };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Queue.Credential);
+                    var response = Client.SendAsync(request).GetAwaiter().GetResult();
+                    var text = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    Assert.True(response.IsSuccessStatusCode, text);
+                    return (Dictionary<string, object>)MiniJson.Parse(text);
+                }
+            }
+
+            /// <summary>The V1 response encodes an empty list as null (Go nil slice); the SDK's JsonUtility reads that as empty.</summary>
+            internal static List<string> Ids(Dictionary<string, object> response, string key) =>
+                response[key] is List<object> list ? list.Cast<string>().ToList() : new List<string>();
+
             internal long Count(string where = "true") => long.Parse(Sql("SELECT COUNT(*) FROM events WHERE project_id = '" + Project + "' AND install_id = '" + Queue.InstallId + "' AND " + where));
 
             internal Dictionary<string, object> Sync(long epoch, long high, string dropped = "")
@@ -259,22 +287,9 @@ namespace M7Transport.Tests
                 // 101..200 carry a shape the catalog does not know: V7 declines, V1 delivers (like the uploader's fallback path).
                 rig.Queue.Enqueue(TestSupport.FixtureText("batch-low.json").Replace("\"coins\"", "\"coinz\""));
                 Assert.Equal(V7ResultKind.Fallback, rig.Send().Kind);
-                var batch = rig.Queue.ReadOldestBatch(100);
-                var v1 = "{\"schema_version\":1,\"project_id\":\"" + Project + "\",\"install_id\":\"" + rig.Queue.InstallId + "\",\"sdk\":{\"name\":\"e2e\",\"version\":\"1\"}," +
-                         "\"sent_at_client\":\"" + DateTimeOffset.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'", CultureInfo.InvariantCulture) + "\",\"events\":" + batch + "}";
-                using (var bytes = new MemoryStream())
-                {
-                    using (var gzip = new GZipStream(bytes, CompressionLevel.Fastest, true)) gzip.Write(Encoding.UTF8.GetBytes(v1), 0, Encoding.UTF8.GetByteCount(v1));
-                    var content = new ByteArrayContent(bytes.ToArray());
-                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    content.Headers.ContentEncoding.Add("gzip");
-                    var request = new HttpRequestMessage(HttpMethod.Post, rig.Url + "/v1/events/batch") { Content = content };
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", rig.Queue.Credential);
-                    var response = rig.Client.SendAsync(request).GetAwaiter().GetResult();
-                    Assert.True(response.IsSuccessStatusCode, response.Content.ReadAsStringAsync().GetAwaiter().GetResult());
-                }
-                var ids = string.Join(",", MiniJson.ParseArray(batch).Cast<Dictionary<string, object>>().Select(e => "\"" + (string)e["event_id"] + "\""));
-                rig.Queue.DeleteAcknowledged("[" + ids + "]");
+                var response = rig.PostV1(100, out var sentIds);
+                Assert.Equal(100, Rig.Ids(response, "accepted").Count);
+                rig.Queue.DeleteAcknowledged("[" + string.Join(",", sentIds.Select(p => "\"" + p.Key + "\"")) + "]");
                 Assert.Equal("[101,200]", rig.Queue.DroppedJson());
                 Assert.Equal(200, rig.Count());                                          // V1 stored them too
 
@@ -288,12 +303,48 @@ namespace M7Transport.Tests
         }
 
         [Fact]
+        public void AV1ResendOfRowsV7AlreadyStoredIsRecognisedAsDuplicates()
+        {
+            if (Skip()) return;
+            using (var rig = new Rig(inner => new DropsFirstPacketResponse(inner)))
+            {
+                rig.Queue.Enqueue(TestSupport.FixtureText("batch-low.json"));
+                Assert.Equal(V7ResultKind.Retry, rig.Send().Kind);          // stored by V7, acknowledgement lost
+                Assert.Equal(100, rig.Count());
+                Assert.True(rig.Queue.StreamEpoch > 0);
+
+                // V7 is given up (say disabled); V1 now sends the very same rows. With derived ids the server sees duplicates, not copies.
+                var response = rig.PostV1(100, out var sentIds);
+                Assert.Empty(Rig.Ids(response, "accepted"));
+                Assert.Equal(100, Rig.Ids(response, "duplicates").Count);
+                Assert.Equal(100, rig.Count());
+                Assert.Equal(sentIds.Select(p => p.Value).OrderBy(x => x), Rig.Ids(response, "duplicates").OrderBy(x => x));
+            }
+        }
+
+        [Fact]
+        public void WithoutAnOpenStreamV1KeepsItsOwnIds()
+        {
+            if (Skip()) return;
+            using (var rig = new Rig())
+            {
+                rig.Queue.Enqueue(TestSupport.FixtureText("batch-low.json"));
+                Assert.Equal(0, rig.Queue.StreamEpoch);
+                var response = rig.PostV1(10, out var sentIds);
+                Assert.Empty(sentIds);
+                Assert.Equal(10, Rig.Ids(response, "accepted").Count);
+                var original = MiniJson.ParseArray(rig.Queue.ReadOldestBatch(10)).Cast<Dictionary<string, object>>().Select(e => (string)e["event_id"]).OrderBy(x => x);
+                Assert.Equal(original, Rig.Ids(response, "accepted").OrderBy(x => x));
+            }
+        }
+
+        [Fact]
         public void AnInstallationThatWasNeverRegisteredIsRefused()
         {
             if (Skip()) return;
             using (var rig = new Rig())
             {
-                rig.Queue.Credential = "A" + rig.Queue.Credential.Substring(1);           // a credential the server does not know
+                rig.Queue.Credential = (rig.Queue.Credential[0] == 'A' ? "B" : "A") + rig.Queue.Credential.Substring(1);   // a credential the server does not know
                 rig.Queue.Enqueue(TestSupport.FixtureText("batch-low.json"));
                 Assert.Equal(V7ResultKind.Unauthorized, rig.Send().Kind);
                 Assert.Equal(0, rig.Count());

@@ -187,8 +187,18 @@ namespace Daliys.Analytics.Internal
                         return UploadResult.Uploaded;
                     }
 
-                    var sentIds = EventIds(events.events);
-                    var response = SendBatch(state, events.raw);
+                    var originalIds = EventIds(events.events);
+                    var sentIds = originalIds;
+                    var raw = events.raw;
+                    Dictionary<string, string> derivedToOriginal = null;
+                    if (TryUseDerivedIds(queue, state, events.raw, out var derivedRaw, out var map))
+                    {
+                        // A V7 stream is open: V1 carries the ids the server derives for the same rows, so a row V7 already stored is a duplicate, not a copy.
+                        raw = derivedRaw;
+                        derivedToOriginal = map;
+                        sentIds = new List<string>(map.Keys);
+                    }
+                    var response = SendBatch(state, raw);
                     if (response.StatusCode == 401)
                     {
                         _registered = false;
@@ -200,7 +210,17 @@ namespace Daliys.Analytics.Internal
                         var policyResult = ApplyPolicy(ParseRegistrationPolicy(registration.Response.Body));
                         if (policyResult != null)
                             return policyResult;
-                        response = SendBatch(state, events.raw);
+                        // Re-registration may have replaced the installation (and with it the stream): derive the ids again for what is now open.
+                        raw = events.raw;
+                        derivedToOriginal = null;
+                        sentIds = originalIds;
+                        if (TryUseDerivedIds(queue, state, events.raw, out derivedRaw, out map))
+                        {
+                            raw = derivedRaw;
+                            derivedToOriginal = map;
+                            sentIds = new List<string>(map.Keys);
+                        }
+                        response = SendBatch(state, raw);
                         if (response.StatusCode == 401)
                             _registered = false;
                     }
@@ -209,7 +229,7 @@ namespace Daliys.Analytics.Internal
                     {
                         if (events.events.Length == 1)
                         {
-                            queue.DeleteAcknowledged(SerializeStrings(sentIds));
+                            queue.DeleteAcknowledged(SerializeStrings(originalIds));
                             continue;
                         }
                         batchSize = Math.Max(1, events.events.Length / 2);
@@ -220,7 +240,7 @@ namespace Daliys.Analytics.Internal
                         return HandleFailure(response, now);
 
                     var acknowledgement = ParseAcknowledgement(response.Body, sentIds);
-                    queue.DeleteAcknowledged(SerializeStrings(acknowledgement.EventIds));
+                    queue.DeleteAcknowledged(SerializeStrings(derivedToOriginal == null ? acknowledgement.EventIds : ToOriginalIds(acknowledgement.EventIds, derivedToOriginal)));
                     var policyResultAfterBatch = ApplyPolicy(acknowledgement.Policy);
                     if (policyResultAfterBatch != null)
                         return policyResultAfterBatch;
@@ -417,6 +437,43 @@ namespace Daliys.Analytics.Internal
             return false;
         }
 
+        /// <summary>
+        /// When transport V7 is enabled and the queue has an open stream, rewrites the batch's event ids to their derived form.
+        /// <paramref name="derivedToOriginal"/> maps each derived id back to the queue row's own id. Never throws: on any doubt V1 sends as it is.
+        /// </summary>
+        private bool TryUseDerivedIds(IAnalyticsQueueBridge queue, AnalyticsQueueState state, string batchJson, out string derivedJson, out Dictionary<string, string> derivedToOriginal)
+        {
+            derivedJson = null;
+            derivedToOriginal = null;
+            if (!_options.UseTransportV7)
+                return false;
+            try
+            {
+                var epoch = JsonUtility.FromJson<SequenceState>(queue.GetSequenceState()).stream_epoch;
+                if (epoch <= 0)
+                    return false;
+                derivedJson = V7Identity.RewriteEventIds(batchJson, _options.ProjectId, state.InstallationId, epoch, out var ids);
+                derivedToOriginal = new Dictionary<string, string>(ids.Count, StringComparer.Ordinal);
+                foreach (var pair in ids)
+                    derivedToOriginal.Add(pair.Value, pair.Key);
+                return true;
+            }
+            catch (Exception)
+            {
+                derivedJson = null;
+                derivedToOriginal = null;
+                return false;
+            }
+        }
+
+        private static IReadOnlyList<string> ToOriginalIds(IReadOnlyList<string> derivedIds, Dictionary<string, string> derivedToOriginal)
+        {
+            var originals = new List<string>(derivedIds.Count);
+            foreach (var id in derivedIds)
+                originals.Add(derivedToOriginal[id]);
+            return originals;
+        }
+
         private static ServerPolicyMode PolicyMode(string mode) =>
             mode == "active" ? ServerPolicyMode.Active : mode == "pause_upload" ? ServerPolicyMode.PauseUpload : mode == "disable_collection" ? ServerPolicyMode.DisableCollection : throw new InvalidDataException("Unknown client policy mode.");
 
@@ -524,6 +581,7 @@ namespace Daliys.Analytics.Internal
         [Serializable] private sealed class RegisterRequest { public int schema_version; public string project_id; public string install_id; public string installation_credential; public string sdk_name; public string sdk_version; public string app_version; public string build_number; public string platform; }
         [Serializable] private sealed class PolicyRequest { public int schema_version; public string project_id; public string install_id; public SdkInfo sdk; public string app_version; public string build_number; public string platform; }
         [Serializable] private sealed class SdkInfo { public string name; public string version; }
+        [Serializable] private sealed class SequenceState { public long stream_epoch; }
         [Serializable] private sealed class QueuedEvents { public QueuedEvent[] events; [NonSerialized] public string raw; }
         [Serializable] private sealed class QueuedEvent { public string event_id; }
         [Serializable] private sealed class RegisterResponse : PolicyResponse { public string installation_status; }
