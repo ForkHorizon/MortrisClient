@@ -92,6 +92,10 @@ namespace Daliys.Analytics.Internal.Transport
         private readonly HttpClient _client;
         private readonly string _baseUrl;
 
+        /// <summary>The client every analytics request goes through. A redirect is never followed: a POST body (and the
+        /// credential) must go to the configured server only, so a 3xx surfaces as a plain non-success status.</summary>
+        internal static HttpClient CreateClient() => new HttpClient(new HttpClientHandler { AllowAutoRedirect = false });
+
         internal HttpV7Transport(HttpClient client, string serverUrl) { _client = client; _baseUrl = serverUrl.TrimEnd('/'); }
 
         public V7Response PostJson(string path, string json, string credential) => Send(HttpMethod.Post, path, JsonContent(json), null, credential);

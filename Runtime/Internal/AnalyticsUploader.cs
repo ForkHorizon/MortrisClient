@@ -35,7 +35,7 @@ namespace Daliys.Analytics.Internal
         private readonly AnalyticsOptions _options;
         private readonly AnalyticsDeviceContext _device;
         private readonly Action<ServerPolicy> _policyChanged;
-        private readonly HttpClient _client = new HttpClient();
+        private readonly HttpClient _client = HttpV7Transport.CreateClient();
         private DateTimeOffset _nextAttemptAt;
         private DateTimeOffset _nextPolicyCheckAt;
         private DateTimeOffset _nextUploadAt;

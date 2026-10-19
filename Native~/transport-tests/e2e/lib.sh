@@ -2,7 +2,7 @@
 # Sets TMP, PSQL, HTTP_PORT and SERVER_PID; call stack_cleanup (usually from a trap).
 SERVER_REPO=${MORTRIS_SERVER_REPO:-/Users/daliys/Daliys/Web/MortrisServer-v7}
 HERE=$(cd "$(dirname "$0")/.." && pwd)
-PGPORT=${PGPORT:-54331}; HTTP_PORT=${HTTP_PORT:-18081}
+PGPORT=${PGPORT:-54331}; HTTP_PORT=${HTTP_PORT:-18082} # the device probe (V7DeviceProbe.cs) sends to 10.0.2.2:18082
 export LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
 stack_cleanup() {
   [ -n "${SERVER_PID:-}" ] && kill "$SERVER_PID" 2>/dev/null || true
