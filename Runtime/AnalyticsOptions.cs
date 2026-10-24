@@ -20,6 +20,16 @@ namespace Daliys.Analytics
         public int DurableEventLimit { get; set; } = 10000;
         public long DurableByteLimit { get; set; } = 20L * 1024L * 1024L;
         public TimeSpan MaxEventAge { get; set; } = TimeSpan.FromDays(7);
+        /// <summary>
+        /// How long tracked events wait in memory before they are written to the durable queue in one batch. Longer windows cost less CPU; at most this much
+        /// is lost if the process is killed without warning. Leaving the game (pause, quit) always writes immediately. <see cref="TimeSpan.Zero"/> writes every event at once.
+        /// </summary>
+        public TimeSpan EventBufferWindow { get; set; } = TimeSpan.FromMilliseconds(200);
+        /// <summary>
+        /// How long the player may stay out of the game (app in the background) before their session counts as over: coming back later starts a new session,
+        /// and the old one ends at the moment they left.
+        /// </summary>
+        public TimeSpan SessionTimeout { get; set; } = TimeSpan.FromMinutes(5);
 
         internal void Validate()
         {
@@ -44,6 +54,12 @@ namespace Daliys.Analytics
 
             if (DurableEventLimit <= 0 || DurableByteLimit <= 0 || MaxEventAge <= TimeSpan.Zero)
                 throw new ArgumentOutOfRangeException("Durable queue limits must be positive.");
+
+            if (EventBufferWindow < TimeSpan.Zero || EventBufferWindow > TimeSpan.FromSeconds(5))
+                throw new ArgumentOutOfRangeException(nameof(EventBufferWindow));
+
+            if (SessionTimeout <= TimeSpan.Zero)
+                throw new ArgumentOutOfRangeException(nameof(SessionTimeout));
         }
 
         /// <summary>Plain HTTP is accepted only for the development host itself (loopback or the Android emulator's host alias), never a routable address.</summary>

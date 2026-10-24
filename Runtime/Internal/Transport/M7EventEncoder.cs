@@ -24,6 +24,10 @@ namespace Daliys.Analytics.Internal.Transport
         private readonly M7Aliases _aliases;
         private readonly string _origin;
         private readonly M7FrameEncoder _frames;
+        private readonly EventRecordReader _reader = new EventRecordReader();
+        private readonly ParsedEvent _parsed = new ParsedEvent();
+        private M7Event _lastContextEvent;
+        private int _lastContextIndex;
 
         internal M7EventEncoder(M7Catalog catalog, M7Aliases aliases, byte[] dictionary, string origin, IM7Compressor compressor, bool integerModel = true, bool stringModel = true)
         {
@@ -36,21 +40,33 @@ namespace Daliys.Analytics.Internal.Transport
         internal M7Catalog Catalog => _catalog;
         internal M7Aliases Aliases => _aliases;
 
+        /// <summary>Encodes JSON event payloads (the form older SDK versions queued, and the test fixtures): converted to records first.</summary>
         internal M7EncodeResult Encode(string eventsJson)
         {
-            List<object> raw;
-            try { raw = MiniJson.ParseArray(eventsJson); }
-            catch (FormatException error) { return Fail("queued batch is not valid JSON: " + error.Message); }
-            if (raw.Count < 1 || raw.Count > M7FrameEncoder.MaxRows) return Fail("batch size " + raw.Count + " is outside 1.." + M7FrameEncoder.MaxRows);
+            QueueBatch batch;
+            try { batch = QueueBatch.FromJsonArray(eventsJson); }
+            catch (FormatException error) { return Fail("queued batch is not valid: " + error.Message); }
+            return Encode(batch);
+        }
 
-            var rows = new M7Row[raw.Count];
-            var sequences = new long[raw.Count];
+        internal M7EncodeResult Encode(QueueBatch batch)
+        {
+            var count = batch.Count;
+            if (count < 1 || count > M7FrameEncoder.MaxRows) return Fail("batch size " + count + " is outside 1.." + M7FrameEncoder.MaxRows);
+
+            var rows = new M7Row[count];
+            var sequences = new long[count];
             var sessions = new Dictionary<string, int>(StringComparer.Ordinal);
             var fields = new List<KeyValuePair<string, int>>();
-            for (var i = 0; i < raw.Count; i++)
+            var parsed = _parsed;
+            for (var i = 0; i < count; i++)
             {
                 M7Event e;
-                try { e = M7Event.Parse(raw[i] as Dictionary<string, object> ?? throw new FormatException("event is not an object"), _catalog.LogicalStrings); }
+                try
+                {
+                    batch.Parse(_reader, i, parsed);
+                    e = M7Event.FromParsed(parsed, batch.Sequence(i), _catalog.LogicalStrings);
+                }
                 catch (FormatException error) { return Fail("event " + i + ": " + error.Message); }
                 if (i > 0 && e.Sequence <= sequences[i - 1]) return Fail("sequences are not strictly increasing");
                 if (e.Sequence < 1) return Fail("sequence must be at least 1");
@@ -59,7 +75,7 @@ namespace Daliys.Analytics.Internal.Transport
                 foreach (var property in e.Properties) fields.Add(new KeyValuePair<string, int>(property.Key, property.Value.Type));
                 var shape = _catalog.FindShape(e.Name, fields);
                 if (shape < 0) return Fail("unknown shape for event " + e.Name);
-                if (!_aliases.TryRegister(_origin, e, out var context)) return Fail("alias table is full");
+                if (!TryRegister(e, out var context)) return Fail("alias table is full");
                 if (!sessions.TryGetValue(e.SessionId, out var session))
                 {
                     session = sessions.Count;
@@ -79,6 +95,23 @@ namespace Daliys.Analytics.Internal.Transport
 
             if (!_frames.TryPack(rows, _catalog.ColumnTypes, out var frame)) return Fail("the batch does not fit a packet (value out of range or too large)");
             return new M7EncodeResult { Ok = true, Frame = frame, Count = rows.Length, Sequences = sequences };
+        }
+
+        /// <summary>Alias index of the event's context; consecutive events of one run share the strings of the record reader, so the previous answer is reused.</summary>
+        private bool TryRegister(M7Event e, out int index)
+        {
+            var last = _lastContextEvent;
+            if (last != null && ReferenceEquals(last.SessionId, e.SessionId) && ReferenceEquals(last.AppVersion, e.AppVersion) && ReferenceEquals(last.BuildNumber, e.BuildNumber) &&
+                ReferenceEquals(last.Platform, e.Platform) && ReferenceEquals(last.OsVersion, e.OsVersion) && ReferenceEquals(last.DeviceClass, e.DeviceClass) &&
+                ReferenceEquals(last.Locale, e.Locale) && last.TimezoneOffsetMinutes == e.TimezoneOffsetMinutes)
+            {
+                index = _lastContextIndex;
+                return true;
+            }
+            if (!_aliases.TryRegister(_origin, e, out index)) return false;
+            _lastContextEvent = e;
+            _lastContextIndex = index;
+            return true;
         }
 
         public void Dispose() => _frames.Dispose();

@@ -45,6 +45,7 @@ namespace Daliys.Analytics.Internal
         private bool _permanentFailure;
         private ServerPolicy _currentPolicy;
         private readonly V7Session _v7;
+        private readonly EventRecordReader _reader = new EventRecordReader();
 
         internal AnalyticsUploader(AnalyticsOptions options, AnalyticsDeviceContext device, Action<ServerPolicy> policyChanged)
         {
@@ -82,6 +83,15 @@ namespace Daliys.Analytics.Internal
             }
         }
 
+        /// <summary>True when <see cref="Flush"/> would return without doing anything (backing off, nothing due): lets the worker skip attaching to the JVM on idle ticks.</summary>
+        internal bool NothingToDo(IAnalyticsQueueBridge queue, bool force)
+        {
+            var now = DateTimeOffset.UtcNow;
+            if (_installConflict || _permanentFailure || (!force && now < _nextAttemptAt))
+                return true;
+            return !force && now < _nextUploadAt && queue.PendingCount < _options.UploadEventThreshold;
+        }
+
         internal UploadResult Flush(IAnalyticsQueueBridge queue, bool force)
         {
             var now = DateTimeOffset.UtcNow;
@@ -90,9 +100,10 @@ namespace Daliys.Analytics.Internal
 
             try
             {
-                var state = queue.GetState();
-                if (!force && now < _nextUploadAt && state.PendingCount < _options.UploadEventThreshold)
+                if (!force && now < _nextUploadAt && queue.PendingCount < _options.UploadEventThreshold)
                     return UploadResult.Persisted;
+
+                var state = queue.GetState();
 
                 if (!_registered)
                 {
@@ -140,7 +151,7 @@ namespace Daliys.Analytics.Internal
                 {
                     if (_v7 != null && !_v7.Disabled)
                     {
-                        var v7 = _v7.Send(queue, state, () => queue.ReadOldestBatch(batchSize));
+                        var v7 = _v7.Send(queue, state, () => queue.ReadOldest(batchSize));
                         switch (v7.Kind)
                         {
                             case V7ResultKind.Delivered:
@@ -180,18 +191,18 @@ namespace Daliys.Analytics.Internal
                         }
                     }
 
-                    var events = ParseQueuedEvents(queue.ReadOldestBatch(batchSize));
-                    if (events.events == null || events.events.Length == 0)
+                    var events = queue.ReadOldest(batchSize);
+                    if (events.Count == 0)
                     {
                         ResetBackoff();
                         return UploadResult.Uploaded;
                     }
 
-                    var originalIds = EventIds(events.events);
+                    var originalIds = EventIds(events);
                     var sentIds = originalIds;
-                    var raw = events.raw;
+                    var raw = events.ToJsonArray(_reader);
                     Dictionary<string, string> derivedToOriginal = null;
-                    if (TryUseDerivedIds(queue, state, events.raw, out var derivedRaw, out var map))
+                    if (TryUseDerivedIds(queue, state, events, out var derivedRaw, out var map))
                     {
                         // A V7 stream is open: V1 carries the ids the server derives for the same rows, so a row V7 already stored is a duplicate, not a copy.
                         raw = derivedRaw;
@@ -211,10 +222,10 @@ namespace Daliys.Analytics.Internal
                         if (policyResult != null)
                             return policyResult;
                         // Re-registration may have replaced the installation (and with it the stream): derive the ids again for what is now open.
-                        raw = events.raw;
+                        raw = events.ToJsonArray(_reader);
                         derivedToOriginal = null;
                         sentIds = originalIds;
-                        if (TryUseDerivedIds(queue, state, events.raw, out derivedRaw, out map))
+                        if (TryUseDerivedIds(queue, state, events, out derivedRaw, out map))
                         {
                             raw = derivedRaw;
                             derivedToOriginal = map;
@@ -227,12 +238,12 @@ namespace Daliys.Analytics.Internal
 
                     if (response.StatusCode == 413)
                     {
-                        if (events.events.Length == 1)
+                        if (events.Count == 1)
                         {
                             queue.DeleteAcknowledged(SerializeStrings(originalIds));
                             continue;
                         }
-                        batchSize = Math.Max(1, events.events.Length / 2);
+                        batchSize = Math.Max(1, events.Count / 2);
                         continue;
                     }
 
@@ -373,24 +384,11 @@ namespace Daliys.Analytics.Internal
             return policy.Mode == ServerPolicyMode.DisableCollection ? UploadResult.Uploaded : null;
         }
 
-        private static QueuedEvents ParseQueuedEvents(string raw)
+        private static IReadOnlyList<string> EventIds(QueueBatch batch)
         {
-            var parsed = JsonUtility.FromJson<QueuedEvents>("{\"events\":" + raw + "}");
-            if (parsed == null)
-                throw new InvalidDataException("Queued event batch is invalid JSON.");
-            parsed.raw = raw;
-            return parsed;
-        }
-
-        private static IReadOnlyList<string> EventIds(QueuedEvent[] events)
-        {
-            var ids = new List<string>(events.Length);
-            foreach (var queuedEvent in events)
-            {
-                if (string.IsNullOrEmpty(queuedEvent.event_id))
-                    throw new InvalidDataException("Queued event has no event_id.");
-                ids.Add(queuedEvent.event_id);
-            }
+            var ids = new List<string>(batch.Count);
+            for (var index = 0; index < batch.Count; index++)
+                ids.Add(batch.EventId(index));
             return ids;
         }
 
@@ -441,7 +439,7 @@ namespace Daliys.Analytics.Internal
         /// When transport V7 is enabled and the queue has an open stream, rewrites the batch's event ids to their derived form.
         /// <paramref name="derivedToOriginal"/> maps each derived id back to the queue row's own id. Never throws: on any doubt V1 sends as it is.
         /// </summary>
-        private bool TryUseDerivedIds(IAnalyticsQueueBridge queue, AnalyticsQueueState state, string batchJson, out string derivedJson, out Dictionary<string, string> derivedToOriginal)
+        private bool TryUseDerivedIds(IAnalyticsQueueBridge queue, AnalyticsQueueState state, QueueBatch batch, out string derivedJson, out Dictionary<string, string> derivedToOriginal)
         {
             derivedJson = null;
             derivedToOriginal = null;
@@ -452,10 +450,15 @@ namespace Daliys.Analytics.Internal
                 var epoch = JsonUtility.FromJson<SequenceState>(queue.GetSequenceState()).stream_epoch;
                 if (epoch <= 0)
                     return false;
-                derivedJson = V7Identity.RewriteEventIds(batchJson, _options.ProjectId, state.InstallationId, epoch, out var ids);
-                derivedToOriginal = new Dictionary<string, string>(ids.Count, StringComparer.Ordinal);
-                foreach (var pair in ids)
-                    derivedToOriginal.Add(pair.Value, pair.Key);
+                var derivedIds = new List<string>(batch.Count);
+                derivedToOriginal = new Dictionary<string, string>(batch.Count, StringComparer.Ordinal);
+                for (var index = 0; index < batch.Count; index++)
+                {
+                    var derived = V7Identity.DerivedEventId(_options.ProjectId, state.InstallationId, epoch, batch.Sequence(index));
+                    derivedIds.Add(derived);
+                    derivedToOriginal.Add(derived, batch.EventId(index));
+                }
+                derivedJson = batch.ToJsonArray(_reader, derivedIds);
                 return true;
             }
             catch (Exception)
@@ -582,8 +585,6 @@ namespace Daliys.Analytics.Internal
         [Serializable] private sealed class PolicyRequest { public int schema_version; public string project_id; public string install_id; public SdkInfo sdk; public string app_version; public string build_number; public string platform; }
         [Serializable] private sealed class SdkInfo { public string name; public string version; }
         [Serializable] private sealed class SequenceState { public long stream_epoch; }
-        [Serializable] private sealed class QueuedEvents { public QueuedEvent[] events; [NonSerialized] public string raw; }
-        [Serializable] private sealed class QueuedEvent { public string event_id; }
         [Serializable] private sealed class RegisterResponse : PolicyResponse { public string installation_status; }
         [Serializable] private sealed class BatchResponse : PolicyResponse { public string[] accepted; public string[] duplicates; public RejectedEvent[] rejected; }
         [Serializable] private class PolicyResponse { public string server_time; public PolicyResponsePolicy client_policy; }

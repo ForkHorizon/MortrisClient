@@ -78,10 +78,10 @@ under a new epoch. Because the queue lives in `noBackupFilesDir`, Android backup
 
 ## Known gaps (state of the branch)
 
-- **Physical phone:** nothing here ran on real hardware. Emulator runs (Android 15 arm64 with 4 KB pages, Android 17 arm64 with 16 KB pages)
-  cover IL2CPP, the Java queue, native zstd and the server end to end; p95 packing time, GC, frame time and battery are unmeasured on a device.
-- **ARMv7:** `libdaliys_zstd.so` for `armeabi-v7a` is built, 16 KB aligned and packaged, but no available emulator can execute 32-bit ARM, so it has
-  not been run. Until it has, treat 32-bit devices as V1-only (`UseTransportV7` falls back automatically if the library fails to load).
-- **Default is off.** `UseTransportV7` stays `false` until a physical-device soak and a server rollout are done.
+- **Physical phone:** a Nothing A142 (Android 16, arm64) ran the Unity player against a local server for V7 and V1 (`night-run~/REPORT.md`, section 8);
+  battery and thermals are unmeasured, and only one phone has been used.
+- **ARMv7:** `libdaliys_zstd.so` for `armeabi-v7a` ran in a real 32-bit process on that phone and delivered 1200 events through V7 packets. One device only.
+- **Default is off.** `UseTransportV7` stays `false` until a soak on more devices and a server rollout are done.
 - Float values are written as raw IEEE numbers (the research encoder's fixed-point float mode is not ported); integer and string models are on.
 - A new installation pays the asset download described above; delivery of assets inside the app build is not implemented.
+- The project's catalog needs the lifecycle shapes (`Documentation/EventPipelineAndSessions.md`).

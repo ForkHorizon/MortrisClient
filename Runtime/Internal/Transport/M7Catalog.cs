@@ -13,6 +13,9 @@ namespace Daliys.Analytics.Internal.Transport
     {
         internal const int TypeInt = 0, TypeString = 1, TypeBool = 2, TypeFloat32 = 3, TypeFloat64 = 4, TypeUuid = 5, TypeHex = 6, TypeNull = 7, TypeUInt64 = 10, TypeNumericText = 11;
         private readonly Dictionary<string, int> _shapeBySignature = new Dictionary<string, int>(StringComparer.Ordinal);
+        private readonly Dictionary<string, List<int>> _shapesByName = new Dictionary<string, List<int>>(StringComparer.Ordinal);
+        private string[][] _shapeKeys;
+        private int[][] _shapeTypes;
 
         private M7Catalog() { }
 
@@ -40,12 +43,16 @@ namespace Daliys.Analytics.Internal.Transport
             var columnIndex = new Dictionary<string, int>(StringComparer.Ordinal);
             var columnTypes = new List<int>();
             catalog.ShapeColumns = new int[shapes.Count][];
+            catalog._shapeKeys = new string[shapes.Count][];
+            catalog._shapeTypes = new int[shapes.Count][];
             for (var shapeId = 0; shapeId < shapes.Count; shapeId++)
             {
                 var tuple = shapes[shapeId] as List<object>;
                 if (tuple == null || tuple.Count != 2 || !(tuple[0] is string name) || !(tuple[1] is List<object> fields) || fields.Count > 32)
                     throw new FormatException("Catalog shape is invalid.");
                 var columns = new int[fields.Count];
+                var keysOfShape = new string[fields.Count];
+                var typesOfShape = new int[fields.Count];
                 var signature = new StringBuilder(name);
                 string previousKey = null;
                 for (var i = 0; i < fields.Count; i++)
@@ -63,9 +70,15 @@ namespace Daliys.Analytics.Internal.Transport
                         columnTypes.Add(type);
                     }
                     columns[i] = column;
+                    keysOfShape[i] = key;
+                    typesOfShape[i] = type;
                     AppendSignature(signature, key, type);
                 }
                 catalog.ShapeColumns[shapeId] = columns;
+                catalog._shapeKeys[shapeId] = keysOfShape;
+                catalog._shapeTypes[shapeId] = typesOfShape;
+                if (!catalog._shapesByName.TryGetValue(name, out var sameName)) catalog._shapesByName.Add(name, sameName = new List<int>());
+                sameName.Add(shapeId);
                 var finished = signature.ToString();
                 if (catalog._shapeBySignature.ContainsKey(finished)) throw new FormatException("Catalog has a duplicate shape.");
                 catalog._shapeBySignature.Add(finished, shapeId);
@@ -77,9 +90,19 @@ namespace Daliys.Analytics.Internal.Transport
         /// <summary>Shape id for an event name and its (key-sorted) typed fields, or -1 when the catalog does not know it.</summary>
         internal int FindShape(string name, IReadOnlyList<KeyValuePair<string, int>> sortedFields)
         {
-            var signature = new StringBuilder(name);
-            foreach (var field in sortedFields) AppendSignature(signature, field.Key, field.Value);
-            return _shapeBySignature.TryGetValue(signature.ToString(), out var id) ? id : -1;
+            // Compare against the shapes of that event name field by field: no signature string is built per event.
+            if (!_shapesByName.TryGetValue(name, out var candidates)) return -1;
+            for (var c = 0; c < candidates.Count; c++)
+            {
+                var id = candidates[c];
+                var keys = _shapeKeys[id]; var types = _shapeTypes[id];
+                if (keys.Length != sortedFields.Count) continue;
+                var same = true;
+                for (var i = 0; same && i < keys.Length; i++)
+                    same = types[i] == sortedFields[i].Value && string.Equals(keys[i], sortedFields[i].Key, StringComparison.Ordinal);
+                if (same) return id;
+            }
+            return -1;
         }
 
         private static void AppendSignature(StringBuilder signature, string key, int type) =>

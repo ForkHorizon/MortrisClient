@@ -26,11 +26,15 @@ namespace Daliys.Analytics
             }
 
             var created = new AnalyticsRuntime(options);
-            if (Interlocked.CompareExchange(ref _runtime, created, null) != null &&
-                !Volatile.Read(ref _runtime).HasSameEndpointAs(options))
+            if (Interlocked.CompareExchange(ref _runtime, created, null) != null)
             {
-                throw new InvalidOperationException("Analytics is already initialized with a different endpoint configuration.");
+                created.Dispose();
+                if (!Volatile.Read(ref _runtime).HasSameEndpointAs(options))
+                    throw new InvalidOperationException("Analytics is already initialized with a different endpoint configuration.");
+                return;
             }
+
+            AnalyticsLifecycle.Attach(created);
         }
 
         public static TrackResult Track(string eventName, IReadOnlyDictionary<string, object> properties = null)
@@ -64,6 +68,7 @@ namespace Daliys.Analytics
         internal static void ResetForTests()
         {
             Interlocked.Exchange(ref _runtime, null)?.Dispose();
+            AnalyticsLifecycle.Detach();
         }
     }
 }

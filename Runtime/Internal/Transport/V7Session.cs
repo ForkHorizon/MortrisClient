@@ -76,9 +76,9 @@ namespace Daliys.Analytics.Internal.Transport
 
         /// <summary>
         /// Sends the oldest queued batch as one packet. <paramref name="readBatch"/> is called after the stream is in sync (a sync may
-        /// settle rows), and returns the queue's JSON array.
+        /// settle rows), and returns the queue's rows.
         /// </summary>
-        internal V7SendResult Send(IAnalyticsQueueBridge queue, AnalyticsQueueState state, Func<string> readBatch)
+        internal V7SendResult Send(IAnalyticsQueueBridge queue, AnalyticsQueueState state, Func<QueueBatch> readBatch)
         {
             if (_disabled) return Fallback("V7 is disabled for this process");
             if (_settings.Clock() < _unavailableUntil) return Fallback(LastFallbackReason ?? "V7 is not available");
@@ -91,7 +91,7 @@ namespace Daliys.Analytics.Internal.Transport
                     if (!prepared) continue;
 
                     var batch = readBatch();
-                    if (batch == null || batch.Length <= 2) return V7SendResult.Empty;
+                    if (batch == null || batch.Count == 0) return V7SendResult.Empty;
                     var encoded = _encoder.Encode(batch);
                     if (!encoded.Ok) return Fallback(encoded.Failure);
 

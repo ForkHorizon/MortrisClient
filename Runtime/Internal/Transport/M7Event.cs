@@ -53,6 +53,41 @@ namespace Daliys.Analytics.Internal.Transport
             return e;
         }
 
+        /// <summary>The event of a queue record (the sequence comes from the queue row). Same typing rules as <see cref="Parse"/>.</summary>
+        internal static M7Event FromParsed(ParsedEvent p, long sequence, bool logicalStrings)
+        {
+            var e = new M7Event
+            {
+                Sequence = sequence, SessionId = p.SessionIdText, Name = p.Name, SessionElapsedMs = p.SessionElapsedMs, TimeMs = p.OccurredAtUnixMs,
+                AppVersion = p.AppVersion, BuildNumber = p.BuildNumber, Platform = p.Platform, OsVersion = p.OsVersion, DeviceClass = p.DeviceClass, Locale = p.Locale,
+                TimezoneOffsetMinutes = p.TimezoneOffsetMinutes,
+                Properties = new List<KeyValuePair<string, M7Value>>(p.PropertyCount),
+            };
+            for (var i = 0; i < p.PropertyCount; i++)
+            {
+                ref var property = ref p.Properties[i];
+                M7Value value;
+                switch (property.Tag)
+                {
+                    case EventRecordFormat.TagNull: value = new M7Value { Type = M7Catalog.TypeNull }; break;
+                    case EventRecordFormat.TagFalse: value = new M7Value { Type = M7Catalog.TypeBool }; break;
+                    case EventRecordFormat.TagTrue: value = new M7Value { Type = M7Catalog.TypeBool, I = 1 }; break;
+                    case EventRecordFormat.TagInt: value = new M7Value { Type = M7Catalog.TypeInt, I = property.I }; break;
+                    case EventRecordFormat.TagUInt64: value = new M7Value { Type = M7Catalog.TypeUInt64, U = property.U }; break;
+                    case EventRecordFormat.TagDouble:
+                        if (double.IsNaN(property.D) || double.IsInfinity(property.D)) throw new FormatException("Non-finite number.");
+                        value = new M7Value { Type = (double)(float)property.D == property.D ? M7Catalog.TypeFloat32 : M7Catalog.TypeFloat64, D = property.D };
+                        break;
+                    default: value = new M7Value { Type = logicalStrings ? M7Catalog.TypeString : TextType(property.S), S = property.S }; break;
+                }
+                e.Properties.Add(new KeyValuePair<string, M7Value>(property.Key, value));
+            }
+            e.Properties.Sort(CompareKeys);
+            return e;
+        }
+
+        private static readonly Comparison<KeyValuePair<string, M7Value>> CompareKeys = (a, b) => string.CompareOrdinal(a.Key, b.Key);
+
         /// <summary>
         /// Type of a JSON value: null, bool, integer lexeme (int64, else uint64), other number (float32 when exactly
         /// representable, else float64), string (uuid or hex when the catalog does not use logical strings, else string).
@@ -86,7 +121,7 @@ namespace Daliys.Analytics.Internal.Transport
             return new M7Value { Type = exactSingle ? M7Catalog.TypeFloat32 : M7Catalog.TypeFloat64, D = d };
         }
 
-        private static int TextType(string s)
+        internal static int TextType(string s)
         {
             if (s.Length == 36 && IsUuid(s)) return M7Catalog.TypeUuid;
             if (s.Length >= 16 && (s.Length & 1) == 0 && IsLowerHex(s, 0, s.Length)) return M7Catalog.TypeHex;

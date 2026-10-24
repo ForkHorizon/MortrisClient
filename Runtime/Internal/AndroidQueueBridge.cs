@@ -1,13 +1,21 @@
 using System;
+using Daliys.Analytics.Internal.Transport;
 
 namespace Daliys.Analytics.Internal
 {
     internal interface IAnalyticsQueueBridge : IDisposable
     {
-        void EnqueueBatch(string eventsJson, int eventLimit, long byteLimit, long maxAgeMilliseconds);
+        /// <summary>Stores <paramref name="count"/> event records (frame layout of <see cref="EventBuffer"/>) in one transaction; the queue numbers them.</summary>
+        void EnqueueRecords(byte[] frames, int count, int eventLimit, long byteLimit, long maxAgeMilliseconds);
         AnalyticsQueueState GetState();
         AnalyticsQueueState ResetIdentity();
-        string ReadOldestBatch(int maxEvents);
+        /// <summary>Rows queued, as last reported by the queue (kept in step by every call that changes it); no round trip.</summary>
+        int PendingCount { get; }
+        QueueBatch ReadOldest(int maxEvents);
+        void SaveSessionState(string state);
+        string LoadSessionState();
+        /// <summary>How the previous process of the app ended (JSON), or an empty string.</summary>
+        string GetPreviousExitInfo();
         int DeleteAcknowledged(string eventIdsJson);
         void ClearAllPendingEvents();
         /// <summary>JSON: install_id, stream_base, next_sequence, stream_epoch, dropped_version and the dropped [from, to] ranges.</summary>
@@ -56,11 +64,12 @@ namespace Daliys.Analytics.Internal
                 _queue = new UnityEngine.AndroidJavaObject("com.daliys.analytics.AnalyticsQueue", activity);
             }
 
-            public void EnqueueBatch(string eventsJson, int eventLimit, long byteLimit, long maxAgeMilliseconds)
-            {
-                var result = _queue.Call<UnityEngine.AndroidJavaObject>("enqueueBatch", eventsJson, eventLimit, byteLimit, maxAgeMilliseconds);
-                result?.Dispose();
-            }
+            private int _pending;
+
+            public int PendingCount => System.Threading.Volatile.Read(ref _pending);
+
+            public void EnqueueRecords(byte[] frames, int count, int eventLimit, long byteLimit, long maxAgeMilliseconds) =>
+                System.Threading.Volatile.Write(ref _pending, _queue.Call<int>("enqueueRecords", frames, count, eventLimit, byteLimit, maxAgeMilliseconds));
 
             public AnalyticsQueueState GetState()
             {
@@ -74,21 +83,37 @@ namespace Daliys.Analytics.Internal
                     return ToState(result);
             }
 
-            public string ReadOldestBatch(int maxEvents) => _queue.Call<string>("readOldestBatch", maxEvents);
+            public QueueBatch ReadOldest(int maxEvents) => QueueBatch.FromFrame(_queue.Call<byte[]>("readOldest", maxEvents));
 
-            public int DeleteAcknowledged(string eventIdsJson) =>
-                _queue.Call<int>("deleteAcknowledged", eventIdsJson);
+            public void SaveSessionState(string state) => _queue.Call("saveSessionState", state);
+
+            public string LoadSessionState() => _queue.Call<string>("loadSessionState");
+
+            public string GetPreviousExitInfo() => _queue.Call<string>("getPreviousExitInfo");
+
+            public int DeleteAcknowledged(string eventIdsJson)
+            {
+                var deleted = _queue.Call<int>("deleteAcknowledged", eventIdsJson);
+                System.Threading.Interlocked.Add(ref _pending, -deleted);
+                return deleted;
+            }
 
             public void ClearAllPendingEvents()
             {
                 _queue.Call("clearAllPendingEvents");
+                System.Threading.Volatile.Write(ref _pending, 0);
             }
 
             public string GetSequenceState() => _queue.Call<string>("getSequenceState");
 
             public void SetStreamEpoch(long epoch) => _queue.Call("setStreamEpoch", epoch);
 
-            public int DeleteThroughSequence(long ackThrough) => _queue.Call<int>("deleteThroughSequence", ackThrough);
+            public int DeleteThroughSequence(long ackThrough)
+            {
+                var deleted = _queue.Call<int>("deleteThroughSequence", ackThrough);
+                System.Threading.Interlocked.Add(ref _pending, -deleted);
+                return deleted;
+            }
 
             public void BeginNewStream() => _queue.Call("beginNewStream");
 
@@ -97,7 +122,14 @@ namespace Daliys.Analytics.Internal
                 _queue.Dispose();
             }
 
-            private static AnalyticsQueueState ToState(UnityEngine.AndroidJavaObject result) =>
+            private AnalyticsQueueState ToState(UnityEngine.AndroidJavaObject result)
+            {
+                var state = ReadState(result);
+                System.Threading.Volatile.Write(ref _pending, state.PendingCount);
+                return state;
+            }
+
+            private static AnalyticsQueueState ReadState(UnityEngine.AndroidJavaObject result) =>
                 new AnalyticsQueueState(
                     result.Call<string>("getInstallationId"),
                     result.Call<string>("getInstallationCredential"),

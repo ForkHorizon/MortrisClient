@@ -1,20 +1,17 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Daliys.Analytics.Internal.Session;
+using Daliys.Analytics.Internal.Transport;
 
 namespace Daliys.Analytics.Internal
 {
-    internal sealed class AnalyticsRuntime
+    internal sealed class AnalyticsRuntime : ISessionEventSink
     {
-        internal const int HandoffCapacity = 256;
-
         private readonly AnalyticsOptions _options;
         private readonly AnalyticsPersistenceWorker _persistenceWorker;
-        private readonly Stopwatch _sessionStopwatch = Stopwatch.StartNew();
-        private readonly string _sessionId = Guid.NewGuid().ToString("D");
+        private readonly SessionTracker _session;
         private int _localCollectionEnabled = 1;
         private int _serverCollectionEnabled = 1;
         private long _handoffDropNewest;
@@ -24,6 +21,9 @@ namespace Daliys.Analytics.Internal
         {
             _options = options;
             _persistenceWorker = new AnalyticsPersistenceWorker(options, ApplyServerPolicy);
+            _session = new SessionTracker(NowMs, options.SessionTimeout, this);
+            _persistenceWorker.AttachSession(_session);
+            _session.Start();
         }
 
         internal bool HasSameEndpointAs(AnalyticsOptions options) => _options.HasSameEndpointAs(options);
@@ -45,19 +45,54 @@ namespace Daliys.Analytics.Internal
                 return TrackResult.InvalidProperties;
             }
 
-            var trackedEvent = new TrackedEvent(
-                Guid.NewGuid().ToString("D"),
-                _sessionId,
-                eventName,
-                CopyProperties(properties),
-                DateTimeOffset.UtcNow,
-                _sessionStopwatch.ElapsedMilliseconds);
-            if (!_persistenceWorker.TryEnqueue(trackedEvent))
+            var session = _session.Current;
+            var now = NowMs();
+            try
             {
-                Interlocked.Increment(ref _handoffDropNewest);
-                return TrackResult.HandoffFull;
+                return Write(eventName, properties, session.Id, now, now - session.StartUnixMs, false)
+                    ? TrackResult.AcceptedToHandoff
+                    : CountDropped();
             }
-            return TrackResult.AcceptedToHandoff;
+            catch (InvalidOperationException)
+            {
+                // the caller changed the dictionary while it was being read
+                Interlocked.Increment(ref _invalidEvents);
+                return TrackResult.InvalidProperties;
+            }
+        }
+
+        private TrackResult CountDropped()
+        {
+            Interlocked.Increment(ref _handoffDropNewest);
+            return TrackResult.HandoffFull;
+        }
+
+        /// <summary>Encodes the event once into its binary record and hands it to the buffer.</summary>
+        private bool Write(string name, IReadOnlyDictionary<string, object> properties, Guid sessionId, long occurredAtUnixMs, long sessionElapsedMs, bool priority)
+        {
+            var writer = EventRecordWriter.ForThread;
+            writer.Begin(Guid.NewGuid(), sessionId, occurredAtUnixMs, sessionElapsedMs, _persistenceWorker.ContextBytes, name, properties == null ? 0 : properties.Count);
+            if (properties is Dictionary<string, object> map)
+            {
+                foreach (var property in map)
+                    writer.AddClr(property.Key, property.Value);
+            }
+            else if (properties != null)
+            {
+                foreach (var property in properties)
+                    writer.AddClr(property.Key, property.Value);
+            }
+            var length = writer.Finish();
+            return _persistenceWorker.TryEnqueue(writer.Buffer, length, priority);
+        }
+
+        /// <summary>A lifecycle event (session start/end, background/foreground): stamped with the session and moment the tracker names, never dropped for want of room.</summary>
+        void ISessionEventSink.Emit(string name, Guid sessionId, long occurredAtUnixMs, long sessionElapsedMs, IReadOnlyDictionary<string, object> properties)
+        {
+            if (!IsCollectionEnabled)
+                return;
+            try { Write(name, properties, sessionId, occurredAtUnixMs, sessionElapsedMs, true); }
+            catch (InvalidOperationException) { Interlocked.Increment(ref _invalidEvents); }
         }
 
         internal void SetCollectionEnabled(bool enabled, bool clearPendingWhenDisabled)
@@ -69,6 +104,28 @@ namespace Daliys.Analytics.Internal
 
         internal Task<FlushResult> FlushAsync(CancellationToken cancellationToken) =>
             _persistenceWorker.FlushAsync(cancellationToken);
+
+        // --- game lifecycle (called by AnalyticsLifecycle on the Unity main thread) -------------------------
+
+        /// <summary>The player left (true) or came back (false). Leaving writes everything to the durable queue before returning.</summary>
+        internal void OnApplicationPause(bool paused)
+        {
+            _session.OnPause(paused);
+            if (paused)
+                _persistenceWorker.PersistNow();
+        }
+
+        internal void OnApplicationFocus(bool hasFocus)
+        {
+            if (!hasFocus)
+                _persistenceWorker.PersistNow();
+        }
+
+        internal void OnApplicationQuit()
+        {
+            _session.OnQuit();
+            _persistenceWorker.PersistNow();
+        }
 
         internal AnalyticsDiagnostics GetDiagnostics()
         {
@@ -82,6 +139,8 @@ namespace Daliys.Analytics.Internal
 
         internal void Dispose() => _persistenceWorker.Dispose();
 
+        private static long NowMs() => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
         private void ApplyServerPolicy(ServerPolicy policy)
         {
             var collectionEnabled = policy.Mode != ServerPolicyMode.DisableCollection;
@@ -93,37 +152,5 @@ namespace Daliys.Analytics.Internal
 
         private bool IsCollectionEnabled =>
             Volatile.Read(ref _localCollectionEnabled) == 1 && Volatile.Read(ref _serverCollectionEnabled) == 1;
-
-        private static IReadOnlyDictionary<string, object> CopyProperties(IReadOnlyDictionary<string, object> properties)
-        {
-            if (properties == null || properties.Count == 0)
-                return new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
-
-            var copy = new Dictionary<string, object>(properties.Count, StringComparer.Ordinal);
-            foreach (var property in properties)
-                copy.Add(property.Key, property.Value);
-
-            return new ReadOnlyDictionary<string, object>(copy);
-        }
-
-        internal sealed class TrackedEvent
-        {
-            internal TrackedEvent(string eventId, string sessionId, string name, IReadOnlyDictionary<string, object> properties, DateTimeOffset occurredAtClient, long sessionElapsedMilliseconds)
-            {
-                EventId = eventId;
-                SessionId = sessionId;
-                Name = name;
-                Properties = properties;
-                OccurredAtClient = occurredAtClient;
-                SessionElapsedMilliseconds = sessionElapsedMilliseconds;
-            }
-
-            internal string EventId { get; }
-            internal string SessionId { get; }
-            internal string Name { get; }
-            internal IReadOnlyDictionary<string, object> Properties { get; }
-            internal DateTimeOffset OccurredAtClient { get; }
-            internal long SessionElapsedMilliseconds { get; }
-        }
     }
 }
