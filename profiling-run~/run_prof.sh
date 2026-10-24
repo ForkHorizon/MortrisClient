@@ -7,7 +7,7 @@ LABEL=$1; MODE=$2; SCEN=$3; KV=${4:-}; SERIAL=${5:-}
 ADB="$HOME/Library/Android/sdk/platform-tools/adb"; [ -n "$SERIAL" ] && ADB="$ADB -s $SERIAL"
 APK=${APK:-$PR/work/v7-prof-arm64.apk}; PKG=com.daliys.v7prof
 OUT=$PR/results/${RUNSET:-runs}/$LABEL; mkdir -p "$OUT"
-export MORTRIS_SERVER_REPO=/Users/daliys/Daliys/Web/MortrisServer-v7
+export MORTRIS_SERVER_REPO=${MORTRIS_SERVER_REPO:-/Users/daliys/Daliys/Web/MortrisServer-v7}
 . "$CLIENT/Native~/transport-tests/e2e/lib.sh"
 trap stack_cleanup EXIT
 awk '/^start_stack_real\(\) \{/{p=1} p{print} p&&/^}/{exit}' "$NR/run_unity_phone.sh" > "$PR/work/stack.sh"; . "$PR/work/stack.sh"

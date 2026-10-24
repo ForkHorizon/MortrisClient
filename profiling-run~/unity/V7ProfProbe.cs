@@ -108,7 +108,21 @@ public sealed class V7ProfProbe : MonoBehaviour
         {
             ServerUrl = Server, ProjectId = Project, Environment = "test", DebugLogging = false, UseTransportV7 = v7,
             UploadInterval = TimeSpan.FromSeconds(5), UploadEventThreshold = 100, AppVersion = "1.1.14", BuildNumber = "prof-1",
+            SessionTimeout = TimeSpan.FromSeconds(double.Parse(Cfg("timeout_s", "300"), CultureInfo.InvariantCulture)),
+            EventBufferWindow = TimeSpan.FromMilliseconds(double.Parse(Cfg("buffer_ms", "200"), CultureInfo.InvariantCulture)),
         });
+        if (scenario == "forever")
+        {
+            // lifecycle test: one event per second until the host app kills, backgrounds or relaunches the process
+            var i = 0;
+            while (true)
+            {
+                var ev = _events[i++ % _events.Count];
+                Analytics.Track(ev.Key, ev.Value);
+                if (i % 5 == 0) Emit("forever tracked=" + i);
+                yield return new WaitForSeconds(1f);
+            }
+        }
         yield return new WaitForSeconds(3f);
         // first flush so registration / policy / V7 sync / asset download / alias upload are done before measuring steady state
         if (!none) { var warm = Analytics.FlushAsync(); while (!warm.IsCompleted) yield return null; Analytics.Track(_events[0].Key, _events[0].Value); var w2 = Analytics.FlushAsync(); while (!w2.IsCompleted) yield return null; yield return new WaitForSeconds(2f); }
