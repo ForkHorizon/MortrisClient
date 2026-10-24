@@ -30,7 +30,7 @@ namespace M7Transport.Tests
                 Http.Ack = () => 100;   // the healthy server settles everything it was sent
             }
 
-            internal V7SendResult Send(int max = 100) => Session.Send(Queue, Queue.GetState(), () => Queue.ReadOldestBatch(max));
+            internal V7SendResult Send(int max = 100) => Session.Send(Queue, Queue.GetState(), () => Queue.ReadOldest(max));
             public void Dispose() => Session.Dispose();
         }
 
@@ -82,7 +82,7 @@ namespace M7Transport.Tests
                 rig.Http.Calls.Clear();
                 using (var second = new V7Session(new V7Settings { ProjectId = "synth_indie_runner", SdkName = "s", SdkVersion = "1", Clock = () => rig.Now }, rig.Http, rig.Store))
                 {
-                    Assert.Equal(V7ResultKind.Delivered, second.Send(rig.Queue, rig.Queue.GetState(), () => rig.Queue.ReadOldestBatch(100)).Kind);
+                    Assert.Equal(V7ResultKind.Delivered, second.Send(rig.Queue, rig.Queue.GetState(), () => rig.Queue.ReadOldest(100)).Kind);
                     Assert.Equal(0, rig.Http.Count("GET", "/v2/assets"));
                 }
                 // A tampered cache entry is refetched.
@@ -92,7 +92,7 @@ namespace M7Transport.Tests
                 rig.Http.Calls.Clear();
                 using (var third = new V7Session(new V7Settings { ProjectId = "synth_indie_runner", SdkName = "s", SdkVersion = "1", Clock = () => rig.Now }, rig.Http, rig.Store))
                 {
-                    Assert.Equal(V7ResultKind.Delivered, third.Send(rig.Queue, rig.Queue.GetState(), () => rig.Queue.ReadOldestBatch(100)).Kind);
+                    Assert.Equal(V7ResultKind.Delivered, third.Send(rig.Queue, rig.Queue.GetState(), () => rig.Queue.ReadOldest(100)).Kind);
                     Assert.Equal(1, rig.Http.Count("GET", "/v2/assets/catalog"));
                 }
             }
@@ -351,7 +351,7 @@ namespace M7Transport.Tests
                     if (call.Path == "/v2/events/packet") { sequence = rig.Queue.Pending; return null; }
                     return null;
                 };
-                var result = rig.Session.Send(rig.Queue, rig.Queue.GetState(), () => { readAfterSync = rig.Queue.Pending; return rig.Queue.ReadOldestBatch(100); });
+                var result = rig.Session.Send(rig.Queue, rig.Queue.GetState(), () => { readAfterSync = rig.Queue.Pending; return rig.Queue.ReadOldest(100); });
                 Assert.Equal(40, readAfterSync);                                   // 60 rows were settled by the sync before the read
                 Assert.Equal(V7ResultKind.Delivered, result.Kind);
             }

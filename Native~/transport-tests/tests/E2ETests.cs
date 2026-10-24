@@ -50,7 +50,7 @@ namespace M7Transport.Tests
                 Session = new V7Session(new V7Settings { ProjectId = Project, SdkName = "mortris-unity", SdkVersion = "0.2.0" }, Http, Store);
             }
 
-            internal V7SendResult Send(int max = 100) => Session.Send(Queue, Queue.GetState(), () => Queue.ReadOldestBatch(max));
+            internal V7SendResult Send(int max = 100) => Session.Send(Queue, Queue.GetState(), () => Queue.ReadOldest(max));
 
             /// <summary>Sends until the queue is empty or the session stops delivering.</summary>
             internal List<V7SendResult> Drain(int guard = 20)

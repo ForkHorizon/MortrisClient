@@ -75,10 +75,14 @@ namespace Daliys.Analytics.Internal
         {
             internal readonly string Payload; internal long Epoch, DroppedVersion; internal bool Settled; internal readonly string Install = Guid.NewGuid().ToString("D");
             internal OneRowQueue(string payload) { Payload = payload; }
-            public void EnqueueBatch(string e, int a, long b, long c) { }
+            public void EnqueueRecords(byte[] frames, int count, int a, long b, long c) { }
+            public int PendingCount => Settled ? 0 : 100;
+            public void SaveSessionState(string state) { }
+            public string LoadSessionState() => "";
+            public string GetPreviousExitInfo() => "";
             public AnalyticsQueueState GetState() => new AnalyticsQueueState(Install, "cred", Settled ? 0 : 1);
             public AnalyticsQueueState ResetIdentity() => GetState();
-            public string ReadOldestBatch(int max) => Settled ? "[]" : Payload;
+            public QueueBatch ReadOldest(int max) => Settled ? QueueBatch.Empty : QueueBatch.FromJsonArray(Payload);
             public int DeleteAcknowledged(string ids) => 0;
             public void ClearAllPendingEvents() { }
             public string GetSequenceState() => "{\"install_id\":\"" + Install + "\",\"stream_base\":1,\"next_sequence\":101,\"stream_epoch\":" + Epoch + ",\"dropped_version\":" + DroppedVersion + ",\"dropped\":[]}";
@@ -117,7 +121,7 @@ namespace Daliys.Analytics.Internal
             var server = new HealthyServer(catalog, dictionary);
             using (var session = new V7Session(new V7Settings { ProjectId = "synth_indie_runner", SdkName = "mortris-unity", SdkVersion = "0.2.0" }, server, new MemoryV7AssetStore()))
             {
-                var result = session.Send(queue, queue.GetState(), () => queue.ReadOldestBatch(100));
+                var result = session.Send(queue, queue.GetState(), () => queue.ReadOldest(100));
 
                 Assert.That(result.Kind, Is.EqualTo(V7ResultKind.Delivered), result.Detail);
                 Assert.That(result.Removed, Is.EqualTo(100));

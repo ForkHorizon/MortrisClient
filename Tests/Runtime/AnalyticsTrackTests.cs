@@ -25,7 +25,7 @@ namespace Daliys.Analytics.Tests
             });
 
             Assert.That(result, Is.EqualTo(TrackResult.AcceptedToHandoff));
-            Assert.That(Analytics.GetDiagnostics().HandoffCount, Is.EqualTo(1));
+            Assert.That(Analytics.GetDiagnostics().HandoffCount, Is.EqualTo(2)); // the tracked event and the session-start event
         }
 
         [TestCase("sys_session_start")]
@@ -56,7 +56,7 @@ namespace Daliys.Analytics.Tests
         public void HandoffDropsTheNewestEventAtCapacity()
         {
             Analytics.Initialize(ValidOptions());
-            for (var index = 0; index < 256; index++)
+            for (var index = 0; index < Internal.AnalyticsPersistenceWorker.BufferCapacity - 1; index++) // one place is taken by the session-start event
                 Assert.That(Analytics.Track("level_start"), Is.EqualTo(TrackResult.AcceptedToHandoff));
 
             Assert.That(Analytics.Track("level_start"), Is.EqualTo(TrackResult.HandoffFull));
@@ -72,7 +72,7 @@ namespace Daliys.Analytics.Tests
             var result = Analytics.FlushAsync().GetAwaiter().GetResult();
 
             Assert.That(result.Status, Is.EqualTo(FlushStatus.PersistenceUnavailable));
-            Assert.That(result.HandoffEventsPending, Is.EqualTo(1));
+            Assert.That(result.HandoffEventsPending, Is.EqualTo(2));
         }
 
         private static AnalyticsOptions ValidOptions()

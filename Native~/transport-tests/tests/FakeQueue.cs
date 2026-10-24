@@ -12,7 +12,7 @@ namespace M7Transport.Tests
     /// </summary>
     internal sealed class FakeQueue : IAnalyticsQueueBridge
     {
-        private sealed class Row { internal long Sequence; internal string EventId; internal string Payload; }
+        private sealed class Row { internal long Sequence; internal string EventId; internal byte[] Record; }
 
         private readonly List<Row> _rows = new List<Row>();
         private readonly SortedDictionary<long, long> _dropped = new SortedDictionary<long, long>();
@@ -31,16 +31,88 @@ namespace M7Transport.Tests
         {
             foreach (Dictionary<string, object> e in MiniJson.ParseArray(eventsJson))
             {
-                e["sequence"] = new JsonNumber(_next.ToString());
-                _rows.Add(new Row { Sequence = _next, EventId = (string)e["event_id"], Payload = TestSupport.Serialize(e) });
-                _next++;
+                var record = EventRecordJson.FromJson(e, out _);
+                Add(record);
             }
+            Trim(limit);
+        }
+
+        private void Add(byte[] record)
+        {
+            _rows.Add(new Row { Sequence = _next, EventId = EventRecordFormat.UuidText(record, EventRecordFormat.IdOffset), Record = record });
+            _next++;
+        }
+
+        private void Trim(int limit)
+        {
             var evicted = 0;
             while (_rows.Count > limit) { RecordDropped(_rows[0].Sequence); _rows.RemoveAt(0); evicted++; }
             if (evicted > 0) _droppedVersion++;
         }
 
-        public void EnqueueBatch(string eventsJson, int eventLimit, long byteLimit, long maxAgeMilliseconds) => Enqueue(eventsJson, eventLimit);
+        public void EnqueueRecords(byte[] frames, int count, int eventLimit, long byteLimit, long maxAgeMilliseconds)
+        {
+            Calls.Add("EnqueueRecords " + count);
+            var position = 0;
+            for (var i = 0; i < count; i++)
+            {
+                var length = QueueBatch.ReadInt32(frames, ref position);
+                var record = new byte[length];
+                Buffer.BlockCopy(frames, position, record, 0, length);
+                position += length;
+                if (_rows.Any(r => r.EventId == EventRecordFormat.UuidText(record, EventRecordFormat.IdOffset))) continue;
+                Add(record);
+            }
+            Trim(eventLimit);
+        }
+
+        public int PendingCount => _rows.Count;
+        public string SessionState = "", ExitInfo = "";
+        public void SaveSessionState(string state) { Calls.Add("SaveSessionState"); SessionState = state; }
+        public string LoadSessionState() => SessionState;
+        public string GetPreviousExitInfo() => ExitInfo;
+
+        public QueueBatch ReadOldest(int maxEvents)
+        {
+            var rows = _rows.Take(maxEvents).ToList();
+            var frame = new List<byte>();
+            void Int32(int v) { frame.Add((byte)(v >> 24)); frame.Add((byte)(v >> 16)); frame.Add((byte)(v >> 8)); frame.Add((byte)v); }
+            Int32(rows.Count);
+            foreach (var row in rows)
+            {
+                frame.Add(EventRecordFormat.Version);
+                for (var shift = 56; shift >= 0; shift -= 8) frame.Add((byte)(row.Sequence >> shift));
+                Int32(row.Record.Length);
+                frame.AddRange(row.Record);
+            }
+            return QueueBatch.FromFrame(frame.ToArray());
+        }
+
+        /// <summary>A batch made of <paramref name="count"/> rows from <paramref name="from"/> (test helper for packet-sized slices of a large queue).</summary>
+        public QueueBatch SliceForTest(int from, int count)
+        {
+            return ReadOldestFrom(from, count);
+        }
+
+        private QueueBatch ReadOldestFrom(int from, int count)
+        {
+            var rows = _rows.Skip(from).Take(count).ToList();
+            var frame = new List<byte>();
+            void Int32(int v) { frame.Add((byte)(v >> 24)); frame.Add((byte)(v >> 16)); frame.Add((byte)(v >> 8)); frame.Add((byte)v); }
+            Int32(rows.Count);
+            foreach (var row in rows)
+            {
+                frame.Add(EventRecordFormat.Version);
+                for (var shift = 56; shift >= 0; shift -= 8) frame.Add((byte)(row.Sequence >> shift));
+                Int32(row.Record.Length);
+                frame.AddRange(row.Record);
+            }
+            return QueueBatch.FromFrame(frame.ToArray());
+        }
+
+        /// <summary>The queued rows in the V1 JSON form, for tests that read what would be sent.</summary>
+        public string ReadOldestBatch(int maxEvents) => ReadOldest(maxEvents).ToJsonArray(new EventRecordReader());
+
         public AnalyticsQueueState GetState() => new AnalyticsQueueState(InstallId, Credential, _rows.Count);
 
         public AnalyticsQueueState ResetIdentity()
@@ -52,8 +124,6 @@ namespace M7Transport.Tests
             _base = _rows.Count > 0 ? _rows[0].Sequence : _next;
             return GetState();
         }
-
-        public string ReadOldestBatch(int maxEvents) => "[" + string.Join(",", _rows.Take(maxEvents).Select(r => r.Payload)) + "]";
 
         public int DeleteAcknowledged(string eventIdsJson)
         {
