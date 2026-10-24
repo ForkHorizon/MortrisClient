@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <OutputPath>$(MSBuildThisFileDirectory)../../.local/telemetry-research/v7-replay/bin/</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../MORTRIS_handoff-v7~/client/Runtime/Internal/Transport/M7Aliases.cs" Link="Transport/M7Aliases.cs" />
+    <Compile Include="../../MORTRIS_handoff-v7~/client/Runtime/Internal/Transport/M7Catalog.cs" Link="Transport/M7Catalog.cs" />
+    <Compile Include="../../MORTRIS_handoff-v7~/client/Runtime/Internal/Transport/M7Columns.cs" Link="Transport/M7Columns.cs" />
+    <Compile Include="../../MORTRIS_handoff-v7~/client/Runtime/Internal/Transport/M7Event.cs" Link="Transport/M7Event.cs" />
+    <Compile Include="../../MORTRIS_handoff-v7~/client/Runtime/Internal/Transport/M7EventEncoder.cs" Link="Transport/M7EventEncoder.cs" />
+    <Compile Include="../../MORTRIS_handoff-v7~/client/Runtime/Internal/Transport/M7FrameEncoder.cs" Link="Transport/M7FrameEncoder.cs" />
+    <Compile Include="../../MORTRIS_handoff-v7~/client/Runtime/Internal/Transport/M7Zstd.cs" Link="Transport/M7Zstd.cs" />
+    <Compile Include="../../MORTRIS_handoff-v7~/client/Runtime/Internal/Transport/MiniJson.cs" Link="Transport/MiniJson.cs" />
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+</Project>

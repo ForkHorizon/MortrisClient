@@ -1,0 +1,20 @@
+{
+ "schema": "fhel-mission-doc/1",
+ "mission_id": "tpl",
+ "objective": "Find frozen-M7 parameter variants that lower payload bytes/event and/or codec CPU relative to the frozen M7 default (batch 100, dictionary 0 KiB, base model, fixed batching) on the development cohort, with exact typed round trips. Development-only evidence: no independent confirmation cohort exists, so nothing here is a confirmed discovery.",
+ "hours": 1.0,
+ "categories": ["measure", "experiment"],
+ "director": "rule",
+ "eval_budget": 600,
+ "limits": {"max_new_tasks": 12, "max_replans": 10, "max_retries": 1, "max_recoveries": 2, "finalization_reserve_s": 300, "poll_s": 2, "stall_s": 900},
+ "research_program": {
+  "schema": "fhel-research-program/1",
+  "id": "tpl",
+  "objective": "Map the M7 payload/CPU trade-off against the frozen default using exact, paired, replicable measurements.",
+  "tracks": [{"id": "track-m7-tradeoff", "question": "Which M7 variants dominate the M7 default on payload bytes/event and codec CPU, and how certain is each CPU claim?", "required": true}],
+  "hypotheses": [{"id": "h-briefing", "track_id": "track-m7-tradeoff", "statement": "The campaign knowledge store holds a verified view of what is measured and what is uncertain.", "prediction": "A free briefing task verifies the store and exposes frontier, uncertainty and unmeasured regions to the Director.", "depends_on": [], "task_id": "brief"}],
+  "completion": {"all_required_resolved": true, "minimum_covered_tracks": 1, "minimum_verified_hypotheses": 1, "scientific_claim": "coverage_only"}
+ },
+ "tasks": [{"id": "brief", "category": "measure", "title": "Briefing: verify the campaign knowledge store (no measurement)", "deps": [], "paths": [], "cost_evals": 0, "idempotent": true, "params": {"purpose": "briefing"}}],
+ "worker": {"research": "external", "xw_wall_s": 3600, "max_rss_mb": 4096}
+}

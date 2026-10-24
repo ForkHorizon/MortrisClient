@@ -1,0 +1,10 @@
+{
+  "dataset": "experiments/night-run~/work/puzzle-1m.jsonl.gz",
+  "distinct_top_level_shapes": 1,
+  "invalid_type_counts": {},
+  "jsonl_rows": 997076,
+  "rows_missing_expected_fields": 0,
+  "rows_with_unmodeled_top_level_fields": 997076,
+  "unique_installations": 239,
+  "unique_sessions": 1019
+}

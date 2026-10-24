@@ -1,0 +1,86 @@
+{
+ "schema": "fhel-mission-doc/1",
+ "mission_id": "tpl",
+ "objective": "Resolve what the 2026-10-23 field test left open about frozen-M7 parameter variants on the development cohort: (1) which low-payload variants keep an encode/decode CPU ratio near 1.0 when re-measured in SEPARATE paired runs (CPU noise across sessions, not more repeats inside one run), (2) whether the payload/CPU trade-off curve has a knee between batch 100 and 300 with the 32 KiB dictionary, (3) the 44 configurations never measured. Exact typed round trips; payload bytes only (no dictionary delivery or framing cost is measured here). Development-only evidence: nothing here is a confirmed discovery. Do not repeat a configuration without saying which uncertainty the repeat resolves.",
+ "hours": 1.0,
+ "categories": [
+  "measure",
+  "experiment"
+ ],
+ "director": "rule",
+ "eval_budget": 900,
+ "limits": {
+  "max_new_tasks": 12,
+  "max_replans": 10,
+  "max_retries": 1,
+  "max_recoveries": 2,
+  "finalization_reserve_s": 300,
+  "poll_s": 2,
+  "stall_s": 900
+ },
+ "research_program": {
+  "schema": "fhel-research-program/1",
+  "id": "tpl",
+  "objective": "Quantify the payload/CPU trade-off against the frozen default with replicated, cross-session CPU evidence and cover the unmeasured region.",
+  "tracks": [
+   {
+    "id": "track-m7-tradeoff",
+    "question": "Which M7 variants dominate the default on payload bytes/event and codec CPU, and where is the knee of the trade-off?",
+    "required": true
+   },
+   {
+    "id": "track-cpu-reliability",
+    "question": "Which near-CPU-neutral low-payload candidates keep their CPU ratio in separate paired sessions (cross-session noise)?",
+    "required": true
+   },
+   {
+    "id": "track-unmeasured-region",
+    "question": "Do the 44 never-measured configurations contain anything not already dominated?",
+    "required": false
+   }
+  ],
+  "hypotheses": [
+   {
+    "id": "h-briefing",
+    "track_id": "track-m7-tradeoff",
+    "statement": "The campaign knowledge store holds a verified view of what is measured and what is uncertain.",
+    "prediction": "A free briefing task verifies the store and exposes frontier, uncertainty and unmeasured regions to the Director.",
+    "depends_on": [],
+    "task_id": "brief"
+   },
+   {
+    "id": "h-cpu-reliability",
+    "track_id": "track-cpu-reliability",
+    "statement": "The near-CPU-neutral low-payload candidates (for example 100/32/base/fixed) keep encode and decode CPU ratios within 3% of 1.0 across separate paired runs.",
+    "prediction": "Re-measured in a later, separate run, the ratio stays inside 0.97..1.03 for both encode and decode; otherwise the earlier neutrality was within-session noise.",
+    "depends_on": [],
+    "task_id": null
+   }
+  ],
+  "completion": {
+   "all_required_resolved": true,
+   "minimum_covered_tracks": 2,
+   "minimum_verified_hypotheses": 2,
+   "scientific_claim": "coverage_only"
+  }
+ },
+ "tasks": [
+  {
+   "id": "brief",
+   "category": "measure",
+   "title": "Briefing: verify the campaign knowledge store (no measurement)",
+   "deps": [],
+   "paths": [],
+   "cost_evals": 0,
+   "idempotent": true,
+   "params": {
+    "purpose": "briefing"
+   }
+  }
+ ],
+ "worker": {
+  "research": "external",
+  "xw_wall_s": 3600,
+  "max_rss_mb": 4096
+ }
+}
