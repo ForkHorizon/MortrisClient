@@ -25,11 +25,15 @@ patch(W, '                _bridge.EnqueueRecords(frames, count, _options.Durable
 patch(W, 'var upload = _uploader.Flush(_bridge, HasFlushWaiters());', 'V7Prof.Add(V7Prof.FlushCalls, 1); var pf = V7Prof.Begin(); var upload = _uploader.Flush(_bridge, HasFlushWaiters()); V7Prof.End(V7Prof.UploaderFlush, pf);')
 # JNI bridge
 B = R + 'AndroidQueueBridge.cs'
-patch(B, 'System.Threading.Volatile.Write(ref _pending, _queue.Call<int>("enqueueRecords", frames, count, eventLimit, byteLimit, maxAgeMilliseconds));',
- 'System.Threading.Volatile.Write(ref _pending, V7Prof.Timed(V7Prof.JniEnqueueBatch, () => _queue.Call<int>("enqueueRecords", frames, count, eventLimit, byteLimit, maxAgeMilliseconds)));')
+patch(B, '''System.Threading.Volatile.Write(ref _pending, _lowLevel
+                    ? EnqueueLowLevel(frames, count, eventLimit, byteLimit, maxAgeMilliseconds)
+                    : _queue.Call<int>("enqueueRecords", frames, count, eventLimit, byteLimit, maxAgeMilliseconds));''',
+ '''System.Threading.Volatile.Write(ref _pending, V7Prof.Timed(V7Prof.JniEnqueueBatch, () => _lowLevel
+                    ? EnqueueLowLevel(frames, count, eventLimit, byteLimit, maxAgeMilliseconds)
+                    : _queue.Call<int>("enqueueRecords", frames, count, eventLimit, byteLimit, maxAgeMilliseconds)));''')
 patch(B, 'using (var result = _queue.Call<UnityEngine.AndroidJavaObject>("getState"))\n                    return ToState(result);',
  'var pj = V7Prof.Begin(); try { using (var result = _queue.Call<UnityEngine.AndroidJavaObject>("getState"))\n                    return ToState(result); } finally { V7Prof.End(V7Prof.JniGetState, pj); }')
-patch(B, 'public QueueBatch ReadOldest(int maxEvents) => QueueBatch.FromFrame(_queue.Call<byte[]>("readOldest", maxEvents));', 'public QueueBatch ReadOldest(int maxEvents) => V7Prof.Timed(V7Prof.JniReadBatch, () => QueueBatch.FromFrame(_queue.Call<byte[]>("readOldest", maxEvents)));')
+patch(B, 'public QueueBatch ReadOldest(int maxEvents) => QueueBatch.FromFrame(_lowLevel ? ReadLowLevel(maxEvents) : _queue.Call<byte[]>("readOldest", maxEvents));', 'public QueueBatch ReadOldest(int maxEvents) => V7Prof.Timed(V7Prof.JniReadBatch, () => QueueBatch.FromFrame(_lowLevel ? ReadLowLevel(maxEvents) : _queue.Call<byte[]>("readOldest", maxEvents)));')
 patch(B, 'var deleted = _queue.Call<int>("deleteAcknowledged", eventIdsJson);', 'var deleted = V7Prof.Timed(V7Prof.JniDeleteAck, () => _queue.Call<int>("deleteAcknowledged", eventIdsJson));')
 patch(B, 'var deleted = _queue.Call<int>("deleteThroughSequence", ackThrough);', 'var deleted = V7Prof.Timed(V7Prof.JniDeleteAck, () => _queue.Call<int>("deleteThroughSequence", ackThrough));')
 # uploader (V1 path + http)

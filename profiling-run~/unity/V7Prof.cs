@@ -30,12 +30,12 @@ namespace Daliys.Analytics.Internal
         public static Token Begin()
         {
             Token t;
-            t.Wall = System.Diagnostics.Stopwatch.GetTimestamp(); t.Cpu = ThreadCpuNs(); t.Alloc = GC.GetAllocatedBytesForCurrentThread();
+            t.Wall = System.Diagnostics.Stopwatch.GetTimestamp(); t.Cpu = ThreadCpuNs(); t.Alloc = GC.GetTotalMemory(false);
             return t;
         }
         public static void End(int stage, Token t)
         {
-            var wall = System.Diagnostics.Stopwatch.GetTimestamp() - t.Wall; var cpu = ThreadCpuNs() - t.Cpu; var alloc = GC.GetAllocatedBytesForCurrentThread() - t.Alloc;
+            var wall = System.Diagnostics.Stopwatch.GetTimestamp() - t.Wall; var cpu = ThreadCpuNs() - t.Cpu; var alloc = Math.Max(0, GC.GetTotalMemory(false) - t.Alloc); // managed heap growth across the stage: an estimate (a collection inside the stage hides it)
             Interlocked.Add(ref Wall[stage], wall * 1000000000L / System.Diagnostics.Stopwatch.Frequency); Interlocked.Add(ref Cpu[stage], cpu);
             Interlocked.Add(ref Alloc[stage], alloc); Interlocked.Increment(ref Calls[stage]);
         }

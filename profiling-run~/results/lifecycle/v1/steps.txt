@@ -1,0 +1,8 @@
+[22:12:35] launch
+[22:12:49] background (HOME)
+[22:12:51] events durable right after leaving (server has not been told yet unless an upload ran)
+12
+[22:12:58] return after the session timeout
+[22:13:07] kill -9 the process
+[22:13:10] relaunch
+[22:13:26] quit cleanly (BACK + force close via am kill is not clean; use the app's own quit path: HOME then wait)

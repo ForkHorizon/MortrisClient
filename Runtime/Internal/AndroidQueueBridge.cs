@@ -58,10 +58,63 @@ namespace Daliys.Analytics.Internal
         private sealed class AndroidQueueBridgeInstance : IAnalyticsQueueBridge
         {
             private readonly UnityEngine.AndroidJavaObject _queue;
+            // The two calls made for every write and read go through plain JNI with method ids resolved once: AndroidJavaObject.Call builds a
+            // signature by reflection on each call, which measured at about 34 KB of managed garbage per call.
+            private readonly bool _lowLevel;
+            private readonly System.IntPtr _handle, _enqueueId, _readId;
+            private readonly UnityEngine.jvalue[] _enqueueArgs = new UnityEngine.jvalue[5], _readArgs = new UnityEngine.jvalue[1];
 
             internal AndroidQueueBridgeInstance(UnityEngine.AndroidJavaObject activity)
             {
                 _queue = new UnityEngine.AndroidJavaObject("com.daliys.analytics.AnalyticsQueue", activity);
+                try
+                {
+                    _handle = _queue.GetRawObject();
+                    var local = UnityEngine.AndroidJNI.GetObjectClass(_handle);
+                    var type = UnityEngine.AndroidJNI.NewGlobalRef(local); // keeps the class (and so its method ids) alive
+                    UnityEngine.AndroidJNI.DeleteLocalRef(local);
+                    _enqueueId = UnityEngine.AndroidJNI.GetMethodID(type, "enqueueRecords", "([BIIJJ)I");
+                    _readId = UnityEngine.AndroidJNI.GetMethodID(type, "readOldest", "(I)[B");
+                    _lowLevel = _enqueueId != System.IntPtr.Zero && _readId != System.IntPtr.Zero;
+                }
+                catch (System.Exception)
+                {
+                    _lowLevel = false;
+                }
+            }
+
+            private static void ThrowIfJavaFailed()
+            {
+                var failure = UnityEngine.AndroidJNI.ExceptionOccurred();
+                if (failure == System.IntPtr.Zero) return;
+                UnityEngine.AndroidJNI.ExceptionClear();
+                UnityEngine.AndroidJNI.DeleteLocalRef(failure);
+                throw new System.InvalidOperationException("The Android analytics queue rejected the call.");
+            }
+
+            private int EnqueueLowLevel(byte[] frames, int count, int eventLimit, long byteLimit, long maxAgeMilliseconds)
+            {
+                var array = UnityEngine.AndroidJNI.ToByteArray(frames);
+                try
+                {
+                    _enqueueArgs[0].l = array; _enqueueArgs[1].i = count; _enqueueArgs[2].i = eventLimit; _enqueueArgs[3].j = byteLimit; _enqueueArgs[4].j = maxAgeMilliseconds;
+                    var pending = UnityEngine.AndroidJNI.CallIntMethod(_handle, _enqueueId, _enqueueArgs);
+                    ThrowIfJavaFailed();
+                    return pending;
+                }
+                finally
+                {
+                    UnityEngine.AndroidJNI.DeleteLocalRef(array);
+                }
+            }
+
+            private byte[] ReadLowLevel(int maxEvents)
+            {
+                _readArgs[0].i = maxEvents;
+                var array = UnityEngine.AndroidJNI.CallObjectMethod(_handle, _readId, _readArgs);
+                ThrowIfJavaFailed();
+                try { return array == System.IntPtr.Zero ? null : UnityEngine.AndroidJNI.FromByteArray(array); }
+                finally { if (array != System.IntPtr.Zero) UnityEngine.AndroidJNI.DeleteLocalRef(array); }
             }
 
             private int _pending;
@@ -69,7 +122,9 @@ namespace Daliys.Analytics.Internal
             public int PendingCount => System.Threading.Volatile.Read(ref _pending);
 
             public void EnqueueRecords(byte[] frames, int count, int eventLimit, long byteLimit, long maxAgeMilliseconds) =>
-                System.Threading.Volatile.Write(ref _pending, _queue.Call<int>("enqueueRecords", frames, count, eventLimit, byteLimit, maxAgeMilliseconds));
+                System.Threading.Volatile.Write(ref _pending, _lowLevel
+                    ? EnqueueLowLevel(frames, count, eventLimit, byteLimit, maxAgeMilliseconds)
+                    : _queue.Call<int>("enqueueRecords", frames, count, eventLimit, byteLimit, maxAgeMilliseconds));
 
             public AnalyticsQueueState GetState()
             {
@@ -83,7 +138,7 @@ namespace Daliys.Analytics.Internal
                     return ToState(result);
             }
 
-            public QueueBatch ReadOldest(int maxEvents) => QueueBatch.FromFrame(_queue.Call<byte[]>("readOldest", maxEvents));
+            public QueueBatch ReadOldest(int maxEvents) => QueueBatch.FromFrame(_lowLevel ? ReadLowLevel(maxEvents) : _queue.Call<byte[]>("readOldest", maxEvents));
 
             public void SaveSessionState(string state) => _queue.Call("saveSessionState", state);
 

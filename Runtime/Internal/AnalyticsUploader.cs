@@ -147,8 +147,17 @@ namespace Daliys.Analytics.Internal
                     return UploadResult.Uploaded;
 
                 var batchSize = MaximumBatchSize;
+                var sent = 0;
                 while (true)
                 {
+                    // Packets compress best when full: after the first one, an upload only goes on while a whole packet is waiting. The rest is sent with the
+                    // next due upload (or at once by FlushAsync), so a burst does not end in a string of small, expensive packets.
+                    if (sent > 0 && !force && queue.PendingCount < MaximumBatchSize)
+                    {
+                        ResetBackoff();
+                        return UploadResult.Uploaded;
+                    }
+
                     if (_v7 != null && !_v7.Disabled)
                     {
                         var v7 = _v7.Send(queue, state, () => queue.ReadOldest(batchSize));
@@ -156,6 +165,7 @@ namespace Daliys.Analytics.Internal
                         {
                             case V7ResultKind.Delivered:
                             {
+                                sent++;
                                 var policyResultAfterPacket = ApplyPolicy(new ServerPolicy(PolicyMode(v7.PolicyMode), v7.DiscardPending, v7.NextCheckSeconds));
                                 if (policyResultAfterPacket != null)
                                     return policyResultAfterPacket;
@@ -252,6 +262,7 @@ namespace Daliys.Analytics.Internal
 
                     var acknowledgement = ParseAcknowledgement(response.Body, sentIds);
                     queue.DeleteAcknowledged(SerializeStrings(derivedToOriginal == null ? acknowledgement.EventIds : ToOriginalIds(acknowledgement.EventIds, derivedToOriginal)));
+                    sent++;
                     var policyResultAfterBatch = ApplyPolicy(acknowledgement.Policy);
                     if (policyResultAfterBatch != null)
                         return policyResultAfterBatch;
