@@ -1,37 +1,30 @@
 #!/usr/bin/env python3
-"""Regenerates MANIFEST.json for this handoff. Run from this directory; never edits imported files.
-Provenance is taken from the git commits named below (read-only access to the Heuriva checkout)."""
-import hashlib, json, os, subprocess, datetime
-HV = os.path.expanduser("~/Daliys/AI_Test_PlayGround/Heuriva")
-PR25 = "2d8f761813545e9abdbc2a536c4d2e36f1d3226a"  # ForkHorizon/Heuriva PR #25 head daliys/fix-over-limit-stop
-PR24 = "2cc7bd9e1a2177847014045fe3519b480984d1a9"  # ForkHorizon/Heuriva PR #24 head daliys/live-field-test-20261023
-LIVE = {"docs__architecture-v2__FOUR_HOUR_LIVE_FIELD_REVIEW_2026-10-23.md", "research__mortris-v8__FOUR_HOUR_LIVE_RESEARCH_REPORT_2026-10-23.md"}
-LOCAL = {"benchmarks/trusted_m7_full_dev_20261021.json", "benchmarks/trusted_m7_dev_sweep_20261021.json",
-         "manifests/heuriva_schema_audit.json", "manifests/heuriva_data_manifest_20261021.json"}
-def sha(p):
-    h = hashlib.sha256(); h.update(open(p, "rb").read()); return h.hexdigest()
-def kind(rel):
-    if rel.startswith("benchmarks/"): return "measurement-aggregate"
-    if rel.startswith("manifests/"): return "provenance-metadata"
-    if rel.startswith("implementations/"): return "source"
-    if "campaign_template" in rel: return "benchmark-config"
-    return "documentation"
-files = []
-for top in ("reports", "implementations", "benchmarks", "manifests"):
+"""Offline: refreshes sha256/bytes in MANIFEST.json for every file under the handoff and registers new files.
+Needs NO Heuriva checkout; provenance of the original import is kept from the existing manifest.
+Run with --check to only verify (exit 1 on mismatch). Imported files are never modified."""
+import hashlib, json, os, sys, datetime
+m = json.load(open("MANIFEST.json")); known = {f["path"]: f for f in m["files"]}
+DERIVED = {"data/summarize.py": "written in this repo", "data/candidate_summary.csv": "derived by data/summarize.py from data/all_measurements.csv",
+           "data/all_measurements.csv": "export of the `measurements` tables of the six data/*.knowledge.sqlite3 (cumulative stores: duplicates across campaigns, see summarize.py)"}
+def sha(p): return hashlib.sha256(open(p, "rb").read()).hexdigest()
+bad = 0
+for top in ("reports", "implementations", "benchmarks", "manifests", "data"):
     for n in sorted(os.listdir(top)):
-        rel = f"{top}/{n}"
-        e = {"path": rel, "bytes": os.path.getsize(rel), "sha256": sha(rel), "kind": kind(rel),
-             "imported": "2026-10-24", "safe_to_commit": True}
-        if rel in LOCAL:
-            e.update(origin_repo="ForkHorizon/Heuriva (untracked local .local/mortris-v8, not in git)",
-                     origin_path=".local/mortris-v8/" + n.replace("heuriva_schema_audit", "schema_audit").replace("heuriva_data_manifest_20261021", "data_manifest"),
-                     origin_commit="n/a (ignored local file, mtime 2026-10-21)", transform="verbatim" if top == "benchmarks" or "schema" in rel else "re-serialized JSON (indent=1), content unchanged")
+        rel = f"{top}/{n}"; h = sha(rel)
+        if rel in known:
+            if known[rel]["sha256"] != h:
+                bad += 1; print("CHANGED", rel)
+                if "--check" not in sys.argv: known[rel].update(sha256=h, bytes=os.path.getsize(rel))
+            continue
+        e = {"path": rel, "bytes": os.path.getsize(rel), "sha256": h, "imported": datetime.date.today().isoformat(), "safe_to_commit": True}
+        if n.endswith(".knowledge.sqlite3"):
+            e.update(kind="measurement-raw-aggregate", origin_repo="ForkHorizon/Heuriva (untracked local)", origin_path=".local/mortris-v8/%s/knowledge.sqlite3" % n[:-len(".knowledge.sqlite3")],
+                     origin_commit="n/a (ignored local file, copied 2026-10-24 via sqlite backup from a read-only immutable open)", transform="verbatim content (sqlite backup API), contains bytes/ns per measurement, no events")
         else:
-            c = PR24 if n in LIVE else PR25
-            op = n.replace("__", "/")
-            blob = subprocess.check_output(["git", "-C", HV, "rev-parse", f"{c}:{op}"], text=True).strip()
-            e.update(origin_repo="ForkHorizon/Heuriva", origin_path=op, origin_commit=c,
-                     origin_pr=24 if c == PR24 else 25, git_blob=blob, transform="verbatim (git show, flattened path)")
-        files.append(e)
-json.dump({"generated": datetime.date.today().isoformat(), "heuriva_prs": {"25": PR25, "24": PR24, "main": "f7f96e986e77c4698f5eea0c4079b3a00b2cd36c"}, "files": files}, open("MANIFEST.json", "w"), indent=1)
-print(len(files), "files")
+            e.update(kind="derived-analysis", origin_repo="this repo", origin_path=DERIVED.get(rel, ""), transform="generated")
+        known[rel] = e; print("ADDED", rel)
+for p in list(known):
+    if not os.path.exists(p): print("MISSING", p); bad += 1
+if "--check" not in sys.argv:
+    m["files"] = [known[k] for k in sorted(known)]; json.dump(m, open("MANIFEST.json", "w"), indent=1)
+sys.exit(1 if bad and "--check" in sys.argv else 0)
