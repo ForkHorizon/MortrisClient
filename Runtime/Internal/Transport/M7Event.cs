@@ -53,16 +53,23 @@ namespace Daliys.Analytics.Internal.Transport
             return e;
         }
 
-        /// <summary>The event of a queue record (the sequence comes from the queue row). Same typing rules as <see cref="Parse"/>.</summary>
-        internal static M7Event FromParsed(ParsedEvent p, long sequence, bool logicalStrings)
+        internal void CopyContextFrom(M7Event e)
         {
-            var e = new M7Event
-            {
-                Sequence = sequence, SessionId = p.SessionIdText, Name = p.Name, SessionElapsedMs = p.SessionElapsedMs, TimeMs = p.OccurredAtUnixMs,
-                AppVersion = p.AppVersion, BuildNumber = p.BuildNumber, Platform = p.Platform, OsVersion = p.OsVersion, DeviceClass = p.DeviceClass, Locale = p.Locale,
-                TimezoneOffsetMinutes = p.TimezoneOffsetMinutes,
-                Properties = new List<KeyValuePair<string, M7Value>>(p.PropertyCount),
-            };
+            SessionId = e.SessionId; AppVersion = e.AppVersion; BuildNumber = e.BuildNumber; Platform = e.Platform; OsVersion = e.OsVersion; DeviceClass = e.DeviceClass; Locale = e.Locale;
+            TimezoneOffsetMinutes = e.TimezoneOffsetMinutes;
+        }
+
+        /// <summary>The event of a queue record (the sequence comes from the queue row). Same typing rules as <see cref="Parse"/>.</summary>
+        internal static M7Event FromParsed(ParsedEvent p, long sequence, bool logicalStrings) => new M7Event().Fill(p, sequence, logicalStrings);
+
+        /// <summary>Overwrites this event with the parsed one, reusing its property list (the encoder keeps one instance per batch).</summary>
+        internal M7Event Fill(ParsedEvent p, long sequence, bool logicalStrings)
+        {
+            var e = this;
+            e.Sequence = sequence; e.SessionId = p.SessionIdText; e.Name = p.Name; e.SessionElapsedMs = p.SessionElapsedMs; e.TimeMs = p.OccurredAtUnixMs;
+            e.AppVersion = p.AppVersion; e.BuildNumber = p.BuildNumber; e.Platform = p.Platform; e.OsVersion = p.OsVersion; e.DeviceClass = p.DeviceClass; e.Locale = p.Locale;
+            e.TimezoneOffsetMinutes = p.TimezoneOffsetMinutes;
+            if (e.Properties == null) e.Properties = new List<KeyValuePair<string, M7Value>>(p.PropertyCount); else e.Properties.Clear();
             for (var i = 0; i < p.PropertyCount; i++)
             {
                 ref var property = ref p.Properties[i];

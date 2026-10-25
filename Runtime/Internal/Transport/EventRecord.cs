@@ -365,7 +365,7 @@ namespace Daliys.Analytics.Internal.Transport
                     {
                         var length = (int)EventRecordFormat.ReadVarint(buffer, ref position, end);
                         if (length < 0 || position + length > end) throw new FormatException("Event record string is truncated.");
-                        p.S = Encoding.UTF8.GetString(buffer, position, length);
+                        p.S = ValueString(buffer, position, length);
                         position += length;
                         break;
                     }
@@ -404,6 +404,31 @@ namespace Daliys.Analytics.Internal.Transport
             var s = _lastContextStrings;
             into.AppVersion = s[0]; into.BuildNumber = s[1]; into.Platform = s[2]; into.OsVersion = s[3]; into.DeviceClass = s[4]; into.Locale = s[5];
             into.TimezoneOffsetMinutes = _lastTimezone;
+        }
+
+        private readonly string[] _values = new string[256];
+
+        /// <summary>String property values repeat a lot (level ids, modes, results): short ASCII ones are looked up by content so a repeat allocates nothing.</summary>
+        private string ValueString(byte[] buffer, int position, int length)
+        {
+            if (length == 0) return string.Empty;
+            if (length > 64) return Encoding.UTF8.GetString(buffer, position, length);
+            var hash = 17;
+            for (var i = 0; i < length; i++)
+            {
+                var b = buffer[position + i];
+                if (b >= 128) return Encoding.UTF8.GetString(buffer, position, length);
+                hash = unchecked(hash * 31 + b);
+            }
+            var index = (hash & 0x7fffffff) % _values.Length;
+            var cached = _values[index];
+            if (cached != null && cached.Length == length)
+            {
+                var same = true;
+                for (var i = 0; same && i < length; i++) same = cached[i] == buffer[position + i];
+                if (same) return cached;
+            }
+            return _values[index] = Encoding.UTF8.GetString(buffer, position, length);
         }
 
         private string CachedString(byte[] buffer, ref int position, int end)

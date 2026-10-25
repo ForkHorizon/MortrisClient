@@ -26,6 +26,10 @@ namespace Daliys.Analytics.Internal.Transport
         private readonly M7FrameEncoder _frames;
         private readonly EventRecordReader _reader = new EventRecordReader();
         private readonly ParsedEvent _parsed = new ParsedEvent();
+        private readonly M7Event _event = new M7Event();
+        private readonly List<M7Row> _rowPool = new List<M7Row>();
+        private readonly List<KeyValuePair<string, int>> _fields = new List<KeyValuePair<string, int>>();
+        private readonly Dictionary<string, int> _sessions = new Dictionary<string, int>(StringComparer.Ordinal);
         private M7Event _lastContextEvent;
         private int _lastContextIndex;
 
@@ -56,8 +60,8 @@ namespace Daliys.Analytics.Internal.Transport
 
             var rows = new M7Row[count];
             var sequences = new long[count];
-            var sessions = new Dictionary<string, int>(StringComparer.Ordinal);
-            var fields = new List<KeyValuePair<string, int>>();
+            var sessions = _sessions; sessions.Clear();
+            var fields = _fields;
             var parsed = _parsed;
             for (var i = 0; i < count; i++)
             {
@@ -65,7 +69,7 @@ namespace Daliys.Analytics.Internal.Transport
                 try
                 {
                     batch.Parse(_reader, i, parsed);
-                    e = M7Event.FromParsed(parsed, batch.Sequence(i), _catalog.LogicalStrings);
+                    e = _event.Fill(parsed, batch.Sequence(i), _catalog.LogicalStrings);
                 }
                 catch (FormatException error) { return Fail("event " + i + ": " + error.Message); }
                 if (i > 0 && e.Sequence <= sequences[i - 1]) return Fail("sequences are not strictly increasing");
@@ -83,13 +87,16 @@ namespace Daliys.Analytics.Internal.Transport
                     sessions.Add(e.SessionId, session);
                 }
 
-                var values = new M7Cell[e.Properties.Count];
+                while (_rowPool.Count <= i) _rowPool.Add(new M7Row());
+                var row = _rowPool[i];
+                var values = row.Values != null && row.Values.Length == e.Properties.Count ? row.Values : new M7Cell[e.Properties.Count];
                 for (var j = 0; j < values.Length; j++)
                 {
                     var v = e.Properties[j].Value;
                     values[j] = new M7Cell { I = v.I, U = v.U, D = v.D, S = v.S };
                 }
-                rows[i] = new M7Row { Sequence = e.Sequence, Time = e.TimeMs, Elapsed = e.SessionElapsedMs, Shape = shape, Context = context, Session = session, Columns = _catalog.ShapeColumns[shape], Values = values };
+                row.Sequence = e.Sequence; row.Time = e.TimeMs; row.Elapsed = e.SessionElapsedMs; row.Shape = shape; row.Context = context; row.Session = session; row.Columns = _catalog.ShapeColumns[shape]; row.Values = values; row.Id = null;
+                rows[i] = row;
                 sequences[i] = e.Sequence;
             }
 
@@ -109,7 +116,7 @@ namespace Daliys.Analytics.Internal.Transport
                 return true;
             }
             if (!_aliases.TryRegister(_origin, e, out index)) return false;
-            _lastContextEvent = e;
+            (_lastContextEvent ?? (_lastContextEvent = new M7Event())).CopyContextFrom(e);
             _lastContextIndex = index;
             return true;
         }
