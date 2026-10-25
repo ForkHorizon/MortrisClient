@@ -29,7 +29,7 @@ namespace M7Transport.Tests
             {
                 var dir = Path.Combine(root, name);
                 var catalog = M7Catalog.Parse(File.ReadAllBytes(Path.Combine(dir, "catalog.json")));
-                var events = new List<(string name, Dictionary<string, object> props)>();
+                var events = new List<(string name, Dictionary<string, object> props, long ts, long el)>();
                 foreach (var line in File.ReadLines(Path.Combine(dir, "events.jsonl")).Where(l => l.Length > 0))
                 {
                     var json = (Dictionary<string, object>)MiniJson.Parse(line);
@@ -41,7 +41,7 @@ namespace M7Transport.Tests
                             case JsonNumber n: props[p.Key] = double.Parse(n.Lexeme, CultureInfo.InvariantCulture); break;
                             default: props[p.Key] = p.Value; break;
                         }
-                    events.Add(((string)json["name"], props));
+                    events.Add(((string)json["name"], props, json.TryGetValue("ts", out var tsv) ? long.Parse(((JsonNumber)tsv).Lexeme, CultureInfo.InvariantCulture) : -1, json.TryGetValue("el", out var elv) ? long.Parse(((JsonNumber)elv).Lexeme, CultureInfo.InvariantCulture) : -1));
                 }
                 long withDict = 0, noDict = 0, raw = 0; var count = 0; var failed = 0;
                 foreach (var useDict in new[] { true, false })
@@ -56,7 +56,7 @@ namespace M7Transport.Tests
                             for (var i = from; i < from + 100; i++)
                             {
                                 var e = events[i];
-                                writer.Begin(Guid.NewGuid(), session, t + (i - from) * 40, 1234 + (i - from) * 40, context, e.name, e.props.Count);
+                                writer.Begin(Guid.NewGuid(), session, e.ts >= 0 ? e.ts : t + (i - from) * 40, e.el >= 0 ? e.el : 1234 + (i - from) * 40, context, e.name, e.props.Count);
                                 foreach (var p in e.props) writer.AddClr(p.Key, p.Value);
                                 var len = writer.Finish();
                                 frames.AddRange(new[] { (byte)(len >> 24), (byte)(len >> 16), (byte)(len >> 8), (byte)len }); frames.AddRange(writer.Buffer.Take(len));
