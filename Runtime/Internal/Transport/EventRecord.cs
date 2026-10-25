@@ -49,11 +49,12 @@ namespace Daliys.Analytics.Internal.Transport
         /// <summary>Writes a UUID in canonical (RFC 4122) byte order, i.e. the order of its "D" text form.</summary>
         internal static void WriteUuid(byte[] buffer, int position, Guid id)
         {
-            var little = id.ToByteArray();
+            Span<byte> little = stackalloc byte[16];
+            id.TryWriteBytes(little);
             buffer[position] = little[3]; buffer[position + 1] = little[2]; buffer[position + 2] = little[1]; buffer[position + 3] = little[0];
             buffer[position + 4] = little[5]; buffer[position + 5] = little[4];
             buffer[position + 6] = little[7]; buffer[position + 7] = little[6];
-            Buffer.BlockCopy(little, 8, buffer, position + 8, 8);
+            for (var i = 8; i < 16; i++) buffer[position + i] = little[i];
         }
 
         internal static Guid ReadUuid(byte[] buffer, int position)
@@ -189,11 +190,43 @@ namespace Daliys.Analytics.Internal.Transport
             else AddRawDouble(key, value);
         }
 
-        /// <summary>A float32 is classified through its shortest round-trip text, like the JSON path.</summary>
+        private static readonly double[] Pow10 = { 1, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15, 1e16, 1e17, 1e18, 1e19, 1e20, 1e21, 1e22 };
+
+        /// <summary>
+        /// A float32 is classified through its shortest round-trip text, like the JSON path. The common values are handled without building that text:
+        /// small integral floats are integers, and a float whose shortest text has at most 7 digits is that decimal divided exactly (mantissa and power of ten
+        /// are exact doubles, so the division rounds like a parse would); everything else takes the text route.
+        /// </summary>
         internal void AddSingle(string key, float value)
         {
-            var text = value.ToString("R", CultureInfo.InvariantCulture);
-            AddLexeme(key, text);
+            if (value == (float)Math.Floor(value) && Math.Abs(value) < 1e7f) { AddInt(key, (long)value); return; }
+            if (TryShortestDouble(value, out var d)) { AddRawDouble(key, d); return; }
+            AddLexeme(key, value.ToString("R", CultureInfo.InvariantCulture));
+        }
+
+        internal static bool TryShortestDouble(float value, out double result)
+        {
+            result = 0;
+            var magnitude = Math.Abs(value);
+            if (!(magnitude >= 1e-5f && magnitude < 1e7f)) return false; // also NaN and infinities
+            Span<int> bits = stackalloc int[4];
+            decimal.GetBits((decimal)value, bits);
+            if (bits[1] != 0 || bits[2] != 0) return false;
+            var scale = (bits[3] >> 16) & 0xFF;
+            long m = (uint)bits[0];
+            while (scale > 0 && m % 10 == 0) { m /= 10; scale--; }
+            if (scale == 0 || scale > 22) return false;
+            var d = (double)m / Pow10[scale];
+            if (value < 0) d = -d;
+            if ((float)d != value) return false;
+            if (m >= 10)
+            {
+                var shorter = (double)((m + 5) / 10) / Pow10[scale - 1]; // a shorter text exists when the next shorter rounding still reads back as this float
+                if (value < 0) shorter = -shorter;
+                if ((float)shorter == value) return false;
+            }
+            result = d;
+            return true;
         }
 
         /// <summary>A number given as its text (decimal, float): integer lexemes become integers, anything else a double.</summary>

@@ -284,3 +284,38 @@ namespace M7Transport.Tests
         }
     }
 }
+
+namespace M7Transport.Tests
+{
+    using System;
+    using System.Globalization;
+    using Daliys.Analytics.Internal.Transport;
+    using Xunit;
+
+    public class FloatFastPathTests
+    {
+        private static void Check(float f, ref long fast)
+        {
+            if (!EventRecordWriter.TryShortestDouble(f, out var d)) return;
+            fast++;
+            var expected = double.Parse(f.ToString("R", CultureInfo.InvariantCulture), NumberStyles.Float, CultureInfo.InvariantCulture);
+            Assert.True(BitConverter.DoubleToInt64Bits(d) == BitConverter.DoubleToInt64Bits(expected), $"{BitConverter.SingleToInt32Bits(f):x8} {f:R}: fast {d:R} text {expected:R}");
+        }
+
+        [Fact]
+        public void FastShortestMatchesTheTextRouteOnRandomAndStructuredFloats()
+        {
+            long fast = 0, total = 0;
+            var rng = new Random(12345);
+            for (var i = 0; i < 6_000_000; i++, total++) Check(BitConverter.Int32BitsToSingle(rng.Next() ^ (rng.Next(2) << 31)), ref fast);
+            for (var i = 0; i < 3_000_000; i++, total++) // ranges games use: positions, speeds, fractions with few digits
+            {
+                Check((float)(rng.NextDouble() * 2000 - 1000), ref fast);
+                Check((float)Math.Round(rng.NextDouble() * 1000, rng.Next(1, 5)), ref fast);
+                Check(rng.Next(-100000, 100000) / (float)Math.Pow(10, rng.Next(1, 6)), ref fast);
+            }
+            for (var bits = 0x3F000000; bits < 0x3F000000 + 2_000_000; bits++, total++) Check(BitConverter.Int32BitsToSingle(bits), ref fast);
+            Assert.True(fast > total / 4, $"fast path taken {fast} of {total}");
+        }
+    }
+}
