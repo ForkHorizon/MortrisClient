@@ -207,26 +207,22 @@ namespace Daliys.Analytics.Internal.Transport
         internal static bool TryShortestDouble(float value, out double result)
         {
             result = 0;
-            var magnitude = Math.Abs(value);
-            if (!(magnitude >= 1e-5f && magnitude < 1e7f)) return false; // also NaN and infinities
-            Span<int> bits = stackalloc int[4];
-            decimal.GetBits((decimal)value, bits);
-            if (bits[1] != 0 || bits[2] != 0) return false;
-            var scale = (bits[3] >> 16) & 0xFF;
-            long m = (uint)bits[0];
-            while (scale > 0 && m % 10 == 0) { m /= 10; scale--; }
-            if (scale == 0 || scale > 22) return false;
-            var d = (double)m / Pow10[scale];
-            if (value < 0) d = -d;
-            if ((float)d != value) return false;
-            if (m >= 10)
+            var magnitude = Math.Abs((double)value);
+            if (!(magnitude >= 1e-5 && magnitude < 1e7)) return false; // also NaN and infinities
+            // The fewest decimal places that read back as this float: that is the shortest text. m and the power of ten are exact doubles, so the division is
+            // correctly rounded, like parsing the text would be.
+            for (var scale = 1; scale <= 11; scale++)
             {
-                var shorter = (double)((m + 5) / 10) / Pow10[scale - 1]; // a shorter text exists when the next shorter rounding still reads back as this float
-                if (value < 0) shorter = -shorter;
-                if ((float)shorter == value) return false;
+                var m = Math.Round(magnitude * Pow10[scale]);
+                if (m >= 1e7 || m < 1) return false; // more than 7 digits: leave it to the text route
+                var d = m / Pow10[scale];
+                if ((float)d == magnitude)
+                {
+                    result = value < 0 ? -d : d;
+                    return true;
+                }
             }
-            result = d;
-            return true;
+            return false;
         }
 
         /// <summary>A number given as its text (decimal, float): integer lexemes become integers, anything else a double.</summary>
