@@ -1,8 +1,8 @@
-[14:32:26] launch
-[14:32:40] background (HOME)
-[14:32:42] events durable right after leaving (server has not been told yet unless an upload ran)
+[18:23:57] launch
+[18:24:11] background (HOME)
+[18:24:13] events durable right after leaving (server has not been told yet unless an upload ran)
 12
-[14:32:49] return after the session timeout
-[14:32:59] kill -9 the process
-[14:33:02] relaunch
-[14:33:18] quit cleanly (BACK + force close via am kill is not clean; use the app's own quit path: HOME then wait)
+[18:24:20] return after the session timeout
+[18:24:29] kill -9 the process
+[18:24:32] relaunch
+[18:24:48] quit cleanly (BACK + force close via am kill is not clean; use the app's own quit path: HOME then wait)
