@@ -19,7 +19,7 @@ namespace M7Transport.Tests
         [Fact]
         public void FrameBytesPerEventForEveryVariant()
         {
-            var root = Environment.GetEnvironmentVariable("M7_ABLATION");
+            var root = Environment.GetEnvironmentVariable("M7_ABLATION"); var batch = int.TryParse(Environment.GetEnvironmentVariable("M7_BATCH"), out var bsz) ? bsz : 100;
             if (string.IsNullOrEmpty(root)) return;
             var dictionary = File.ReadAllBytes(Path.GetFullPath(Path.Combine(TestSupport.Root, "../../../../../night-run~/work/dictionary.bin")));
             var context = EventContext.Build("1.1.14", "perf-1", "android", "Android 16", "Nothing A142", "en-US", 120);
@@ -50,10 +50,10 @@ namespace M7Transport.Tests
                     var writer = new EventRecordWriter();
                     using (var encoder = new M7EventEncoder(catalog, new M7Aliases(), d, "0d9e6c8e-1d0b-4c1e-9d8a-3f7a2b6c4e11", new NativeZstdCompressor(d)))
                     {
-                        for (var from = 0; from + 100 <= events.Count; from += 100)
+                        for (var from = 0; from + batch <= events.Count; from += batch)
                         {
                             var frames = new List<byte>(); long t = 1790000000000;
-                            for (var i = from; i < from + 100; i++)
+                            for (var i = from; i < from + batch; i++)
                             {
                                 var e = events[i];
                                 writer.Begin(Guid.NewGuid(), session, e.ts >= 0 ? e.ts : t + (i - from) * 40, e.el >= 0 ? e.el : 1234 + (i - from) * 40, context, e.name, e.props.Count);
@@ -61,10 +61,10 @@ namespace M7Transport.Tests
                                 var len = writer.Finish();
                                 frames.AddRange(new[] { (byte)(len >> 24), (byte)(len >> 16), (byte)(len >> 8), (byte)len }); frames.AddRange(writer.Buffer.Take(len));
                             }
-                            var queue = new FakeQueue(); queue.EnqueueRecords(frames.ToArray(), 100, 1000000, 1L << 40, 1L << 40);
+                            var queue = new FakeQueue(); queue.EnqueueRecords(frames.ToArray(), batch, 1000000, 1L << 40, 1L << 40);
                             var r = encoder.Encode(queue.ReadOldest(100000));
                             if (!r.Ok) { if (useDict) failed++; continue; }
-                            if (useDict) { withDict += r.Frame.Length; count += 100; int p2 = 28; ReadVar(r.Frame, ref p2); raw += ReadVar(r.Frame, ref p2); }
+                            if (useDict) { withDict += r.Frame.Length; count += batch; int p2 = 28; ReadVar(r.Frame, ref p2); raw += ReadVar(r.Frame, ref p2); }
                             else noDict += r.Frame.Length;
                         }
                     }
