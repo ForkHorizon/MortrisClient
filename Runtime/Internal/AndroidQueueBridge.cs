@@ -62,6 +62,9 @@ namespace Daliys.Analytics.Internal
             // signature by reflection on each call, which measured at about 34 KB of managed garbage per call.
             private readonly bool _lowLevel;
             private readonly System.IntPtr _handle, _enqueueId, _readId;
+            private System.IntPtr _classRef;
+            // The Java calls that change the row count and the cached count are one step, so the cache never ends up behind the queue.
+            private readonly object _countSync = new object();
             private readonly UnityEngine.jvalue[] _enqueueArgs = new UnityEngine.jvalue[5], _readArgs = new UnityEngine.jvalue[1];
 
             internal AndroidQueueBridgeInstance(UnityEngine.AndroidJavaObject activity)
@@ -71,7 +74,7 @@ namespace Daliys.Analytics.Internal
                 {
                     _handle = _queue.GetRawObject();
                     var local = UnityEngine.AndroidJNI.GetObjectClass(_handle);
-                    var type = UnityEngine.AndroidJNI.NewGlobalRef(local); // keeps the class (and so its method ids) alive
+                    var type = _classRef = UnityEngine.AndroidJNI.NewGlobalRef(local); // keeps the class (and so its method ids) alive
                     UnityEngine.AndroidJNI.DeleteLocalRef(local);
                     _enqueueId = UnityEngine.AndroidJNI.GetMethodID(type, "enqueueRecords", "([BIIJJ)I");
                     _readId = UnityEngine.AndroidJNI.GetMethodID(type, "readOldest", "(I)[B");
@@ -121,10 +124,13 @@ namespace Daliys.Analytics.Internal
 
             public int PendingCount => System.Threading.Volatile.Read(ref _pending);
 
-            public void EnqueueRecords(byte[] frames, int count, int eventLimit, long byteLimit, long maxAgeMilliseconds) =>
-                System.Threading.Volatile.Write(ref _pending, _lowLevel
-                    ? EnqueueLowLevel(frames, count, eventLimit, byteLimit, maxAgeMilliseconds)
-                    : _queue.Call<int>("enqueueRecords", frames, count, eventLimit, byteLimit, maxAgeMilliseconds));
+            public void EnqueueRecords(byte[] frames, int count, int eventLimit, long byteLimit, long maxAgeMilliseconds)
+            {
+                lock (_countSync)
+                    _pending = _lowLevel
+                        ? EnqueueLowLevel(frames, count, eventLimit, byteLimit, maxAgeMilliseconds)
+                        : _queue.Call<int>("enqueueRecords", frames, count, eventLimit, byteLimit, maxAgeMilliseconds);
+            }
 
             public AnalyticsQueueState GetState()
             {
@@ -148,15 +154,21 @@ namespace Daliys.Analytics.Internal
 
             public int DeleteAcknowledged(string eventIdsJson)
             {
-                var deleted = _queue.Call<int>("deleteAcknowledged", eventIdsJson);
-                System.Threading.Interlocked.Add(ref _pending, -deleted);
-                return deleted;
+                lock (_countSync)
+                {
+                    var deleted = _queue.Call<int>("deleteAcknowledged", eventIdsJson);
+                    _pending -= deleted;
+                    return deleted;
+                }
             }
 
             public void ClearAllPendingEvents()
             {
-                _queue.Call("clearAllPendingEvents");
-                System.Threading.Volatile.Write(ref _pending, 0);
+                lock (_countSync)
+                {
+                    _queue.Call("clearAllPendingEvents");
+                    _pending = 0;
+                }
             }
 
             public string GetSequenceState() => _queue.Call<string>("getSequenceState");
@@ -165,22 +177,31 @@ namespace Daliys.Analytics.Internal
 
             public int DeleteThroughSequence(long ackThrough)
             {
-                var deleted = _queue.Call<int>("deleteThroughSequence", ackThrough);
-                System.Threading.Interlocked.Add(ref _pending, -deleted);
-                return deleted;
+                lock (_countSync)
+                {
+                    var deleted = _queue.Call<int>("deleteThroughSequence", ackThrough);
+                    _pending -= deleted;
+                    return deleted;
+                }
             }
 
             public void BeginNewStream() => _queue.Call("beginNewStream");
 
             public void Dispose()
             {
+                if (_classRef != System.IntPtr.Zero)
+                {
+                    UnityEngine.AndroidJNI.DeleteGlobalRef(_classRef);
+                    _classRef = System.IntPtr.Zero;
+                }
                 _queue.Dispose();
             }
 
             private AnalyticsQueueState ToState(UnityEngine.AndroidJavaObject result)
             {
                 var state = ReadState(result);
-                System.Threading.Volatile.Write(ref _pending, state.PendingCount);
+                lock (_countSync)
+                    _pending = state.PendingCount;
                 return state;
             }
 

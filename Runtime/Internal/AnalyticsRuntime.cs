@@ -67,11 +67,19 @@ namespace Daliys.Analytics.Internal
             return TrackResult.HandoffFull;
         }
 
+        /// <summary>A session ends once, so its end event has a fixed id: a recovery repeated after a crash is stored once (the queue ignores a known id).</summary>
+        private static Guid SessionEndId(Guid sessionId)
+        {
+            var bytes = sessionId.ToByteArray();
+            for (var i = 0; i < bytes.Length; i++) bytes[i] ^= 0xA5;
+            return new Guid(bytes);
+        }
+
         /// <summary>Encodes the event once into its binary record and hands it to the buffer.</summary>
         private bool Write(string name, IReadOnlyDictionary<string, object> properties, Guid sessionId, long occurredAtUnixMs, long sessionElapsedMs, bool priority)
         {
             var writer = EventRecordWriter.ForThread;
-            writer.Begin(Guid.NewGuid(), sessionId, occurredAtUnixMs, sessionElapsedMs, _persistenceWorker.ContextBytes, name, properties == null ? 0 : properties.Count);
+            writer.Begin(name == "sys_session_end" ? SessionEndId(sessionId) : Guid.NewGuid(), sessionId, occurredAtUnixMs, sessionElapsedMs, _persistenceWorker.ContextBytes, name, properties == null ? 0 : properties.Count);
             if (properties is Dictionary<string, object> map)
             {
                 foreach (var property in map)

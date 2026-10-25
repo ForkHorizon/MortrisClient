@@ -36,6 +36,7 @@ namespace Daliys.Analytics.Internal.Transport
             {
                 if (position >= end) throw new FormatException("Event record is truncated.");
                 var b = buffer[position++];
+                if (shift == 63 && b > 1) throw new FormatException("Event record has an invalid varint.");
                 result |= (ulong)(b & 127) << shift;
                 if (b < 128) return result;
             }
@@ -533,7 +534,7 @@ namespace Daliys.Analytics.Internal.Transport
             _buffers = new byte[count][]; _starts = new int[count]; _ends = new int[count]; _sequences = new long[count];
         }
 
-        internal int Count { get; }
+        internal int Count { get; private set; }
         internal long Sequence(int index) => _sequences[index];
         internal long FirstSequence => Count > 0 ? _sequences[0] : 0;
         internal long LastSequence => Count > 0 ? _sequences[Count - 1] : 0;
@@ -550,6 +551,7 @@ namespace Daliys.Analytics.Internal.Transport
             var count = ReadInt32(frame, ref position);
             if (count < 0) throw new FormatException("Queue batch is invalid.");
             var batch = new QueueBatch(count);
+            var kept = 0;
             for (var i = 0; i < count; i++)
             {
                 if (position + 13 > frame.Length) throw new FormatException("Queue batch is truncated.");
@@ -557,17 +559,24 @@ namespace Daliys.Analytics.Internal.Transport
                 var sequence = ReadInt64(frame, ref position);
                 var length = ReadInt32(frame, ref position);
                 if (length < 0 || position + length > frame.Length) throw new FormatException("Queue batch is truncated.");
-                batch._sequences[i] = sequence;
-                if (format == EventRecordFormat.Version) { batch._buffers[i] = frame; batch._starts[i] = position; batch._ends[i] = position + length; }
+                byte[] buffer = null; int start = 0, end = 0;
+                if (format == EventRecordFormat.Version) { buffer = frame; start = position; end = position + length; }
                 else if (format == 0)
                 {
-                    var json = MiniJson.Parse(new UTF8Encoding(false, true).GetString(frame, position, length)) as Dictionary<string, object> ?? throw new FormatException("Queued payload is not an object.");
-                    var record = EventRecordJson.FromJson(json, out _);
-                    batch._buffers[i] = record; batch._starts[i] = 0; batch._ends[i] = record.Length;
+                    try
+                    {
+                        var json = MiniJson.Parse(new UTF8Encoding(false, true).GetString(frame, position, length)) as Dictionary<string, object> ?? throw new FormatException("Queued payload is not an object.");
+                        buffer = EventRecordJson.FromJson(json, out _); end = buffer.Length;
+                    }
+                    catch (Exception) { buffer = null; } // an unreadable legacy row is skipped, not allowed to block the rows behind it; it ages out with the queue limits
                 }
-                else throw new FormatException("Queue row has an unknown format.");
+                // else: unknown format, skipped the same way
                 position += length;
+                if (buffer == null) continue;
+                batch._sequences[kept] = sequence; batch._buffers[kept] = buffer; batch._starts[kept] = start; batch._ends[kept] = end;
+                kept++;
             }
+            batch.Count = kept;
             return batch;
         }
 

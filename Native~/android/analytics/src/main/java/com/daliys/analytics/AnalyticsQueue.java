@@ -107,7 +107,8 @@ public final class AnalyticsQueue implements Closeable {
                     "SELECT COALESCE(MIN(sequence), ?) FROM pending_events", new String[]{Long.toString(next)});
             putMetadata(META_STREAM_BASE, Long.toString(base));
             putMetadata(META_STREAM_EPOCH, "0");
-            database.delete("dropped_ranges", null, null);
+            // Gaps between queued rows stay: those rows keep their numbers, and the server must be told the gaps are closed.
+            database.delete("dropped_ranges", "to_sequence < ?", new String[]{Long.toString(base)});
             bumpDroppedVersion();
             database.setTransactionSuccessful();
         } finally {
@@ -158,7 +159,12 @@ public final class AnalyticsQueue implements Closeable {
             if (sessionState != null) putMetadata(META_SESSION_STATE, sessionState);
             database.setTransactionSuccessful();
         } finally {
-            database.endTransaction();
+            try {
+                database.endTransaction();
+            } catch (RuntimeException failure) {
+                identity = ensureIdentity(); // the commit failed: take the identity back from the database
+                throw failure;
+            }
         }
         reloadCaches();
         return getState();
@@ -211,8 +217,13 @@ public final class AnalyticsQueue implements Closeable {
             database.setTransactionSuccessful();
             committed = true;
         } finally {
-            database.endTransaction();
-            if (!committed) reloadCaches();
+            boolean ended = false;
+            try {
+                database.endTransaction();
+                ended = true;
+            } finally {
+                if (!committed || !ended) reloadCaches(); // a failed commit leaves the cached counters ahead of the database
+            }
         }
         return pendingCount;
     }
@@ -323,6 +334,7 @@ public final class AnalyticsQueue implements Closeable {
             return openDatabase();
         } catch (android.database.sqlite.SQLiteException originalFailure) {
             helper.close();
+            keepFailedDatabase();
             deleteDatabaseFiles();
             helper = new QueueOpenHelper(context, databaseFile.getAbsolutePath());
             try {
@@ -338,6 +350,13 @@ public final class AnalyticsQueue implements Closeable {
         SQLiteDatabase opened = helper.getWritableDatabase();
         opened.enableWriteAheadLogging();
         return opened;
+    }
+
+    /** A failed open may be a failed upgrade (full storage), not corruption: the main file is kept aside so queued events are not destroyed with it. */
+    private void keepFailedDatabase() {
+        File kept = new File(databaseFile.getAbsolutePath() + ".failed");
+        if (databaseFile.exists() && (!kept.exists() || kept.delete()))
+            databaseFile.renameTo(kept);
     }
 
     private void deleteDatabaseFiles() {
@@ -416,7 +435,7 @@ public final class AnalyticsQueue implements Closeable {
         long streamBase = android.database.DatabaseUtils.longForQuery(database,
                 "SELECT COALESCE(MIN(sequence), ?) FROM pending_events", new String[]{Long.toString(nextSequence)});
         putMetadata(META_STREAM_BASE, Long.toString(streamBase));
-        database.delete("dropped_ranges", null, null);
+        database.delete("dropped_ranges", "to_sequence < ?", new String[]{Long.toString(streamBase)});
         putMetadata("registered", "false");
         return new Identity(installId, credential);
     }

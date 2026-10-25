@@ -18,6 +18,7 @@ namespace Daliys.Analytics.Internal
         /// <summary>Records that make the buffer write straight away instead of waiting for the window.</summary>
         private const int ImmediateThreshold = 128;
         internal const int BufferCapacity = 1024, BufferBytes = 1024 * 1024;
+        private static readonly TimeSpan RetryDelay = TimeSpan.FromSeconds(2);
         private static readonly TimeSpan HeartbeatInterval = TimeSpan.FromSeconds(30);
 
         private readonly object _sync = new object();
@@ -181,6 +182,9 @@ namespace Daliys.Analytics.Internal
                     SaveSessionState(false);
                 }
 
+                // A clear requested after the write step above must not let the upload send what it was meant to remove; the finally block reschedules.
+                if (Volatile.Read(ref _clearRequested) == 1)
+                    return;
                 var upload = _uploader.Flush(_bridge, HasFlushWaiters());
                 status = upload.Status;
             }
@@ -199,7 +203,9 @@ namespace Daliys.Analytics.Internal
                 Interlocked.Exchange(ref _isScheduled, 0);
                 CompleteFlushes(status);
 
-                if (status != FlushStatus.PersistenceUnavailable && status != FlushStatus.PersistenceFailed)
+                if (status == FlushStatus.PersistenceFailed && _buffer.Count > 0 && Interlocked.CompareExchange(ref _timerArmed, 1, 0) == 0)
+                    _flushTimer.Change(RetryDelay, Timeout.InfiniteTimeSpan); // a transient write failure retries without waiting for new events
+                else if (status != FlushStatus.PersistenceUnavailable && status != FlushStatus.PersistenceFailed)
                 {
                     if (Volatile.Read(ref _clearRequested) == 1 || _buffer.Count >= ImmediateThreshold)
                         Schedule();
