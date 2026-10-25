@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -28,7 +29,8 @@ namespace Daliys.Analytics.Internal
 
     internal sealed class AnalyticsUploader : IDisposable
     {
-        private const int MaximumBatchSize = 100;
+        /// <summary>The V1 batch endpoint takes at most this many events per request.</summary>
+        private const int MaximumV1BatchSize = 100;
         private static readonly TimeSpan InitialBackoff = TimeSpan.FromSeconds(5);
         private static readonly TimeSpan MaximumBackoff = TimeSpan.FromMinutes(5);
 
@@ -45,6 +47,8 @@ namespace Daliys.Analytics.Internal
         private bool _permanentFailure;
         private ServerPolicy _currentPolicy;
         private readonly V7Session _v7;
+        private HttpV7Transport _http;
+        private volatile CancellationTokenSourceBox _deadline = CancellationTokenSourceBox.None;
         private readonly EventRecordReader _reader = new EventRecordReader();
 
         internal AnalyticsUploader(AnalyticsOptions options, AnalyticsDeviceContext device, Action<ServerPolicy> policyChanged)
@@ -74,7 +78,8 @@ namespace Daliys.Analytics.Internal
                 // Created on the Unity main thread (the worker is constructed by Analytics.Initialize), where persistentDataPath is legal.
                 var directory = Path.Combine(Application.persistentDataPath, "daliys-analytics", "v7");
                 var settings = new V7Settings { ProjectId = _options.ProjectId, SdkName = AnalyticsDeviceContext.SdkName, SdkVersion = AnalyticsDeviceContext.SdkVersion };
-                return new V7Session(settings, new HttpV7Transport(_client, _options.ServerUrl), new FileV7AssetStore(directory));
+                _http = new HttpV7Transport(_client, _options.ServerUrl);
+                return new V7Session(settings, _http, new FileV7AssetStore(directory));
             }
             catch (Exception exception)
             {
@@ -84,6 +89,9 @@ namespace Daliys.Analytics.Internal
         }
 
         /// <summary>True when <see cref="Flush"/> would return without doing anything (backing off, nothing due): lets the worker skip attaching to the JVM on idle ticks.</summary>
+        /// <summary>Events that make a "full" packet for the transport in use.</summary>
+        private int FullPacket() => _v7 != null && !_v7.Disabled ? _options.MaxPacketEvents : Math.Min(_options.MaxPacketEvents, MaximumV1BatchSize);
+
         internal bool NothingToDo(IAnalyticsQueueBridge queue, bool force)
         {
             var now = DateTimeOffset.UtcNow;
@@ -92,7 +100,31 @@ namespace Daliys.Analytics.Internal
             return !force && now < _nextUploadAt && queue.PendingCount < _options.UploadEventThreshold;
         }
 
-        internal UploadResult Flush(IAnalyticsQueueBridge queue, bool force)
+        /// <summary>
+        /// Uploads what is due. With <paramref name="deadline"/> the requests are cancelled when it passes and nothing is penalised for it (a background upload:
+        /// the events simply stay queued).
+        /// </summary>
+        internal UploadResult Flush(IAnalyticsQueueBridge queue, bool force, TimeSpan? deadline = null)
+        {
+            if (deadline == null)
+                return FlushCore(queue, force);
+
+            using (var cancel = new CancellationTokenSource(deadline.Value))
+            {
+                var box = new CancellationTokenSourceBox(cancel.Token);
+                _deadline = box;
+                if (_http != null) _http.Deadline = box;
+                try { return FlushCore(queue, force); }
+                catch (OperationCanceledException) { return UploadResult.Deferred; }
+                finally
+                {
+                    _deadline = CancellationTokenSourceBox.None;
+                    if (_http != null) _http.Deadline = CancellationTokenSourceBox.None;
+                }
+            }
+        }
+
+        private UploadResult FlushCore(IAnalyticsQueueBridge queue, bool force)
         {
             var now = DateTimeOffset.UtcNow;
             if (_installConflict || _permanentFailure || (!force && now < _nextAttemptAt))
@@ -146,13 +178,13 @@ namespace Daliys.Analytics.Internal
                 if (_currentPolicy != null && _currentPolicy.Mode == ServerPolicyMode.DisableCollection)
                     return UploadResult.Uploaded;
 
-                var batchSize = MaximumBatchSize;
+                var batchSize = _options.MaxPacketEvents;
                 var sent = 0;
                 while (true)
                 {
                     // Packets compress best when full: after the first one, an upload only goes on while a whole packet is waiting. The rest is sent with the
                     // next due upload (or at once by FlushAsync), so a burst does not end in a string of small, expensive packets.
-                    if (sent > 0 && !force && queue.PendingCount < MaximumBatchSize)
+                    if (sent > 0 && !force && queue.PendingCount < FullPacket())
                     {
                         ResetBackoff();
                         return UploadResult.Uploaded;
@@ -201,7 +233,7 @@ namespace Daliys.Analytics.Internal
                         }
                     }
 
-                    var events = queue.ReadOldest(batchSize);
+                    var events = queue.ReadOldest(Math.Min(batchSize, MaximumV1BatchSize));
                     if (events.Count == 0)
                     {
                         ResetBackoff();
@@ -268,6 +300,10 @@ namespace Daliys.Analytics.Internal
                         return policyResultAfterBatch;
                 }
             }
+            catch (OperationCanceledException) when (!ReferenceEquals(_deadline, CancellationTokenSourceBox.None))
+            {
+                return UploadResult.Deferred; // the background allowance ran out: the events stay queued, no backoff
+            }
             catch (Exception)
             {
                 return BackOff(now, null);
@@ -326,7 +362,7 @@ namespace Daliys.Analytics.Internal
                 if (!string.IsNullOrEmpty(credential))
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", credential);
 
-                using (var response = _client.SendAsync(request).GetAwaiter().GetResult())
+                using (var response = _client.SendAsync(request, _deadline.Token).GetAwaiter().GetResult())
                 {
                     var responseBody = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                     return new ServerResponse((int)response.StatusCode, responseBody, RetryAfter(response));

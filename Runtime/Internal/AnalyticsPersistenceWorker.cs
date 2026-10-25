@@ -39,6 +39,8 @@ namespace Daliys.Analytics.Internal
         private int _isDisposed;
         private int _timerArmed;
         private int _heartbeatDue;
+        private int _backgroundUploadRequested;
+        private long _lastBackgroundUploadTicks;
 
         internal AnalyticsPersistenceWorker(AnalyticsOptions options, Action<ServerPolicy> policyChanged)
         {
@@ -70,6 +72,23 @@ namespace Daliys.Analytics.Internal
             else if (Interlocked.CompareExchange(ref _timerArmed, 1, 0) == 0)
                 _flushTimer.Change(_options.EventBufferWindow, Timeout.InfiniteTimeSpan);
             return true;
+        }
+
+        /// <summary>
+        /// The game is leaving the foreground or quitting: after the durable write, try one short upload of what is queued (no waiting for the interval).
+        /// Skipped when the option is off or the previous such upload was less than <see cref="AnalyticsOptions.BackgroundUploadMinGap"/> ago.
+        /// </summary>
+        internal void RequestBackgroundUpload()
+        {
+            if (!_options.UploadOnBackground || !AndroidQueueBridge.IsSupported || Volatile.Read(ref _isDisposed) != 0)
+                return;
+            var now = System.Diagnostics.Stopwatch.GetTimestamp();
+            var last = Interlocked.Read(ref _lastBackgroundUploadTicks);
+            if (last != 0 && now - last < (long)(_options.BackgroundUploadMinGap.TotalSeconds * System.Diagnostics.Stopwatch.Frequency))
+                return;
+            Interlocked.Exchange(ref _lastBackgroundUploadTicks, now == 0 ? 1 : now);
+            Interlocked.Exchange(ref _backgroundUploadRequested, 1);
+            Schedule();
         }
 
         internal void ClearPending()
@@ -185,7 +204,10 @@ namespace Daliys.Analytics.Internal
                 // A clear requested after the write step above must not let the upload send what it was meant to remove; the finally block reschedules.
                 if (Volatile.Read(ref _clearRequested) == 1)
                     return;
-                var upload = _uploader.Flush(_bridge, HasFlushWaiters());
+                var background = Interlocked.Exchange(ref _backgroundUploadRequested, 0) == 1;
+                var upload = background
+                    ? _uploader.Flush(_bridge, true, _options.BackgroundUploadTimeout)
+                    : _uploader.Flush(_bridge, HasFlushWaiters());
                 status = upload.Status;
             }
             catch (Exception exception)
@@ -234,7 +256,7 @@ namespace Daliys.Analytics.Internal
 
         private bool IsIdle() =>
             _bridge != null && _sessionRecovered && _buffer.Count == 0 && Volatile.Read(ref _clearRequested) == 0 && Volatile.Read(ref _heartbeatDue) == 0 &&
-            !HasFlushWaiters() && (_session == null || _session.StateVersion == _savedSessionVersion) && _uploader.NothingToDo(_bridge, false);
+            Volatile.Read(ref _backgroundUploadRequested) == 0 && !HasFlushWaiters() && (_session == null || _session.StateVersion == _savedSessionVersion) && _uploader.NothingToDo(_bridge, false);
 
         private IAnalyticsQueueBridge EnsureBridge() => _bridge ?? (_bridge = AndroidQueueBridge.TryCreate());
 

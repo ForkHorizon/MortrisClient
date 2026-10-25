@@ -22,7 +22,7 @@ patch(W, 'private void PersistPending()\n        {', 'private void PersistPendin
 patch(W, 'var frames = _buffer.Drain(out var count);', 'var ps = V7Prof.Begin(); var frames = _buffer.Drain(out var count); V7Prof.End(V7Prof.Snapshot, ps);')
 patch(W, '                _bridge.EnqueueRecords(frames, count, _options.DurableEventLimit, _options.DurableByteLimit, (long)_options.MaxEventAge.TotalMilliseconds);',
  '                V7Prof.Add(V7Prof.PersistEvents, count);\n                _bridge.EnqueueRecords(frames, count, _options.DurableEventLimit, _options.DurableByteLimit, (long)_options.MaxEventAge.TotalMilliseconds);')
-patch(W, 'var upload = _uploader.Flush(_bridge, HasFlushWaiters());', 'V7Prof.Add(V7Prof.FlushCalls, 1); var pf = V7Prof.Begin(); var upload = _uploader.Flush(_bridge, HasFlushWaiters()); V7Prof.End(V7Prof.UploaderFlush, pf);')
+patch(W, 'var upload = background\n                    ? _uploader.Flush(_bridge, true, _options.BackgroundUploadTimeout)\n                    : _uploader.Flush(_bridge, HasFlushWaiters());', 'V7Prof.Add(V7Prof.FlushCalls, 1); var pf = V7Prof.Begin(); var upload = background ? _uploader.Flush(_bridge, true, _options.BackgroundUploadTimeout) : _uploader.Flush(_bridge, HasFlushWaiters()); V7Prof.End(V7Prof.UploaderFlush, pf);')
 # JNI bridge
 B = R + 'AndroidQueueBridge.cs'
 patch(B, '''_pending = _lowLevel

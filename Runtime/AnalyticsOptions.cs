@@ -15,8 +15,18 @@ namespace Daliys.Analytics
         /// project supports it and silently keeps using V1 batches when it does not, or when the native library is unavailable.
         /// </summary>
         public bool UseTransportV7 { get; set; }
-        public TimeSpan UploadInterval { get; set; } = TimeSpan.FromSeconds(30);
-        public int UploadEventThreshold { get; set; } = 50;
+        /// <summary>How often the queue is uploaded. Fewer, fuller packets cost fewer bytes and less battery; events wait at most about this long.</summary>
+        public TimeSpan UploadInterval { get; set; } = TimeSpan.FromSeconds(120);
+        /// <summary>Queued events that start an upload before the interval is up.</summary>
+        public int UploadEventThreshold { get; set; } = 200;
+        /// <summary>Most events in one packet (V7 allows up to 500; the V1 fallback never sends more than 100 per request).</summary>
+        public int MaxPacketEvents { get; set; } = 200;
+        /// <summary>When the game goes to the background or quits, try one short upload of what is queued instead of waiting for the next interval.</summary>
+        public bool UploadOnBackground { get; set; } = true;
+        /// <summary>Least time between two such background uploads (quick app switching must not cause a string of requests).</summary>
+        public TimeSpan BackgroundUploadMinGap { get; set; } = TimeSpan.FromSeconds(30);
+        /// <summary>The background upload gives up after this long; the events stay queued.</summary>
+        public TimeSpan BackgroundUploadTimeout { get; set; } = TimeSpan.FromSeconds(10);
         public int DurableEventLimit { get; set; } = 10000;
         public long DurableByteLimit { get; set; } = 20L * 1024L * 1024L;
         public TimeSpan MaxEventAge { get; set; } = TimeSpan.FromDays(7);
@@ -51,6 +61,12 @@ namespace Daliys.Analytics
 
             if (UploadEventThreshold <= 0)
                 throw new ArgumentOutOfRangeException(nameof(UploadEventThreshold));
+
+            if (MaxPacketEvents < 1 || MaxPacketEvents > 500)
+                throw new ArgumentOutOfRangeException(nameof(MaxPacketEvents));
+
+            if (BackgroundUploadMinGap < TimeSpan.Zero || BackgroundUploadTimeout <= TimeSpan.Zero)
+                throw new ArgumentOutOfRangeException(nameof(BackgroundUploadTimeout));
 
             if (DurableEventLimit <= 0 || DurableByteLimit <= 0 || MaxEventAge <= TimeSpan.Zero)
                 throw new ArgumentOutOfRangeException("Durable queue limits must be positive.");

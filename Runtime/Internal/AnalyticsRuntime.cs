@@ -120,8 +120,8 @@ namespace Daliys.Analytics.Internal
         internal void OnApplicationPause(bool paused)
         {
             _session.OnPause(paused);
-            if (paused)
-                _persistenceWorker.PersistNow();
+            if (paused && _persistenceWorker.PersistNow())
+                _persistenceWorker.RequestBackgroundUpload();
         }
 
         internal void OnApplicationFocus(bool hasFocus)
@@ -133,7 +133,8 @@ namespace Daliys.Analytics.Internal
         internal void OnApplicationQuit()
         {
             _session.OnQuit();
-            _persistenceWorker.PersistNow();
+            if (_persistenceWorker.PersistNow())
+                _persistenceWorker.RequestBackgroundUpload();
         }
 
         internal AnalyticsDiagnostics GetDiagnostics()

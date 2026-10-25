@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.IO;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -86,11 +87,22 @@ namespace Daliys.Analytics.Internal.Transport
         private string PathFor(string kind, string id) => Path.Combine(_directory, kind + "-" + id + ".bin");
     }
 
+    /// <summary>A cancellation token that can be swapped atomically.</summary>
+    internal sealed class CancellationTokenSourceBox
+    {
+        internal static readonly CancellationTokenSourceBox None = new CancellationTokenSourceBox(CancellationToken.None);
+        internal readonly CancellationToken Token;
+        internal CancellationTokenSourceBox(CancellationToken token) { Token = token; }
+    }
+
     /// <summary>HttpClient-backed <see cref="IV7Http"/>.</summary>
     internal sealed class HttpV7Transport : IV7Http
     {
         private readonly HttpClient _client;
         private readonly string _baseUrl;
+
+        /// <summary>Cancels requests still running when it is signalled (a background upload has a short allowance).</summary>
+        internal volatile CancellationTokenSourceBox Deadline = CancellationTokenSourceBox.None;
 
         /// <summary>The client every analytics request goes through. A redirect is never followed: a POST body (and the
         /// credential) must go to the configured server only, so a 3xx surfaces as a plain non-success status.</summary>
@@ -118,7 +130,7 @@ namespace Daliys.Analytics.Internal.Transport
             {
                 if (!string.IsNullOrEmpty(credential)) request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", credential);
                 if (headers != null) foreach (var header in headers) request.Headers.TryAddWithoutValidation(header.Key, header.Value);
-                using (var response = _client.SendAsync(request).GetAwaiter().GetResult())
+                using (var response = _client.SendAsync(request, Deadline.Token).GetAwaiter().GetResult())
                 {
                     var body = response.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
                     TimeSpan? retryAfter = response.Headers.RetryAfter?.Delta;
