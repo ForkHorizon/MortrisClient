@@ -1,23 +1,23 @@
-{"time":"2026-10-24T22:11:21.752638+02:00","level":"INFO","msg":"retention mode","require_verified_export":false}
-{"time":"2026-10-24T22:11:21.752714+02:00","level":"INFO","msg":"gameplay results mode","imported_results_only":false}
-{"time":"2026-10-24T22:11:21.752797+02:00","level":"INFO","msg":"listening","addr":"0.0.0.0:18082"}
-{"time":"2026-10-24T22:11:21.752874+02:00","level":"WARN","msg":"disk state changed","from":"normal","to":"critical","percent_used":95.25439303972088,"free_bytes":47200288768}
-{"time":"2026-10-24T22:11:21.754556+02:00","level":"INFO","msg":"precompute: project idle in window, writing empty cache","project_id":"puzzle_gravity_test"}
-{"time":"2026-10-24T22:11:21.754933+02:00","level":"INFO","msg":"maintenance run","kind":"unactivated_cleanup","rows_affected":0,"duration_ms":2}
-{"time":"2026-10-24T22:11:21.755866+02:00","level":"INFO","msg":"maintenance run","kind":"retention_delete","rows_affected":0,"duration_ms":0}
-{"time":"2026-10-24T22:11:32.518935+02:00","level":"INFO","msg":"request","request_id":"d41e464588ba8f52","method":"POST","route":"POST /v1/installs/register","status":200,"latency_ms":2}
-{"time":"2026-10-24T22:11:32.531049+02:00","level":"INFO","msg":"request","request_id":"f6d73aa6c22319ac","method":"POST","route":"POST /v2/streams/sync","status":200,"latency_ms":2,"epoch":1,"ack_through":0}
-{"time":"2026-10-24T22:11:32.533897+02:00","level":"INFO","msg":"request","request_id":"620837fd5ba635f6","method":"GET","route":"GET /v2/assets/{kind}/{id}","status":200,"latency_ms":0,"bytes":12039}
-{"time":"2026-10-24T22:11:32.593035+02:00","level":"INFO","msg":"request","request_id":"5fe7104fbb3acc4b","method":"GET","route":"GET /v2/assets/{kind}/{id}","status":200,"latency_ms":0,"bytes":16384}
-{"time":"2026-10-24T22:11:32.65007+02:00","level":"INFO","msg":"request","request_id":"8717f5ec7a807eff","method":"PUT","route":"PUT /v2/streams/aliases","status":200,"latency_ms":1,"alias_count":1}
-{"time":"2026-10-24T22:11:32.659866+02:00","level":"INFO","msg":"request","request_id":"c0dc4755e80c5552","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":8,"ack_through":6,"accepted":6,"duplicates":0,"rejected":0}
-{"time":"2026-10-24T22:11:37.893465+02:00","level":"INFO","msg":"request","request_id":"19b558274bd13036","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":3,"accepted":6,"duplicates":0,"rejected":0,"ack_through":12}
-{"time":"2026-10-24T22:11:47.52184+02:00","level":"INFO","msg":"request","request_id":"b69787888df3c444","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":3,"accepted":2,"duplicates":0,"rejected":0,"ack_through":14}
-{"time":"2026-10-24T22:11:52.777539+02:00","level":"INFO","msg":"request","request_id":"85d696d8733999a8","method":"PUT","route":"PUT /v2/streams/aliases","status":200,"latency_ms":1,"alias_count":2}
-{"time":"2026-10-24T22:11:52.78252+02:00","level":"INFO","msg":"request","request_id":"b91126f56fd7fdfa","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":3,"accepted":8,"duplicates":0,"rejected":0,"ack_through":22}
-{"time":"2026-10-24T22:12:08.085477+02:00","level":"INFO","msg":"request","request_id":"d7e88d1d1911e1d6","method":"POST","route":"POST /v1/installs/register","status":200,"latency_ms":1}
-{"time":"2026-10-24T22:12:08.095626+02:00","level":"INFO","msg":"request","request_id":"fb399dcc0cd9c642","method":"POST","route":"POST /v2/streams/sync","status":200,"latency_ms":1,"epoch":1,"ack_through":22}
-{"time":"2026-10-24T22:12:08.115987+02:00","level":"INFO","msg":"request","request_id":"d506e943789a640d","method":"PUT","route":"PUT /v2/streams/aliases","status":200,"latency_ms":0,"alias_count":2}
-{"time":"2026-10-24T22:12:08.127889+02:00","level":"INFO","msg":"request","request_id":"22e673d7487e683b","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":9,"duplicates":0,"rejected":0,"ack_through":33,"accepted":11}
-{"time":"2026-10-24T22:12:13.42911+02:00","level":"INFO","msg":"request","request_id":"a811f295362acd28","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":2,"rejected":0,"ack_through":38,"accepted":5,"duplicates":0}
-{"time":"2026-10-24T22:12:23.086551+02:00","level":"INFO","msg":"request","request_id":"29354a67254a213d","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":9,"accepted":3,"duplicates":0,"rejected":0,"ack_through":41}
+{"time":"2026-10-25T14:33:34.013599+01:00","level":"INFO","msg":"retention mode","require_verified_export":false}
+{"time":"2026-10-25T14:33:34.013675+01:00","level":"INFO","msg":"gameplay results mode","imported_results_only":false}
+{"time":"2026-10-25T14:33:34.013764+01:00","level":"INFO","msg":"listening","addr":"0.0.0.0:18082"}
+{"time":"2026-10-25T14:33:34.013798+01:00","level":"WARN","msg":"disk state changed","from":"normal","to":"critical","percent_used":94.55377086878029,"free_bytes":54168748032}
+{"time":"2026-10-25T14:33:34.015325+01:00","level":"INFO","msg":"precompute: project idle in window, writing empty cache","project_id":"puzzle_gravity_test"}
+{"time":"2026-10-25T14:33:34.015758+01:00","level":"INFO","msg":"maintenance run","kind":"unactivated_cleanup","rows_affected":0,"duration_ms":2}
+{"time":"2026-10-25T14:33:34.01666+01:00","level":"INFO","msg":"maintenance run","kind":"retention_delete","rows_affected":0,"duration_ms":0}
+{"time":"2026-10-25T14:33:44.626775+01:00","level":"INFO","msg":"request","request_id":"16c721c4547c25db","method":"POST","route":"POST /v1/installs/register","status":200,"latency_ms":2}
+{"time":"2026-10-25T14:33:44.636105+01:00","level":"INFO","msg":"request","request_id":"05fcb44dec582553","method":"POST","route":"POST /v2/streams/sync","status":200,"latency_ms":5,"epoch":1,"ack_through":0}
+{"time":"2026-10-25T14:33:44.638162+01:00","level":"INFO","msg":"request","request_id":"551ceec7aa1c91ae","method":"GET","route":"GET /v2/assets/{kind}/{id}","status":200,"latency_ms":0,"bytes":12039}
+{"time":"2026-10-25T14:33:44.687984+01:00","level":"INFO","msg":"request","request_id":"8a621ee46d592c14","method":"GET","route":"GET /v2/assets/{kind}/{id}","status":200,"latency_ms":0,"bytes":16384}
+{"time":"2026-10-25T14:33:44.743881+01:00","level":"INFO","msg":"request","request_id":"6b02d533b185c4ad","method":"PUT","route":"PUT /v2/streams/aliases","status":200,"latency_ms":0,"alias_count":1}
+{"time":"2026-10-25T14:33:44.754092+01:00","level":"INFO","msg":"request","request_id":"756f74c2fc05b905","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":9,"rejected":0,"ack_through":6,"accepted":6,"duplicates":0}
+{"time":"2026-10-25T14:33:50.008114+01:00","level":"INFO","msg":"request","request_id":"77e911d80bb0ac7a","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":4,"accepted":6,"duplicates":0,"rejected":0,"ack_through":12}
+{"time":"2026-10-25T14:33:59.643983+01:00","level":"INFO","msg":"request","request_id":"b64b5a11a3d72976","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":3,"accepted":2,"duplicates":0,"rejected":0,"ack_through":14}
+{"time":"2026-10-25T14:34:04.774132+01:00","level":"INFO","msg":"request","request_id":"4297a38a9745c9fb","method":"PUT","route":"PUT /v2/streams/aliases","status":200,"latency_ms":4,"alias_count":2}
+{"time":"2026-10-25T14:34:04.779872+01:00","level":"INFO","msg":"request","request_id":"a08956b0bc642410","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":4,"accepted":8,"duplicates":0,"rejected":0,"ack_through":22}
+{"time":"2026-10-25T14:34:19.92248+01:00","level":"INFO","msg":"request","request_id":"e0ca772f3758213d","method":"POST","route":"POST /v1/installs/register","status":200,"latency_ms":0}
+{"time":"2026-10-25T14:34:19.925503+01:00","level":"INFO","msg":"request","request_id":"cfc811a44cdaf530","method":"POST","route":"POST /v2/streams/sync","status":200,"latency_ms":0,"epoch":1,"ack_through":22}
+{"time":"2026-10-25T14:34:19.9392+01:00","level":"INFO","msg":"request","request_id":"11921b614b6f265c","method":"PUT","route":"PUT /v2/streams/aliases","status":200,"latency_ms":0,"alias_count":2}
+{"time":"2026-10-25T14:34:19.948456+01:00","level":"INFO","msg":"request","request_id":"05e8945a8bcd56d4","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":7,"accepted":10,"duplicates":0,"rejected":0,"ack_through":32}
+{"time":"2026-10-25T14:34:25.309195+01:00","level":"INFO","msg":"request","request_id":"90bfb55eafa4cfe2","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":4,"ack_through":38,"accepted":6,"duplicates":0,"rejected":0}
+{"time":"2026-10-25T14:34:34.931378+01:00","level":"INFO","msg":"request","request_id":"e2e8501859420d23","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":7,"accepted":4,"duplicates":0,"rejected":0,"ack_through":42}

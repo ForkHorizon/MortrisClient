@@ -1,0 +1,6 @@
+loaded events=1200 mode=none scenario=perframe n=1200 k=100 gap=6 perframe=1
+summary mode=none scenario=perframe events=1200 tracked=1200 scenario_ms=40097 cpu_ticks_scenario=954 cpu_ticks_drain=0 cpu_ticks_total=954 track_us_p50=0.3 track_us_p95=0.4 track_us_p99=0.5 track_us_max=1.7 frame_ms_p50=0.00 frame_ms_p99=0.01 frame_ms_max=0.11 gc0=0 gc1=0 gc2=0 main_alloc_bytes=0 alloc_counter_works=0 unity_gc_alloc_bytes_main_frames=776014 unity_gc_alloc_count_main_frames=8855 art_bytes_allocated=65536 art_objects_allocated=-5148 art_gc_count=1 mono_start_kb=10780 mono_peak_kb=0 pss_start_kb=169352 pss_peak_kb=171806 calib=2.726
+threads top=31174:UnityMain=452;31169:UnityGfxDeviceW=443;31129:UnityMain=44;31172:AChoreographer_=3;31117:Jit thread pool=2;31186:Thread-4=2;31123:binder:31111_1=1;31147:Background Job.=1
+done
+host_load_start=4.64 5.71 5.63 host_load_end=6.59 6.10 5.78
+db_events=0 packets_v2=0 batches_v1=0

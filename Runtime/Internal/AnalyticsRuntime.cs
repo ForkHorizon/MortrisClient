@@ -72,6 +72,7 @@ namespace Daliys.Analytics.Internal
         {
             var bytes = sessionId.ToByteArray();
             for (var i = 0; i < bytes.Length; i++) bytes[i] ^= 0xA5;
+            bytes[7] = (byte)((bytes[7] & 0x0F) | 0x40); bytes[8] = (byte)((bytes[8] & 0x3F) | 0x80); // still a version-4 UUID: the servers validate it
             return new Guid(bytes);
         }
 
