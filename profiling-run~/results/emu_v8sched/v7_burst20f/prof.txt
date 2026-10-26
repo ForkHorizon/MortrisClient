@@ -1,0 +1,23 @@
+loaded events=2800 mode=v7 scenario=perframe n=2800 k=100 gap=6 perframe=20
+summary mode=v7 scenario=perframe events=2800 tracked=2800 scenario_ms=4662 cpu_ticks_scenario=138 cpu_ticks_drain=2 cpu_ticks_total=140 track_us_p50=14.7 track_us_p95=44.2 track_us_p99=88.1 track_us_max=407.2 frame_ms_p50=0.34 frame_ms_p99=0.77 frame_ms_max=0.89 gc0=5 gc1=5 gc2=5 main_alloc_bytes=0 alloc_counter_works=0 unity_gc_alloc_bytes_main_frames=11079485 unity_gc_alloc_count_main_frames=65922 art_bytes_allocated=16375808 art_objects_allocated=-8285 art_gc_count=4 mono_start_kb=15276 mono_peak_kb=16760 pss_start_kb=176518 pss_peak_kb=189922 calib=3.089
+S|track_total|2800|51124|48135|1515520
+S|track_enqueue|2800|3509|2634|561152
+S|persist_total|23|1452015|295252|5996544
+S|snapshot_batch|22|546|384|2260992
+S|jni_enqueue_batch|22|208072|170571|24576
+S|uploader_flush|22|1241017|122350|4268032
+S|jni_get_state|22|4546|3911|4096
+S|jni_read_batch|30|12066|11178|2379776
+S|jni_delete_ack|28|33635|13264|4096
+S|v7_encode(parse+pack+zstd)|29|76962|74527|2449408
+S|v7_post_packet|29|1097299|10243|757760
+C|persist_calls|23
+C|persist_events|2800
+C|flush_calls|22
+C|bytes_v7_packets|58931
+C|v7_packets|29
+C|schedule_calls|126
+threads top=17899:UnityMain=52;17893:UnityGfxDeviceW=40;17852:UnityMain=12;17911:Thread-29=10;17910:Thread-20=8;17918:Thread-28=6;17912:Thread-26=5;17840:Jit thread pool=2;17913:Thread-18=2;17841:HeapTaskDaemon=1
+done
+host_load_start=9.07 7.81 6.93 host_load_end=10.14 8.11 7.05
+db_events=2802 packets_v2=29 batches_v1=2

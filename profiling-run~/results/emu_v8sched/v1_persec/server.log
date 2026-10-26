@@ -1,0 +1,29 @@
+{"time":"2026-10-26T01:34:02.93725+01:00","level":"INFO","msg":"retention mode","require_verified_export":false}
+{"time":"2026-10-26T01:34:02.937327+01:00","level":"INFO","msg":"gameplay results mode","imported_results_only":false}
+{"time":"2026-10-26T01:34:02.937408+01:00","level":"INFO","msg":"listening","addr":"0.0.0.0:18082"}
+{"time":"2026-10-26T01:34:02.93747+01:00","level":"WARN","msg":"disk state changed","from":"normal","to":"critical","percent_used":94.86416427617374,"free_bytes":51081543680}
+{"time":"2026-10-26T01:34:02.939072+01:00","level":"INFO","msg":"precompute: project idle in window, writing empty cache","project_id":"puzzle_gravity_test"}
+{"time":"2026-10-26T01:34:02.939397+01:00","level":"INFO","msg":"maintenance run","kind":"unactivated_cleanup","rows_affected":0,"duration_ms":2}
+{"time":"2026-10-26T01:34:02.940345+01:00","level":"INFO","msg":"maintenance run","kind":"retention_delete","rows_affected":0,"duration_ms":0}
+{"time":"2026-10-26T01:34:11.704481+01:00","level":"INFO","msg":"request","request_id":"92d11a9630a9b9ce","method":"POST","route":"POST /v1/installs/register","status":200,"latency_ms":2}
+{"time":"2026-10-26T01:34:11.709069+01:00","level":"INFO","msg":"request","request_id":"d4a8f2a67d1b5486","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":2,"duplicates":0,"rejected":0,"accepted":1}
+{"time":"2026-10-26T01:34:11.741928+01:00","level":"INFO","msg":"request","request_id":"1998d2f1b64e27a0","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":5,"accepted":1,"duplicates":0,"rejected":0}
+{"time":"2026-10-26T01:34:17.104409+01:00","level":"INFO","msg":"request","request_id":"d61188a4a6960873","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":2,"accepted":4,"duplicates":0,"rejected":0}
+{"time":"2026-10-26T01:34:22.273808+01:00","level":"INFO","msg":"request","request_id":"bcf4278c8fb1c817","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":3,"accepted":5,"duplicates":0,"rejected":0}
+{"time":"2026-10-26T01:34:27.44102+01:00","level":"INFO","msg":"request","request_id":"c703660e7617d870","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":2,"duplicates":0,"rejected":0,"accepted":5}
+{"time":"2026-10-26T01:34:32.608564+01:00","level":"INFO","msg":"request","request_id":"89a3434b229b0c63","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":4,"duplicates":0,"rejected":0,"accepted":5}
+{"time":"2026-10-26T01:34:37.768898+01:00","level":"INFO","msg":"request","request_id":"9b65223093b2001c","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":2,"accepted":5,"duplicates":0,"rejected":0}
+{"time":"2026-10-26T01:34:42.944099+01:00","level":"INFO","msg":"request","request_id":"16e006f5390b77d5","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":2,"accepted":5,"duplicates":0,"rejected":0}
+{"time":"2026-10-26T01:34:48.110334+01:00","level":"INFO","msg":"request","request_id":"4c811ba2b0c4e359","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":5,"accepted":5,"duplicates":0,"rejected":0}
+{"time":"2026-10-26T01:34:53.273588+01:00","level":"INFO","msg":"request","request_id":"e4226729253872e9","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":2,"accepted":5,"duplicates":0,"rejected":0}
+{"time":"2026-10-26T01:34:58.444573+01:00","level":"INFO","msg":"request","request_id":"5385f6033afe8954","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":2,"accepted":5,"duplicates":0,"rejected":0}
+{"time":"2026-10-26T01:35:03.608751+01:00","level":"INFO","msg":"request","request_id":"db7aa425d4eb1866","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":5,"rejected":0,"accepted":5,"duplicates":0}
+{"time":"2026-10-26T01:35:08.740704+01:00","level":"INFO","msg":"request","request_id":"3c1251ebaa482ae8","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":3,"accepted":5,"duplicates":0,"rejected":0}
+{"time":"2026-10-26T01:35:13.84509+01:00","level":"INFO","msg":"request","request_id":"10a32ea1befe08a8","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":3,"accepted":5,"duplicates":0,"rejected":0}
+{"time":"2026-10-26T01:35:19.074425+01:00","level":"INFO","msg":"request","request_id":"8b33c5c043cc99db","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":3,"accepted":5,"duplicates":0,"rejected":0}
+{"time":"2026-10-26T01:35:24.240346+01:00","level":"INFO","msg":"request","request_id":"75fe8839a36ba9c0","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":3,"rejected":0,"accepted":5,"duplicates":0}
+{"time":"2026-10-26T01:35:29.411503+01:00","level":"INFO","msg":"request","request_id":"a43da14263c58e6f","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":3,"accepted":5,"duplicates":0,"rejected":0}
+{"time":"2026-10-26T01:35:34.577269+01:00","level":"INFO","msg":"request","request_id":"febdab9ea1f581d2","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":5,"rejected":0,"accepted":5,"duplicates":0}
+{"time":"2026-10-26T01:35:39.744374+01:00","level":"INFO","msg":"request","request_id":"be5e5fa8b705761f","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":3,"accepted":5,"duplicates":0,"rejected":0}
+{"time":"2026-10-26T01:35:44.904307+01:00","level":"INFO","msg":"request","request_id":"d5e74386a58fd724","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":3,"accepted":5,"duplicates":0,"rejected":0}
+{"time":"2026-10-26T01:35:46.775798+01:00","level":"INFO","msg":"request","request_id":"cbff2cacc3e410b5","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":5,"accepted":1,"duplicates":0,"rejected":0}

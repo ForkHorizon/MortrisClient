@@ -1,0 +1,20 @@
+{"time":"2026-10-26T01:26:29.620453+01:00","level":"INFO","msg":"retention mode","require_verified_export":false}
+{"time":"2026-10-26T01:26:29.620539+01:00","level":"INFO","msg":"gameplay results mode","imported_results_only":false}
+{"time":"2026-10-26T01:26:29.620626+01:00","level":"INFO","msg":"listening","addr":"0.0.0.0:18082"}
+{"time":"2026-10-26T01:26:29.620692+01:00","level":"WARN","msg":"disk state changed","from":"normal","to":"critical","percent_used":94.80649099415301,"free_bytes":51655168000}
+{"time":"2026-10-26T01:26:29.622595+01:00","level":"INFO","msg":"precompute: project idle in window, writing empty cache","project_id":"puzzle_gravity_test"}
+{"time":"2026-10-26T01:26:29.622851+01:00","level":"INFO","msg":"maintenance run","kind":"unactivated_cleanup","rows_affected":0,"duration_ms":2}
+{"time":"2026-10-26T01:26:29.623889+01:00","level":"INFO","msg":"maintenance run","kind":"retention_delete","rows_affected":0,"duration_ms":0}
+{"time":"2026-10-26T01:26:38.585641+01:00","level":"INFO","msg":"request","request_id":"9b2975a872bd7dab","method":"POST","route":"POST /v1/installs/register","status":200,"latency_ms":2}
+{"time":"2026-10-26T01:26:38.592835+01:00","level":"INFO","msg":"request","request_id":"854e394e90578fcd","method":"POST","route":"POST /v2/streams/sync","status":200,"latency_ms":3,"epoch":1,"ack_through":0}
+{"time":"2026-10-26T01:26:38.598148+01:00","level":"INFO","msg":"request","request_id":"81e111e0a5a2acec","method":"GET","route":"GET /v2/assets/{kind}/{id}","status":200,"latency_ms":0,"bytes":11528}
+{"time":"2026-10-26T01:26:38.646468+01:00","level":"INFO","msg":"request","request_id":"046353f1706e326f","method":"GET","route":"GET /v2/assets/{kind}/{id}","status":200,"latency_ms":0,"bytes":16384}
+{"time":"2026-10-26T01:26:38.702455+01:00","level":"INFO","msg":"request","request_id":"ca909e2fabaa3439","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":2,"accepted":1,"duplicates":0,"rejected":0}
+{"time":"2026-10-26T01:26:38.706237+01:00","level":"INFO","msg":"request","request_id":"3bea21691a8f705a","method":"POST","route":"POST /v2/streams/sync","status":200,"latency_ms":1,"epoch":1,"ack_through":1}
+{"time":"2026-10-26T01:26:38.71622+01:00","level":"INFO","msg":"request","request_id":"82dac0192b7287ec","method":"PUT","route":"PUT /v2/streams/aliases","status":200,"latency_ms":2,"alias_count":1}
+{"time":"2026-10-26T01:26:38.723235+01:00","level":"INFO","msg":"request","request_id":"a11c1b40f59dd899","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":3,"rejected":0,"ack_through":2,"accepted":1,"duplicates":0}
+{"time":"2026-10-26T01:26:41.035932+01:00","level":"INFO","msg":"request","request_id":"565d1d44c582d21a","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":36,"duplicates":0,"rejected":0,"ack_through":102,"accepted":100}
+{"time":"2026-10-26T01:26:53.067888+01:00","level":"INFO","msg":"request","request_id":"380bea3f0ea6b444","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":35,"duplicates":0,"rejected":0,"ack_through":202,"accepted":100}
+{"time":"2026-10-26T01:27:05.086589+01:00","level":"INFO","msg":"request","request_id":"598aa484abfbaa42","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":31,"rejected":0,"ack_through":302,"accepted":100,"duplicates":0}
+{"time":"2026-10-26T01:27:17.122581+01:00","level":"INFO","msg":"request","request_id":"8a23c8b8b9fd2ebd","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":32,"accepted":100,"duplicates":0,"rejected":0,"ack_through":402}
+{"time":"2026-10-26T01:27:29.130894+01:00","level":"INFO","msg":"request","request_id":"27842aeccde4a3ce","method":"POST","route":"POST /v2/events/packet","status":200,"latency_ms":36,"rejected":0,"ack_through":502,"accepted":100,"duplicates":0}

@@ -1,0 +1,25 @@
+catalog 81c8a203dc3d77b4 imported (12039 bytes)
+dictionary 933536cf9fae4ac0 imported (16384 bytes)
+/var/folders/zs/0wxbbps90t9c_pc2pxdfkhfc0000gn/T/tmp.3aTkgEdfAE/config.txt: 1 file pushed, 0 skipped. 0.7 MB/s (77 bytes in 0.000s)
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/work/replay_real_20k.jsonl: 1 file pushed, 0 skipped. 1379.6 MB/s (14935898 bytes in 0.010s)
+[01:38:31] launch
+[01:38:46] background (HOME)
+[01:38:48] events durable right after leaving (server has not been told yet unless an upload ran)
+13
+[01:38:55] return after the session timeout
+Warning: Activity not started, its current task has been brought to the front
+[01:39:04] kill -9 the process
+[01:39:07] relaunch
+[01:39:23] quit cleanly (BACK + force close via am kill is not clean; use the app's own quit path: HOME then wait)
+sys_session_start|dd113a72-fbcb-42c4-8923-565f2c6d212b|2026-10-26 01:38:35.052+01|{"cold_start": true}
+sys_app_background|dd113a72-fbcb-42c4-8923-565f2c6d212b|2026-10-26 01:38:46.137+01|{"reason": "pause", "active_ms": 11085}
+sys_session_end|dd113a72-fbcb-42c4-8923-565f2c6d212b|2026-10-26 01:38:46.137+01|{"reason": "timeout", "active_ms": 11085, "background": true, "duration_ms": 11085}
+sys_app_foreground|d64430b3-d2eb-4bbd-8343-8d7185e6b39e|2026-10-26 01:38:54.818+01|{"paused_ms": 8681, "new_session": true}
+sys_session_start|d64430b3-d2eb-4bbd-8343-8d7185e6b39e|2026-10-26 01:38:54.818+01|{"cold_start": false}
+sys_session_end|d64430b3-d2eb-4bbd-8343-8d7185e6b39e|2026-10-26 01:39:03.986+01|{"reason": "signaled", "active_ms": 9168, "background": false, "duration_ms": 9168}
+sys_session_start|4ee8f3fd-aa73-4dca-bd37-db6a46b02235|2026-10-26 01:39:11.018+01|{"cold_start": true}
+sys_app_background|4ee8f3fd-aa73-4dca-bd37-db6a46b02235|2026-10-26 01:39:23.84+01|{"reason": "pause", "active_ms": 12822}
+---
+41|3
+---
+2
