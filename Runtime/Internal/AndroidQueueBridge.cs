@@ -25,6 +25,9 @@ namespace Daliys.Analytics.Internal
         int DeleteThroughSequence(long ackThrough);
         /// <summary>Starts a fresh stream at the lowest queued sequence (epoch cleared, older ranges forgotten).</summary>
         void BeginNewStream();
+        /// <summary>Small durable key/value storage of the queue (V8 keeps its token, shape table and server counts here). Missing keys read as an empty string.</summary>
+        string GetMeta(string key);
+        void SetMeta(string key, string value);
     }
 
     internal sealed class AnalyticsQueueState
@@ -186,6 +189,10 @@ namespace Daliys.Analytics.Internal
             }
 
             public void BeginNewStream() => _queue.Call("beginNewStream");
+
+            public string GetMeta(string key) => _queue.Call<string>("getMeta", key) ?? "";
+
+            public void SetMeta(string key, string value) => _queue.Call("setMeta", key, value ?? "");
 
             public void Dispose()
             {

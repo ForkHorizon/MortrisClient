@@ -67,6 +67,9 @@ namespace M7Transport.Tests
         }
 
         public int PendingCount => _rows.Count;
+        internal readonly Dictionary<string, string> Meta = new Dictionary<string, string>();
+        public string GetMeta(string key) => Meta.TryGetValue(key, out var v) ? v : "";
+        public void SetMeta(string key, string value) { Calls.Add("SetMeta " + key); Meta[key] = value ?? ""; }
         public string SessionState = "", ExitInfo = "";
         public void SaveSessionState(string state) { Calls.Add("SaveSessionState"); SessionState = state; }
         public string LoadSessionState() => SessionState;

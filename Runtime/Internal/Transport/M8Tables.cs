@@ -98,16 +98,33 @@ namespace Daliys.Analytics.Internal.Transport
             return id;
         }
 
+        /// <summary>Drops the shapes after the first <paramref name="count"/> (those the server never accepted).</summary>
+        internal void TruncateTo(int count)
+        {
+            if (count >= _shapes.Count) return;
+            var keep = _shapes.GetRange(0, Math.Max(0, count));
+            Clear();
+            foreach (var shape in keep)
+            {
+                var fields = new List<KeyValuePair<string, int>>(shape.Keys.Length);
+                for (var i = 0; i < shape.Keys.Length; i++) fields.Add(new KeyValuePair<string, int>(shape.Keys[i], shape.Kinds[i]));
+                Add(shape.Name, fields);
+            }
+        }
+
         internal void Clear()
         {
             _shapes.Clear(); _byName.Clear(); _columnIndex.Clear(); _columnTypes.Clear(); _columnTypesArray = new int[0];
         }
 
         /// <summary>The catalog document of GET /v3/catalog (or of the local persisted copy): {"project_id", "shapes":[[name,[[key,kind]...]]...]}.</summary>
-        internal string ToJson(string project)
+        internal string ToJson(string project) => ToJson(project, _shapes.Count);
+
+        /// <summary>The catalog document of the first <paramref name="count"/> shapes.</summary>
+        internal string ToJson(string project, int count)
         {
             var json = new StringBuilder("{\"project_id\":").Append(MiniJson.Escape(project)).Append(",\"shapes\":[");
-            for (var i = 0; i < _shapes.Count; i++)
+            for (var i = 0; i < count; i++)
             {
                 var s = _shapes[i];
                 if (i > 0) json.Append(',');
@@ -150,12 +167,14 @@ namespace Daliys.Analytics.Internal.Transport
         }
 
         /// <summary>The first 8 bytes of the SHA-256 of the catalog document, in hex: the id the server reports as <c>catalog</c>.</summary>
-        internal string CatalogId(string project)
+        internal string CatalogId(string project) => CatalogId(project, _shapes.Count);
+
+        internal string CatalogId(string project, int count)
         {
             // the server hashes the document it generates (encoding/json, compact); ours is generated the same way, but the id is only an equality check
             using (var sha = SHA256.Create())
             {
-                var hash = sha.ComputeHash(new UTF8Encoding(false).GetBytes(ToJson(project)));
+                var hash = sha.ComputeHash(new UTF8Encoding(false).GetBytes(ToJson(project, count)));
                 var builder = new StringBuilder(16);
                 for (var i = 0; i < 8; i++) builder.Append(hash[i].ToString("x2", CultureInfo.InvariantCulture));
                 return builder.ToString();

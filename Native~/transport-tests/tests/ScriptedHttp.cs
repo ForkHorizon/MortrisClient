@@ -58,6 +58,13 @@ namespace M7Transport.Tests
         public V7Response PostJson(string path, string json, string credential) => Record("POST", path, json, null, null, credential);
         public V7Response PutJson(string path, string json, string credential) => Record("PUT", path, json, null, null, credential);
         public V7Response PostPacket(string path, byte[] packet, IReadOnlyDictionary<string, string> headers, string credential) => Record("POST", path, null, packet, headers, credential);
+        internal readonly List<Call> BinaryCalls = new List<Call>();
+        public V7Response PostBinary(string path, byte[] body, string contentType, string credential)
+        {
+            var call = new Call { Method = "POST", Path = path, Packet = body, Headers = new Dictionary<string, string> { ["Content-Type"] = contentType }, Credential = credential };
+            Calls.Add(call); BinaryCalls.Add(call);
+            return Override?.Invoke(call) ?? Error(404, "not_found");
+        }
         public V7Response Get(string pathAndQuery, string credential) => Record("GET", pathAndQuery, null, null, null, credential);
 
         private V7Response Default(Call call)

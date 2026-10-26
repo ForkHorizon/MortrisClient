@@ -192,6 +192,7 @@ namespace M7Transport.Tests
             public V7Response PostJson(string p, string j, string c) => _inner.PostJson(p, j, c);
             public V7Response PutJson(string p, string j, string c) => _inner.PutJson(p, j, c);
             public V7Response Get(string p, string c) => _inner.Get(p, c);
+            public V7Response PostBinary(string p, byte[] b, string t, string c) => _inner.PostBinary(p, b, t, c);
             public V7Response PostPacket(string path, byte[] packet, IReadOnlyDictionary<string, string> headers, string credential)
             {
                 var real = _inner.PostPacket(path, packet, headers, credential);      // the server stored it...

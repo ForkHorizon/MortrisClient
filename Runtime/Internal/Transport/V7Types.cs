@@ -34,6 +34,8 @@ namespace Daliys.Analytics.Internal.Transport
         V7Response PostJson(string path, string json, string credential);
         V7Response PutJson(string path, string json, string credential);
         V7Response PostPacket(string path, byte[] packet, IReadOnlyDictionary<string, string> headers, string credential);
+        /// <summary>A binary body with the given media type (V8 packets).</summary>
+        V7Response PostBinary(string path, byte[] body, string contentType, string credential);
         V7Response Get(string pathAndQuery, string credential);
     }
 
@@ -106,7 +108,7 @@ namespace Daliys.Analytics.Internal.Transport
 
         /// <summary>The client every analytics request goes through. A redirect is never followed: a POST body (and the
         /// credential) must go to the configured server only, so a 3xx surfaces as a plain non-success status.</summary>
-        internal static HttpClient CreateClient() => new HttpClient(new HttpClientHandler { AllowAutoRedirect = false });
+        internal static HttpClient CreateClient() => new HttpClient(new HttpClientHandler { AllowAutoRedirect = false, AutomaticDecompression = System.Net.DecompressionMethods.GZip });
 
         internal HttpV7Transport(HttpClient client, string serverUrl) { _client = client; _baseUrl = serverUrl.TrimEnd('/'); }
 
@@ -118,6 +120,13 @@ namespace Daliys.Analytics.Internal.Transport
             var content = new ByteArrayContent(packet);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/vnd.mortris.m7");
             return Send(HttpMethod.Post, path, content, headers, credential);
+        }
+
+        public V7Response PostBinary(string path, byte[] body, string contentType, string credential)
+        {
+            var content = new ByteArrayContent(body);
+            content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+            return Send(HttpMethod.Post, path, content, null, credential);
         }
 
         public V7Response Get(string pathAndQuery, string credential) => Send(HttpMethod.Get, pathAndQuery, null, null, credential);
