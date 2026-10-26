@@ -329,6 +329,27 @@ namespace M7Transport.Tests
         }
 
         [Fact]
+        public void ADictionaryTrainedLaterIsAnnouncedInTheAcknowledgementAndFetchedOnce()
+        {
+            using (var rig = new Rig())
+            {
+                rig.Enqueue(10); rig.Send();
+                var dictionary = System.Text.Encoding.ASCII.GetBytes(new string('d', 400));
+                rig.Server.Dictionary = dictionary; rig.Server.DictionaryId = ScriptedHttp.Id(dictionary);
+                rig.Enqueue(10);
+                Assert.Equal(V7ResultKind.Delivered, rig.Send().Kind);          // this packet still names no dictionary; the answer announces one
+                Assert.Equal(0, rig.Calls("/v3/assets/dictionary/" + rig.Server.DictionaryId));
+                rig.Enqueue(10);
+                Assert.Equal(V7ResultKind.Delivered, rig.Send().Kind);          // the encoder is rebuilt with it: one fetch
+                Assert.Equal(1, rig.Calls("/v3/assets/dictionary/" + rig.Server.DictionaryId));
+                rig.Enqueue(10);
+                Assert.Equal(V7ResultKind.Delivered, rig.Send().Kind);
+                Assert.Equal(1, rig.Calls("/v3/assets/dictionary/" + rig.Server.DictionaryId));       // cached
+                Assert.Equal(40, rig.Server.StoredSequences.Distinct().Count());
+            }
+        }
+
+        [Fact]
         public void AnAcknowledgementThatSettlesNothingEventuallyYieldsToV1()
         {
             using (var rig = new Rig())

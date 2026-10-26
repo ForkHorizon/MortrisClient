@@ -381,6 +381,12 @@ namespace Daliys.Analytics.Internal.Transport
             var result = MiniJson.ParseObject(response.Text);
             var ack = ToLong(result["ack"]);
             var removed = queue.DeleteThroughSequence(ack);
+            if (result.TryGetValue("dict", out var announced) && announced is string newDictionary && newDictionary.Length == 16 && newDictionary != _dictionaryId)
+            {
+                // a dictionary was trained since the last hello: use it from the next packet (its bytes are fetched when the encoder is rebuilt)
+                _dictionaryId = newDictionary; _dictionary = null;
+                _encoder?.Dispose(); _encoder = null;
+            }
             // the server holds what the frame carried now
             _serverShapes = encoded.ShapeCount;
             _serverAliases = encoded.AliasCount;

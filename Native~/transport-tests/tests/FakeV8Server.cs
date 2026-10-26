@@ -230,7 +230,7 @@ namespace M7Transport.Tests
             foreach (var range in dropped) for (var n = range.Key; n <= range.Value; n++) stream.Dropped.Add(n);
             stream.High = Math.Max(stream.High, high);
             foreach (var s in sequences) { stream.Received.Add(s); StoredSequences.Add(s); }
-            return Json(200, "{\"ack\":" + Ack(stream) + ",\"p\":" + PolicyVersion + "}");
+            return Json(200, "{\"ack\":" + Ack(stream) + ",\"p\":" + PolicyVersion + (dictionary != DictionaryId ? ",\"dict\":\"" + DictionaryId + "\"" : "") + "}");
         }
 
         /// <summary>Decodes the first integer column (mode 0 or 1: varints, direct or delta; mode 2 or 3: bit-packed).</summary>

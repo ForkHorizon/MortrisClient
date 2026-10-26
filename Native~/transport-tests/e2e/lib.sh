@@ -22,6 +22,8 @@ start_stack() {
   (cd "$SERVER_REPO" && "$TMP/analytics-server" migrate >/dev/null)
   $PSQL -d mortris_e2e -c "INSERT INTO projects (id, environment, display_name, strict_catalog, enabled) VALUES ('synth_indie_runner', 'test', 'synth', false, true)"
   [ "${M7_SKIP_ASSETS:-0}" = 1 ] || (cd "$SERVER_REPO" && "$TMP/analytics-server" import-transport-assets --project synth_indie_runner --catalog "$HERE/fixtures/catalog-plain.json" --dictionary "$HERE/fixtures/dictionary-plain.bin")
+  # the V8 transport (/v3) needs a master key; servers without V8 simply ignore the variable
+  export MORTRIS_TRANSPORT_MASTER_KEYS=${MORTRIS_TRANSPORT_MASTER_KEYS:-k:0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20}
   (cd "$SERVER_REPO" && "$TMP/analytics-server" serve >"$TMP/server.log" 2>&1 &); sleep 2
   SERVER_PID=$(pgrep -f "$TMP/analytics-server serve" | head -1)
   for i in 1 2 3 4 5 6 7 8 9 10; do curl -fsS "http://127.0.0.1:$HTTP_PORT/health/live" >/dev/null 2>&1 && break; sleep 1; done
