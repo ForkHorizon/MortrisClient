@@ -1,0 +1,33 @@
+{
+ "label": "net_loss_mortris_v1",
+ "sdk": "mortris_v1",
+ "host": "127.0.0.1:18191",
+ "net": "reverse",
+ "data": "puzzle_slice_11.jsonl",
+ "kv": [
+  "marker=1",
+  "flush_at_end=1",
+  "scenario=perframe",
+  "perframe=20",
+  "n=3000"
+ ],
+ "battery_start": "  level: 100   temperature: 250   Capacity level: -1 ",
+ "db0": 21637,
+ "tail_s": 121.79372119903564,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 250   Capacity level: -1 ",
+ "final_stats": {
+  "events": 0,
+  "requests": 33,
+  "bytes_in": 283083,
+  "bytes_out": 126920,
+  "connections": 44,
+  "last": 1793001140.144468,
+  "last_activity_age_s": 0.0,
+  "kinds": {}
+ },
+ "db1": 24638,
+ "fatal": null,
+ "wall_s": 144.07868599891663,
+ "window_wall_s": 4.19175910949707
+}

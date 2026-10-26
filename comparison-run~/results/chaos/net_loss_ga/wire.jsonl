@@ -1,0 +1,92 @@
+{"t": 7.884, "conn": 1, "new_connection": true, "method": "POST", "path": "/ga/remote_configs/v1/init", "req_header_bytes": 442, "req_body_bytes": 114, "resp_header_bytes": 71, "resp_body_bytes": 73, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 132, "events": 0, "user_agent": "Dalvik/2.1.0 (Linux; U; Android 17; sdk_gphone16k_arm64 Build/CP21.260330.005)"}
+{"t": 7.989, "conn": 1, "new_connection": false, "method": "POST", "path": "/ga/v2/0123456789abcdef0123456789abcdef/events", "req_header_bytes": 364, "req_body_bytes": 405, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 659, "events": 1, "user_agent": "Dalvik/2.1.0 (Linux; U; Android 17; sdk_gphone16k_arm64 Build/CP21.260330.005)"}
+{"t": 19.648, "conn": 2, "closed": true}
+{"t": 22.652, "conn": 3, "closed": true}
+{"t": 25.662, "conn": 4, "closed": true}
+{"t": 28.672, "conn": 5, "closed": true}
+{"t": 31.683, "conn": 6, "closed": true}
+{"t": 33.791, "conn": 1, "closed": true}
+{"t": 33.816, "conn": 7, "new_connection": true, "method": "POST", "path": "/ga/v2/0123456789abcdef0123456789abcdef/events", "req_header_bytes": 366, "req_body_bytes": 36928, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 686374, "events": 502, "user_agent": "Dalvik/2.1.0 (Linux; U; Android 17; sdk_gphone16k_arm64 Build/CP21.260330.005)"}
+{"t": 34.693, "conn": 8, "closed": true}
+{"t": 37.702, "conn": 9, "closed": true}
+{"t": 40.709, "conn": 10, "closed": true}
+{"t": 43.721, "conn": 11, "closed": true}
+{"t": 46.723, "conn": 12, "closed": true}
+{"t": 49.726, "conn": 13, "closed": true}
+{"t": 52.734, "conn": 14, "closed": true}
+{"t": 55.741, "conn": 15, "closed": true}
+{"t": 58.75, "conn": 16, "closed": true}
+{"t": 61.759, "conn": 17, "closed": true}
+{"t": 64.769, "conn": 18, "closed": true}
+{"t": 67.77, "conn": 19, "closed": true}
+{"t": 70.774, "conn": 20, "closed": true}
+{"t": 73.785, "conn": 21, "closed": true}
+{"t": 76.797, "conn": 22, "closed": true}
+{"t": 79.8, "conn": 23, "closed": true}
+{"t": 82.811, "conn": 24, "closed": true}
+{"t": 85.823, "conn": 25, "closed": true}
+{"t": 88.834, "conn": 26, "closed": true}
+{"t": 91.837, "conn": 27, "closed": true}
+{"t": 94.195, "conn": 7, "new_connection": false, "method": "POST", "path": "/ga/v2/0123456789abcdef0123456789abcdef/events", "req_header_bytes": 366, "req_body_bytes": 37629, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 732089, "events": 506, "user_agent": "Dalvik/2.1.0 (Linux; U; Android 17; sdk_gphone16k_arm64 Build/CP21.260330.005)"}
+{"t": 94.845, "conn": 28, "closed": true}
+{"t": 97.854, "conn": 29, "closed": true}
+{"t": 100.859, "conn": 30, "closed": true}
+{"t": 103.143, "conn": 7, "new_connection": false, "method": "POST", "path": "/ga/v2/0123456789abcdef0123456789abcdef/events", "req_header_bytes": 366, "req_body_bytes": 41729, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 735454, "events": 525, "user_agent": "Dalvik/2.1.0 (Linux; U; Android 17; sdk_gphone16k_arm64 Build/CP21.260330.005)"}
+{"t": 103.868, "conn": 31, "closed": true}
+{"t": 106.876, "conn": 32, "closed": true}
+{"t": 109.884, "conn": 33, "closed": true}
+{"t": 112.081, "conn": 7, "new_connection": false, "method": "POST", "path": "/ga/v2/0123456789abcdef0123456789abcdef/events", "req_header_bytes": 366, "req_body_bytes": 41760, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 768862, "events": 542, "user_agent": "Dalvik/2.1.0 (Linux; U; Android 17; sdk_gphone16k_arm64 Build/CP21.260330.005)"}
+{"t": 112.889, "conn": 34, "closed": true}
+{"t": 115.899, "conn": 35, "closed": true}
+{"t": 118.903, "conn": 36, "closed": true}
+{"t": 121.087, "conn": 7, "new_connection": false, "method": "POST", "path": "/ga/v2/0123456789abcdef0123456789abcdef/events", "req_header_bytes": 366, "req_body_bytes": 40109, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 734879, "events": 512, "user_agent": "Dalvik/2.1.0 (Linux; U; Android 17; sdk_gphone16k_arm64 Build/CP21.260330.005)"}
+{"t": 121.917, "conn": 37, "closed": true}
+{"t": 124.917, "conn": 38, "closed": true}
+{"t": 127.925, "conn": 39, "closed": true}
+{"t": 130.123, "conn": 7, "new_connection": false, "method": "POST", "path": "/ga/v2/0123456789abcdef0123456789abcdef/events", "req_header_bytes": 366, "req_body_bytes": 40413, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 758070, "events": 535, "user_agent": "Dalvik/2.1.0 (Linux; U; Android 17; sdk_gphone16k_arm64 Build/CP21.260330.005)"}
+{"t": 130.935, "conn": 40, "closed": true}
+{"t": 133.95, "conn": 41, "closed": true}
+{"t": 136.961, "conn": 42, "closed": true}
+{"t": 139.051, "conn": 7, "new_connection": false, "method": "POST", "path": "/ga/v2/0123456789abcdef0123456789abcdef/events", "req_header_bytes": 365, "req_body_bytes": 9701, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 276403, "events": 295, "user_agent": "Dalvik/2.1.0 (Linux; U; Android 17; sdk_gphone16k_arm64 Build/CP21.260330.005)"}
+{"t": 139.97, "conn": 43, "closed": true}
+{"t": 142.977, "conn": 44, "closed": true}
+{"t": 145.986, "conn": 45, "closed": true}
+{"t": 148.991, "conn": 46, "closed": true}
+{"t": 151.999, "conn": 47, "closed": true}
+{"t": 155.016, "conn": 48, "closed": true}
+{"t": 158.03, "conn": 49, "closed": true}
+{"t": 161.04, "conn": 50, "closed": true}
+{"t": 164.053, "conn": 51, "closed": true}
+{"t": 167.058, "conn": 52, "closed": true}
+{"t": 170.067, "conn": 53, "closed": true}
+{"t": 173.071, "conn": 54, "closed": true}
+{"t": 176.079, "conn": 55, "closed": true}
+{"t": 179.088, "conn": 56, "closed": true}
+{"t": 182.089, "conn": 57, "closed": true}
+{"t": 185.094, "conn": 58, "closed": true}
+{"t": 188.099, "conn": 59, "closed": true}
+{"t": 191.108, "conn": 60, "closed": true}
+{"t": 194.112, "conn": 61, "closed": true}
+{"t": 197.123, "conn": 62, "closed": true}
+{"t": 200.129, "conn": 63, "closed": true}
+{"t": 203.133, "conn": 64, "closed": true}
+{"t": 206.143, "conn": 65, "closed": true}
+{"t": 209.157, "conn": 66, "closed": true}
+{"t": 212.16, "conn": 67, "closed": true}
+{"t": 215.168, "conn": 68, "closed": true}
+{"t": 218.174, "conn": 69, "closed": true}
+{"t": 221.184, "conn": 70, "closed": true}
+{"t": 224.189, "conn": 71, "closed": true}
+{"t": 227.199, "conn": 72, "closed": true}
+{"t": 230.207, "conn": 73, "closed": true}
+{"t": 233.227, "conn": 74, "closed": true}
+{"t": 236.234, "conn": 75, "closed": true}
+{"t": 239.243, "conn": 76, "closed": true}
+{"t": 242.249, "conn": 77, "closed": true}
+{"t": 245.26, "conn": 78, "closed": true}
+{"t": 248.265, "conn": 79, "closed": true}
+{"t": 251.268, "conn": 80, "closed": true}
+{"t": 254.273, "conn": 81, "closed": true}
+{"t": 257.274, "conn": 82, "closed": true}
+{"t": 260.285, "conn": 83, "closed": true}
+{"t": 262.535, "conn": 84, "closed": true}

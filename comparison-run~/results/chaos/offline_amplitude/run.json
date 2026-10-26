@@ -1,0 +1,34 @@
+{
+ "label": "offline_amplitude",
+ "sdk": "amplitude",
+ "host": "127.0.0.1:18191",
+ "net": "reverse",
+ "data": "puzzle_hold_100k.jsonl",
+ "kv": [
+  "marker=1",
+  "flush_at_end=1",
+  "scenario=rate",
+  "hz=10",
+  "n=3000"
+ ],
+ "battery_start": "  level: 100   temperature: 250   Capacity level: -1 ",
+ "db0": null,
+ "backend_back_at": 316.19145488739014,
+ "tail_s": 300.9182620048523,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 250   Capacity level: -1 ",
+ "final_stats": {
+  "events": 0,
+  "requests": 0,
+  "bytes_in": 0,
+  "bytes_out": 0,
+  "connections": 102,
+  "last": 1793000982.4650922,
+  "last_activity_age_s": 0.0,
+  "kinds": {}
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 620.2904472351074,
+ "window_wall_s": 300.38143396377563
+}

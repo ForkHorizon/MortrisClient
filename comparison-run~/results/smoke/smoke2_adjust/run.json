@@ -1,0 +1,32 @@
+{
+ "label": "smoke2_adjust",
+ "sdk": "adjust",
+ "host": "127.0.0.1:18090",
+ "net": "reverse",
+ "data": "puzzle_slice_00.jsonl",
+ "kv": [
+  "n=200",
+  "scenario=rate",
+  "hz=50",
+  "flush_at_end=1"
+ ],
+ "battery_start": "  level: 100   temperature: 280   Capacity level: 5 ",
+ "db0": null,
+ "tail_s": 60.45600986480713,
+ "settled": "fixed",
+ "bat_end": "  level: 100   temperature: 280   Capacity level: 5 ",
+ "final_stats": {
+  "events": 0,
+  "requests": 0,
+  "bytes_in": 0,
+  "bytes_out": 0,
+  "connections": 1,
+  "last": 1792982082.456665,
+  "last_activity_age_s": 0.0,
+  "kinds": {}
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 79.88678979873657,
+ "window_wall_s": 4.029922008514404
+}

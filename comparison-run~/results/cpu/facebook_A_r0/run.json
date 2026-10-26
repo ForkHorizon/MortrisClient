@@ -1,0 +1,32 @@
+{
+ "label": "facebook_A_r0",
+ "sdk": "facebook",
+ "host": "127.0.0.1:18090",
+ "net": "reverse",
+ "data": "puzzle_slice_00.jsonl",
+ "kv": [
+  "scenario=rate",
+  "hz=10",
+  "n=400",
+  "flush_at_end=1"
+ ],
+ "battery_start": "  level: 100   temperature: 270   Capacity level: 5 ",
+ "db0": null,
+ "tail_s": 42.412822008132935,
+ "settled": "fixed",
+ "bat_end": "  level: 100   temperature: 270   Capacity level: 5 ",
+ "final_stats": {
+  "events": 0,
+  "requests": 0,
+  "bytes_in": 0,
+  "bytes_out": 0,
+  "connections": 1,
+  "last": 1792986803.5459142,
+  "last_activity_age_s": 0.0,
+  "kinds": {}
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 97.96252679824829,
+ "window_wall_s": 40.02523493766785
+}

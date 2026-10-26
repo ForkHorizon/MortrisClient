@@ -1,0 +1,37 @@
+{
+ "label": "midcore_ga",
+ "sdk": "ga",
+ "host": "127.0.0.1:18190",
+ "net": "reverse",
+ "data": "midcore_slice_00.jsonl",
+ "kv": [
+  "scenario=perframe",
+  "perframe=20",
+  "n=2000",
+  "marker=1",
+  "flush_at_end=1"
+ ],
+ "battery_start": "  level: 100   temperature: 250 ",
+ "db0": null,
+ "tail_s": 204.7215039730072,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 250 ",
+ "final_stats": {
+  "events": 1573,
+  "requests": 5,
+  "bytes_in": 240301,
+  "bytes_out": 432,
+  "connections": 71,
+  "last": 1792988244.5396202,
+  "last_activity_age_s": 0.0,
+  "kinds": {
+   "user": 1,
+   "design": 1546,
+   "error": 26
+  }
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 282.2953591346741,
+ "window_wall_s": 2.1445400714874268
+}

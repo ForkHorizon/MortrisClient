@@ -1,0 +1,70 @@
+{"t": 14.894, "conn": 1, "new_connection": true, "method": "POST", "path": "/v3/hello", "req_header_bytes": 165, "req_body_bytes": 222, "resp_header_bytes": 109, "resp_body_bytes": 262, "status": 200, "content_encoding": "", "decoded_body_bytes": 222, "events": -1, "user_agent": ""}
+{"t": 14.908, "conn": 1, "new_connection": false, "method": "GET", "path": "/v3/catalog", "req_header_bytes": 112, "req_body_bytes": 0, "resp_header_bytes": 216, "resp_body_bytes": 845, "status": 200, "content_encoding": "", "decoded_body_bytes": 0, "events": -1, "user_agent": ""}
+{"t": 14.924, "conn": 1, "new_connection": false, "method": "GET", "path": "/v3/assets/dictionary/933536cf9fae4ac0", "req_header_bytes": 139, "req_body_bytes": 0, "resp_header_bytes": 224, "resp_body_bytes": 9304, "status": 200, "content_encoding": "", "decoded_body_bytes": 0, "events": -1, "user_agent": ""}
+{"t": 14.961, "conn": 1, "new_connection": false, "method": "POST", "path": "/v3/packet", "req_header_bytes": 175, "req_body_bytes": 178, "resp_header_bytes": 108, "resp_body_bytes": 22, "status": 200, "content_encoding": "", "decoded_body_bytes": 178, "events": -1, "user_agent": ""}
+{"t": 14.972, "conn": 1, "new_connection": false, "method": "GET", "path": "/v3/policy", "req_header_bytes": 111, "req_body_bytes": 0, "resp_header_bytes": 108, "resp_body_bytes": 81, "status": 200, "content_encoding": "", "decoded_body_bytes": 0, "events": -1, "user_agent": ""}
+{"t": 15.231, "conn": 1, "new_connection": false, "method": "POST", "path": "/v3/packet", "req_header_bytes": 176, "req_body_bytes": 3537, "resp_header_bytes": 108, "resp_body_bytes": 47, "status": 200, "content_encoding": "", "decoded_body_bytes": 3537, "events": -1, "user_agent": ""}
+{"t": 15.332, "conn": 1, "new_connection": false, "method": "POST", "path": "/v3/packet", "req_header_bytes": 176, "req_body_bytes": 3419, "resp_header_bytes": 108, "resp_body_bytes": 47, "status": 200, "content_encoding": "", "decoded_body_bytes": 3419, "events": -1, "user_agent": ""}
+{"t": 15.449, "conn": 1, "new_connection": false, "method": "POST", "path": "/v3/packet", "req_header_bytes": 176, "req_body_bytes": 3292, "resp_header_bytes": 108, "resp_body_bytes": 47, "status": 200, "content_encoding": "", "decoded_body_bytes": 3292, "events": -1, "user_agent": ""}
+{"t": 15.627, "conn": 1, "new_connection": false, "method": "POST", "path": "/v3/packet", "req_header_bytes": 176, "req_body_bytes": 3346, "resp_header_bytes": 108, "resp_body_bytes": 47, "status": 200, "content_encoding": "", "decoded_body_bytes": 3346, "events": -1, "user_agent": ""}
+{"t": 15.756, "conn": 1, "new_connection": false, "method": "POST", "path": "/v3/packet", "req_header_bytes": 176, "req_body_bytes": 3458, "resp_header_bytes": 108, "resp_body_bytes": 49, "status": 200, "content_encoding": "", "decoded_body_bytes": 3458, "events": -1, "user_agent": ""}
+{"t": 15.921, "conn": 1, "new_connection": false, "method": "POST", "path": "/v3/packet", "req_header_bytes": 176, "req_body_bytes": 3967, "resp_header_bytes": 108, "resp_body_bytes": 49, "status": 200, "content_encoding": "", "decoded_body_bytes": 3967, "events": -1, "user_agent": ""}
+{"t": 16.041, "conn": 1, "new_connection": false, "method": "POST", "path": "/v3/packet", "req_header_bytes": 176, "req_body_bytes": 4100, "resp_header_bytes": 108, "resp_body_bytes": 49, "status": 200, "content_encoding": "", "decoded_body_bytes": 4100, "events": -1, "user_agent": ""}
+{"t": 16.167, "conn": 1, "new_connection": false, "method": "POST", "path": "/v3/packet", "req_header_bytes": 176, "req_body_bytes": 3984, "resp_header_bytes": 108, "resp_body_bytes": 49, "status": 200, "content_encoding": "", "decoded_body_bytes": 3984, "events": -1, "user_agent": ""}
+{"t": 16.299, "conn": 1, "new_connection": false, "method": "POST", "path": "/v3/packet", "req_header_bytes": 176, "req_body_bytes": 3901, "resp_header_bytes": 108, "resp_body_bytes": 49, "status": 200, "content_encoding": "", "decoded_body_bytes": 3901, "events": -1, "user_agent": ""}
+{"t": 16.439, "conn": 1, "new_connection": false, "method": "POST", "path": "/v3/packet", "req_header_bytes": 176, "req_body_bytes": 3913, "resp_header_bytes": 108, "resp_body_bytes": 49, "status": 200, "content_encoding": "", "decoded_body_bytes": 3913, "events": -1, "user_agent": ""}
+{"t": 16.514, "conn": 1, "new_connection": false, "method": "POST", "path": "/v3/packet", "req_header_bytes": 176, "req_body_bytes": 2342, "resp_header_bytes": 108, "resp_body_bytes": 25, "status": 200, "content_encoding": "", "decoded_body_bytes": 2342, "events": -1, "user_agent": ""}
+{"t": 17.146, "conn": 2, "closed": true}
+{"t": 20.177, "conn": 3, "closed": true}
+{"t": 23.208, "conn": 4, "closed": true}
+{"t": 26.251, "conn": 5, "closed": true}
+{"t": 29.294, "conn": 6, "closed": true}
+{"t": 32.328, "conn": 7, "closed": true}
+{"t": 35.351, "conn": 8, "closed": true}
+{"t": 38.39, "conn": 9, "closed": true}
+{"t": 41.432, "conn": 10, "closed": true}
+{"t": 44.466, "conn": 11, "closed": true}
+{"t": 47.507, "conn": 12, "closed": true}
+{"t": 50.557, "conn": 13, "closed": true}
+{"t": 53.598, "conn": 14, "closed": true}
+{"t": 56.638, "conn": 15, "closed": true}
+{"t": 59.671, "conn": 16, "closed": true}
+{"t": 62.706, "conn": 17, "closed": true}
+{"t": 65.735, "conn": 18, "closed": true}
+{"t": 68.773, "conn": 19, "closed": true}
+{"t": 71.806, "conn": 20, "closed": true}
+{"t": 74.839, "conn": 21, "closed": true}
+{"t": 77.867, "conn": 22, "closed": true}
+{"t": 80.896, "conn": 23, "closed": true}
+{"t": 83.944, "conn": 24, "closed": true}
+{"t": 86.973, "conn": 25, "closed": true}
+{"t": 90.007, "conn": 26, "closed": true}
+{"t": 93.043, "conn": 27, "closed": true}
+{"t": 96.077, "conn": 28, "closed": true}
+{"t": 99.107, "conn": 29, "closed": true}
+{"t": 102.146, "conn": 30, "closed": true}
+{"t": 105.186, "conn": 31, "closed": true}
+{"t": 108.227, "conn": 32, "closed": true}
+{"t": 111.266, "conn": 33, "closed": true}
+{"t": 114.299, "conn": 34, "closed": true}
+{"t": 116.523, "conn": 1, "closed": true}
+{"t": 117.327, "conn": 35, "closed": true}
+{"t": 120.364, "conn": 36, "closed": true}
+{"t": 123.394, "conn": 37, "closed": true}
+{"t": 126.427, "conn": 38, "closed": true}
+{"t": 129.461, "conn": 39, "closed": true}
+{"t": 132.499, "conn": 40, "closed": true}
+{"t": 135.538, "conn": 41, "closed": true}
+{"t": 138.577, "conn": 42, "closed": true}
+{"t": 141.613, "conn": 43, "closed": true}
+{"t": 144.646, "conn": 44, "closed": true}
+{"t": 147.675, "conn": 45, "closed": true}
+{"t": 150.713, "conn": 46, "closed": true}
+{"t": 153.748, "conn": 47, "closed": true}
+{"t": 156.788, "conn": 48, "closed": true}
+{"t": 159.811, "conn": 49, "closed": true}
+{"t": 162.85, "conn": 50, "closed": true}
+{"t": 165.893, "conn": 51, "closed": true}
+{"t": 168.924, "conn": 52, "closed": true}
+{"t": 171.42, "conn": 53, "new_connection": true, "method": "POST", "path": "/v3/packet", "req_header_bytes": 174, "req_body_bytes": 63, "resp_header_bytes": 108, "resp_body_bytes": 25, "status": 200, "content_encoding": "", "decoded_body_bytes": 63, "events": -1, "user_agent": ""}
+{"t": 171.432, "conn": 54, "closed": true}

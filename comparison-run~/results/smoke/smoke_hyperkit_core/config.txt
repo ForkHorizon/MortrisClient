@@ -1,0 +1,8 @@
+sdk=hyperkit_core
+host=127.0.0.1:18090
+server=http://127.0.0.1:18090
+data=replay.jsonl
+n=300
+scenario=rate
+hz=50
+tail_max_s=150

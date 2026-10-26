@@ -1,0 +1,1 @@
+{"sdk": "firebase", "basis": "rule_based_prediction", "sent": 2000, "delivered_unique": 2000, "delivered_pct": 100.0, "duplicates": 0, "events_fully_preserved": 1876, "events_fully_preserved_pct_of_sent": 93.8, "props_total": 9299, "props_lost": 0, "props_lost_pct": 0.0, "lost_by_kind": {}, "strings_truncated": 0, "type_changed": 0, "value_changed": 124}

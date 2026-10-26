@@ -1,0 +1,1 @@
+{"sdk": "mortris_v1", "basis": "wire", "sent": 6000, "delivered_unique": 99, "delivered_pct": 1.65, "duplicates": 0, "events_fully_preserved": 99, "events_fully_preserved_pct_of_sent": 1.65, "props_total": 2282, "props_lost": 0, "props_lost_pct": 0.0, "lost_by_kind": {}, "strings_truncated": 0, "type_changed": 0, "value_changed": 0}

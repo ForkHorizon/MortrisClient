@@ -1,0 +1,9 @@
+data/
+work/
+loadgen/bin/
+loadgen/obj/
+results/**/dump/
+results/**/logcat.txt
+results/**/rss.samples
+results/**/server.log
+__pycache__/

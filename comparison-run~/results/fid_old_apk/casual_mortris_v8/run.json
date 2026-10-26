@@ -1,0 +1,33 @@
+{
+ "label": "casual_mortris_v8",
+ "sdk": "mortris_v8",
+ "host": "127.0.0.1:18190",
+ "net": "reverse",
+ "data": "casual_slice_00.jsonl",
+ "kv": [
+  "scenario=perframe",
+  "perframe=20",
+  "n=2000",
+  "marker=1",
+  "flush_at_end=1"
+ ],
+ "battery_start": "  level: 100   temperature: 250 ",
+ "db0": 7864,
+ "tail_s": 0.20812511444091797,
+ "settled": "all_delivered",
+ "bat_end": "  level: 100   temperature: 250 ",
+ "final_stats": {
+  "events": 0,
+  "requests": 17,
+  "bytes_in": 17824,
+  "bytes_out": 4305,
+  "connections": 3,
+  "last": 1792984603.025972,
+  "last_activity_age_s": 0.0,
+  "kinds": {}
+ },
+ "db1": 9866,
+ "fatal": null,
+ "wall_s": 19.562999725341797,
+ "window_wall_s": 2.773252010345459
+}

@@ -1,0 +1,34 @@
+{
+ "label": "hyperkit_ctx_B_r2",
+ "sdk": "hyperkit_ctx",
+ "host": "127.0.0.1:18090",
+ "net": "reverse",
+ "data": "puzzle_slice_02.jsonl",
+ "kv": [
+  "scenario=perframe",
+  "perframe=20",
+  "n=3000",
+  "flush_at_end=1"
+ ],
+ "battery_start": "  level: 100   temperature: 290   Capacity level: 5 ",
+ "db0": null,
+ "tail_s": 21.409165143966675,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 290   Capacity level: 5 ",
+ "final_stats": {
+  "events": 3001,
+  "requests": 2,
+  "bytes_in": 3501199,
+  "bytes_out": 144,
+  "connections": 11,
+  "last": 1792991500.2822468,
+  "last_activity_age_s": 0.0,
+  "kinds": {
+   "hk": 3001
+  }
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 39.76651573181152,
+ "window_wall_s": 2.522934913635254
+}

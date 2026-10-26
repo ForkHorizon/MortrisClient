@@ -1,0 +1,51 @@
+{
+ "label": "offline_amplitude_kotlin",
+ "sdk": "amplitude_kotlin",
+ "host": "127.0.0.1:18191",
+ "net": "reverse",
+ "data": "puzzle_hold_100k.jsonl",
+ "kv": [
+  "marker=1",
+  "flush_at_end=1",
+  "scenario=rate",
+  "hz=10",
+  "n=3000"
+ ],
+ "battery_start": "  level: 100   temperature: 250   Capacity level: -1 ",
+ "db0": null,
+ "backend_back_at": 316.0987231731415,
+ "tail_s": 514.5315339565277,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 250   Capacity level: -1 ",
+ "final_stats": {
+  "events": 3001,
+  "requests": 7,
+  "bytes_in": 4011300,
+  "bytes_out": 1127,
+  "connections": 174,
+  "last": 1792999691.2390568,
+  "last_activity_age_s": 0.0,
+  "kinds": {
+   "session_start": 1,
+   "state_checkpoint": 687,
+   "detail_taken": 684,
+   "detail_released": 683,
+   "placement_resolved": 684,
+   "detail_returned": 144,
+   "hint_used": 8,
+   "wave_completed": 25,
+   "attempt_closed": 25,
+   "wave_attempt_started": 25,
+   "memory_sample": 11,
+   "house_completed": 10,
+   "house_run_started": 10,
+   "app_backgrounded": 2,
+   "app_foregrounded": 1,
+   "attempt_recovered": 1
+  }
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 833.7901780605316,
+ "window_wall_s": 300.0982530117035
+}

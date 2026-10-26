@@ -1,0 +1,40 @@
+{"t": 14.914, "conn": 1, "new_connection": true, "method": "POST", "path": "/amp", "req_header_bytes": 191, "req_body_bytes": 58147, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 58147, "events": 30, "user_agent": "okhttp/4.12.0"}
+{"t": 17.265, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 191, "req_body_bytes": 98451, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 98451, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 17.982, "conn": 2, "closed": true}
+{"t": 20.985, "conn": 3, "closed": true}
+{"t": 23.996, "conn": 4, "closed": true}
+{"t": 27.008, "conn": 5, "closed": true}
+{"t": 30.014, "conn": 6, "closed": true}
+{"t": 33.026, "conn": 7, "closed": true}
+{"t": 36.034, "conn": 8, "closed": true}
+{"t": 39.018, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 191, "req_body_bytes": 99263, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 99263, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.046, "conn": 9, "closed": true}
+{"t": 39.094, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 192, "req_body_bytes": 101277, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 101277, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.17, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 192, "req_body_bytes": 101723, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 101723, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.242, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 192, "req_body_bytes": 102014, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 102014, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.267, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 192, "req_body_bytes": 103966, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 103966, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.3, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 192, "req_body_bytes": 104216, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 104216, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.37, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 192, "req_body_bytes": 105242, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 105242, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.455, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 192, "req_body_bytes": 104540, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 104540, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.489, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 192, "req_body_bytes": 105260, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 105260, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.529, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 192, "req_body_bytes": 100962, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 100962, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.566, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 191, "req_body_bytes": 97481, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 97481, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.61, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 191, "req_body_bytes": 97706, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 97706, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.648, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 191, "req_body_bytes": 98383, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 98383, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.683, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 191, "req_body_bytes": 99136, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 99136, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.73, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 191, "req_body_bytes": 98991, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 98991, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.769, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 192, "req_body_bytes": 100347, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 100347, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.811, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 192, "req_body_bytes": 100585, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 100585, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.849, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 192, "req_body_bytes": 101147, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 101147, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.887, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 192, "req_body_bytes": 101459, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 101459, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 39.919, "conn": 1, "new_connection": false, "method": "POST", "path": "/amp", "req_header_bytes": 191, "req_body_bytes": 81768, "resp_header_bytes": 64, "resp_body_bytes": 7, "status": 200, "content_encoding": "", "decoded_body_bytes": 81768, "events": 40, "user_agent": "okhttp/4.12.0"}
+{"t": 42.052, "conn": 10, "closed": true}
+{"t": 45.06, "conn": 11, "closed": true}
+{"t": 48.064, "conn": 12, "closed": true}
+{"t": 51.069, "conn": 13, "closed": true}
+{"t": 54.075, "conn": 14, "closed": true}
+{"t": 57.086, "conn": 15, "closed": true}
+{"t": 60.097, "conn": 16, "closed": true}
+{"t": 63.1, "conn": 17, "closed": true}
+{"t": 66.387, "conn": 1, "closed": true}
+{"t": 66.516, "conn": 18, "closed": true}

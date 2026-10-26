@@ -1,0 +1,35 @@
+{
+ "label": "telemetry_hyperkit_ctx",
+ "sdk": "hyperkit_ctx",
+ "host": "127.0.0.1:18190",
+ "net": "reverse",
+ "data": "telemetry_slice_00.jsonl",
+ "kv": [
+  "scenario=perframe",
+  "perframe=20",
+  "n=2000",
+  "marker=1",
+  "flush_at_end=1"
+ ],
+ "battery_start": "  level: 100   temperature: 250 ",
+ "db0": null,
+ "tail_s": 60.321439027786255,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 250 ",
+ "final_stats": {
+  "events": 2001,
+  "requests": 2,
+  "bytes_in": 1081277,
+  "bytes_out": 144,
+  "connections": 24,
+  "last": 1792989485.14555,
+  "last_activity_age_s": 0.0,
+  "kinds": {
+   "hk": 2001
+  }
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 78.5487449169159,
+ "window_wall_s": 2.1597981452941895
+}

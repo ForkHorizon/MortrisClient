@@ -1,0 +1,35 @@
+{
+ "label": "burst20000_hyperkit_ctx",
+ "sdk": "hyperkit_ctx",
+ "host": "127.0.0.1:18191",
+ "net": "reverse",
+ "data": "puzzle_hold_100k.jsonl",
+ "kv": [
+  "scenario=burst",
+  "k=20000",
+  "n=1",
+  "flush_at_end=1",
+  "tail_max_s=1200"
+ ],
+ "battery_start": "  level: 100   temperature: 250   Capacity level: -1 ",
+ "db0": null,
+ "tail_s": 150.58143615722656,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 250   Capacity level: -1 ",
+ "final_stats": {
+  "events": 20001,
+  "requests": 2,
+  "bytes_in": 23183035,
+  "bytes_out": 144,
+  "connections": 54,
+  "last": 1793004063.929888,
+  "last_activity_age_s": 0.0,
+  "kinds": {
+   "hk": 20001
+  }
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 170.82748293876648,
+ "window_wall_s": 2.1258108615875244
+}

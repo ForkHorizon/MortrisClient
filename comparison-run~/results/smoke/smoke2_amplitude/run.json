@@ -1,0 +1,43 @@
+{
+ "label": "smoke2_amplitude",
+ "sdk": "amplitude",
+ "host": "127.0.0.1:18090",
+ "net": "reverse",
+ "data": "puzzle_slice_00.jsonl",
+ "kv": [
+  "n=300",
+  "scenario=rate",
+  "hz=50",
+  "flush_at_end=1"
+ ],
+ "battery_start": "  level: 100   temperature: 280   Capacity level: 5 ",
+ "db0": null,
+ "tail_s": 27.409566164016724,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 280   Capacity level: 5 ",
+ "final_stats": {
+  "events": 300,
+  "requests": 10,
+  "bytes_in": 600042,
+  "bytes_out": 710,
+  "connections": 12,
+  "last": 1792981550.804974,
+  "last_activity_age_s": 0.0,
+  "kinds": {
+   "detail_released": 70,
+   "placement_resolved": 70,
+   "detail_returned": 9,
+   "state_checkpoint": 70,
+   "detail_taken": 70,
+   "wave_completed": 3,
+   "house_completed": 1,
+   "attempt_closed": 3,
+   "house_run_started": 1,
+   "wave_attempt_started": 3
+  }
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 48.71552491188049,
+ "window_wall_s": 6.026708126068115
+}

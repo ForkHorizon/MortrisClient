@@ -1,0 +1,46 @@
+{
+ "label": "amplitude_B_r2",
+ "sdk": "amplitude",
+ "host": "127.0.0.1:18090",
+ "net": "reverse",
+ "data": "puzzle_slice_02.jsonl",
+ "kv": [
+  "scenario=perframe",
+  "perframe=20",
+  "n=3000",
+  "flush_at_end=1"
+ ],
+ "battery_start": "  level: 100   temperature: 280   Capacity level: 5 ",
+ "db0": null,
+ "tail_s": 45.44454908370972,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 280   Capacity level: 5 ",
+ "final_stats": {
+  "events": 1070,
+  "requests": 22,
+  "bytes_in": 2166279,
+  "bytes_out": 1562,
+  "connections": 18,
+  "last": 1792991106.8943622,
+  "last_activity_age_s": 0.0,
+  "kinds": {
+   "detail_taken": 230,
+   "detail_released": 230,
+   "placement_resolved": 231,
+   "detail_returned": 126,
+   "state_checkpoint": 233,
+   "wave_completed": 4,
+   "attempt_closed": 4,
+   "wave_attempt_started": 4,
+   "memory_sample": 2,
+   "app_backgrounded": 2,
+   "attempt_recovered": 2,
+   "house_completed": 1,
+   "house_run_started": 1
+  }
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 64.75734210014343,
+ "window_wall_s": 2.526201009750366
+}

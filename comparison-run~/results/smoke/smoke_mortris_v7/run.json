@@ -1,0 +1,31 @@
+{
+ "label": "smoke_mortris_v7",
+ "sdk": "mortris_v7",
+ "host": "127.0.0.1:18090",
+ "net": "reverse",
+ "data": "puzzle_slice_00.jsonl",
+ "kv": [
+  "n=1000",
+  "scenario=rate",
+  "hz=50"
+ ],
+ "battery_start": "  level: 94   temperature: 290   Capacity level: 4 ",
+ "db0": 1002,
+ "tail_s": 0.3575253486633301,
+ "settled": "all_delivered",
+ "bat_end": "  level: 95   temperature: 290   Capacity level: 4 ",
+ "final_stats": {
+  "events": 0,
+  "requests": 19,
+  "bytes_in": 33848,
+  "bytes_out": 33514,
+  "connections": 3,
+  "last": 1792980837.250122,
+  "last_activity_age_s": 0.0,
+  "kinds": {}
+ },
+ "db1": 2004,
+ "fatal": null,
+ "wall_s": 36.76747393608093,
+ "window_wall_s": 20.072312116622925
+}

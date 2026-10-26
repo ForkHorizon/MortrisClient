@@ -1,0 +1,1 @@
+{"sdk": "ga", "basis": "wire", "sent": 2000, "delivered_unique": 1546, "delivered_pct": 77.3, "duplicates": 0, "events_fully_preserved": 310, "events_fully_preserved_pct_of_sent": 15.5, "props_total": 25430, "props_lost": 2615, "props_lost_pct": 10.283130161226897, "lost_by_kind": {"bool": 2615}, "strings_truncated": 0, "type_changed": 0, "value_changed": 0}

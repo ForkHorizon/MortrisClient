@@ -1,0 +1,50 @@
+{
+ "label": "net_bad_mixpanel",
+ "sdk": "mixpanel",
+ "host": "127.0.0.1:18191",
+ "net": "reverse",
+ "data": "puzzle_slice_11.jsonl",
+ "kv": [
+  "marker=1",
+  "flush_at_end=1",
+  "scenario=perframe",
+  "perframe=20",
+  "n=3000"
+ ],
+ "battery_start": "  level: 100   temperature: 250   Capacity level: -1 ",
+ "db0": null,
+ "tail_s": 902.2567420005798,
+ "settled": "tail_max",
+ "bat_end": "  level: 100   temperature: 250   Capacity level: -1 ",
+ "final_stats": {
+  "events": 2830,
+  "requests": 57,
+  "bytes_in": 5855841,
+  "bytes_out": 3705,
+  "connections": 310,
+  "last": 1792990976.14566,
+  "last_activity_age_s": 0.0,
+  "kinds": {
+   "$identify": 1,
+   "detail_taken": 622,
+   "detail_released": 622,
+   "placement_resolved": 622,
+   "state_checkpoint": 623,
+   "detail_returned": 279,
+   "wave_completed": 12,
+   "attempt_closed": 12,
+   "wave_attempt_started": 12,
+   "hint_used": 6,
+   "house_completed": 4,
+   "house_run_started": 4,
+   "app_backgrounded": 3,
+   "app_foregrounded": 2,
+   "memory_sample": 5,
+   "attempt_recovered": 1
+  }
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 921.4573562145233,
+ "window_wall_s": 3.5590767860412598
+}

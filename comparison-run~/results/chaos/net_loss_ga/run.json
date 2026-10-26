@@ -1,0 +1,37 @@
+{
+ "label": "net_loss_ga",
+ "sdk": "ga",
+ "host": "127.0.0.1:18191",
+ "net": "reverse",
+ "data": "puzzle_slice_11.jsonl",
+ "kv": [
+  "marker=1",
+  "flush_at_end=1",
+  "scenario=perframe",
+  "perframe=20",
+  "n=3000"
+ ],
+ "battery_start": "  level: 100   temperature: 250   Capacity level: -1 ",
+ "db0": null,
+ "tail_s": 240.79813194274902,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 250   Capacity level: -1 ",
+ "final_stats": {
+  "events": 3418,
+  "requests": 9,
+  "bytes_in": 252155,
+  "bytes_out": 720,
+  "connections": 84,
+  "last": 1792988759.897706,
+  "last_activity_age_s": 0.0,
+  "kinds": {
+   "user": 1,
+   "design": 3000,
+   "error": 417
+  }
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 261.07252502441406,
+ "window_wall_s": 3.8983349800109863
+}

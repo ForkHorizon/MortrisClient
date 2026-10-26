@@ -1,0 +1,19 @@
+{
+ "loadgen": {
+  "mode": "v8",
+  "events": 147000,
+  "requests": 1470,
+  "wall_s": 58.83,
+  "errors": 0,
+  "first_error": ""
+ },
+ "rc": 0,
+ "server_cpu_s": 22.49,
+ "pg_cpu_s": 15.350000000000001,
+ "db_events": 144171,
+ "server_rss_peak_mb": 150.406,
+ "pg_rss_peak_mb": 982.328,
+ "load_start": "16.72 17.88 16.43",
+ "server_cpu_us_per_event": 155.99531112359628,
+ "pg_cpu_us_per_event": 106.47078816128071
+}

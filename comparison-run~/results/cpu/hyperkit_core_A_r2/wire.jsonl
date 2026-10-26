@@ -1,0 +1,18 @@
+{"t": 14.672, "conn": 1, "new_connection": true, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 238, "req_body_bytes": 378, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "", "decoded_body_bytes": 378, "events": 1, "user_agent": "okhttp/4.12.0"}
+{"t": 19.756, "conn": 2, "new_connection": true, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 240, "req_body_bytes": 19435, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "", "decoded_body_bytes": 19435, "events": 51, "user_agent": "okhttp/4.12.0"}
+{"t": 24.772, "conn": 3, "new_connection": true, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 240, "req_body_bytes": 19065, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "", "decoded_body_bytes": 19065, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 29.857, "conn": 4, "new_connection": true, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 240, "req_body_bytes": 19498, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "", "decoded_body_bytes": 19498, "events": 51, "user_agent": "okhttp/4.12.0"}
+{"t": 34.971, "conn": 5, "new_connection": true, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 240, "req_body_bytes": 19491, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "", "decoded_body_bytes": 19491, "events": 51, "user_agent": "okhttp/4.12.0"}
+{"t": 39.984, "conn": 6, "new_connection": true, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 240, "req_body_bytes": 19112, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "", "decoded_body_bytes": 19112, "events": 50, "user_agent": "okhttp/4.12.0"}
+{"t": 45.077, "conn": 7, "new_connection": true, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 240, "req_body_bytes": 19494, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "", "decoded_body_bytes": 19494, "events": 51, "user_agent": "okhttp/4.12.0"}
+{"t": 50.166, "conn": 8, "new_connection": true, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 240, "req_body_bytes": 19491, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "", "decoded_body_bytes": 19491, "events": 51, "user_agent": "okhttp/4.12.0"}
+{"t": 54.676, "conn": 9, "new_connection": true, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 240, "req_body_bytes": 17233, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "", "decoded_body_bytes": 17233, "events": 45, "user_agent": "okhttp/4.12.0"}
+{"t": 55.151, "conn": 10, "closed": true}
+{"t": 58.158, "conn": 11, "closed": true}
+{"t": 61.161, "conn": 12, "closed": true}
+{"t": 64.168, "conn": 13, "closed": true}
+{"t": 67.173, "conn": 14, "closed": true}
+{"t": 70.178, "conn": 15, "closed": true}
+{"t": 73.18, "conn": 16, "closed": true}
+{"t": 76.189, "conn": 17, "closed": true}
+{"t": 78.636, "conn": 18, "closed": true}

@@ -1,0 +1,33 @@
+{
+ "label": "burst6000_mortris_v8",
+ "sdk": "mortris_v8",
+ "host": "127.0.0.1:18090",
+ "net": "reverse",
+ "data": "puzzle_hold_100k.jsonl",
+ "kv": [
+  "scenario=burst",
+  "k=6000",
+  "n=1",
+  "flush_at_end=1",
+  "tail_max_s=1200"
+ ],
+ "battery_start": "  level: 100   temperature: 280   Capacity level: 5 ",
+ "db0": 44404,
+ "tail_s": 152.1468710899353,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 280   Capacity level: 5 ",
+ "final_stats": {
+  "events": 0,
+  "requests": 17,
+  "bytes_in": 42534,
+  "bytes_out": 13107,
+  "connections": 54,
+  "last": 1792993112.13805,
+  "last_activity_age_s": 0.0,
+  "kinds": {}
+ },
+ "db1": 46514,
+ "fatal": null,
+ "wall_s": 169.5314519405365,
+ "window_wall_s": 0.949962854385376
+}

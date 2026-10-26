@@ -11,6 +11,7 @@
 - Sessions: the SDK now observes pause/focus/quit, emits `sys_session_start`, `sys_app_background`, `sys_app_foreground` and `sys_session_end`, writes buffered
   events before the game is suspended, and closes the session of a process that died (Android exit reason). New options `EventBufferWindow` and
   `SessionTimeout`. Projects using V7 need the four lifecycle shapes in their catalog.
+- `FlushAsync` no longer completes early: a flush requested while a regular persistence pass was running is served by its own forced pass instead of being completed by the running one (the last events used to wait for the 120 s timer).
 - V8 transport (opt-in `AnalyticsOptions.UseTransportV8`, `Documentation/V8Transport.md`): server-issued short installation id and token, shapes learned by the SDK and
   registered in the packet that first uses them, first packet of a normal launch without a handshake, minimal acknowledgement, server-trained dictionary. Numbers keep
   their type in event records (`float` stays float32). `Analytics.NextId(counter)` hands out numbers that survive a crash together with the events that used them.

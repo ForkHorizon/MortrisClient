@@ -1,0 +1,12 @@
+{
+ "loadgen": {},
+ "rc": 134,
+ "server_cpu_s": 9.04,
+ "pg_cpu_s": 6.42,
+ "db_events": 60981,
+ "server_rss_peak_mb": 151.234,
+ "pg_rss_peak_mb": 638.453,
+ "load_start": "14.73 16.63 16.12",
+ "server_cpu_us_per_event": 148.242895328053,
+ "pg_cpu_us_per_event": 105.27869336350666
+}

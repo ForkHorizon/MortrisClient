@@ -1,0 +1,35 @@
+{
+ "label": "rate30_ga",
+ "sdk": "ga",
+ "host": "127.0.0.1:18190",
+ "net": "reverse",
+ "data": "puzzle_hold_100k.jsonl",
+ "kv": [
+  "scenario=rate",
+  "hz=30",
+  "n=3000"
+ ],
+ "battery_start": "  level: 100   temperature: 250 ",
+ "db0": null,
+ "tail_s": 105.36307716369629,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 250 ",
+ "final_stats": {
+  "events": 3019,
+  "requests": 15,
+  "bytes_in": 251524,
+  "bytes_out": 1152,
+  "connections": 38,
+  "last": 1793004918.298492,
+  "last_activity_age_s": 0.0,
+  "kinds": {
+   "user": 1,
+   "design": 3000,
+   "error": 18
+  }
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 224.17799305915833,
+ "window_wall_s": 100.33525490760803
+}

@@ -1,0 +1,25 @@
+{"t": 14.628, "conn": 1, "new_connection": true, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 238, "req_body_bytes": 443, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "", "decoded_body_bytes": 443, "events": 1, "user_agent": "okhttp/4.12.0"}
+{"t": 16.734, "conn": 1, "closed": true}
+{"t": 16.745, "conn": 2, "new_connection": true, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 241, "req_body_bytes": 891157, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "", "decoded_body_bytes": 891157, "events": 2000, "user_agent": "okhttp/4.12.0"}
+{"t": 17.589, "conn": 3, "closed": true}
+{"t": 20.6, "conn": 4, "closed": true}
+{"t": 23.614, "conn": 5, "closed": true}
+{"t": 26.619, "conn": 6, "closed": true}
+{"t": 29.622, "conn": 7, "closed": true}
+{"t": 32.627, "conn": 8, "closed": true}
+{"t": 35.637, "conn": 9, "closed": true}
+{"t": 38.642, "conn": 10, "closed": true}
+{"t": 41.649, "conn": 11, "closed": true}
+{"t": 44.656, "conn": 12, "closed": true}
+{"t": 47.661, "conn": 13, "closed": true}
+{"t": 50.668, "conn": 14, "closed": true}
+{"t": 53.676, "conn": 15, "closed": true}
+{"t": 56.68, "conn": 16, "closed": true}
+{"t": 59.689, "conn": 17, "closed": true}
+{"t": 62.699, "conn": 18, "closed": true}
+{"t": 65.705, "conn": 19, "closed": true}
+{"t": 68.713, "conn": 20, "closed": true}
+{"t": 71.721, "conn": 21, "closed": true}
+{"t": 74.724, "conn": 22, "closed": true}
+{"t": 77.729, "conn": 23, "closed": true}
+{"t": 81.011, "conn": 24, "closed": true}

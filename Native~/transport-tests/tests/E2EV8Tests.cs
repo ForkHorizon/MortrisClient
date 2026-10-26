@@ -122,6 +122,41 @@ namespace M7Transport.Tests
             : i % 3 == 1 ? ("position_sample", new Dictionary<string, object> { ["x"] = 0.1f * (i % 100), ["y"] = -2.5f, ["z"] = 0.25 * (i % 9) })
             : ("speed_sample", new Dictionary<string, object> { ["speed"] = i % 2 == 0 ? 0f : 3f, ["flag"] = (long)i });
 
+        /// <summary>Diagnostic: pushes the first M8_CORPUS_N events of a JSONL corpus ({"name","props"}) through the session and prints what every send returned. Skipped without M8_CORPUS.</summary>
+        [Fact]
+        public void ZCorpusFromFile()
+        {
+            var file = Environment.GetEnvironmentVariable("M8_CORPUS");
+            if (Skip() || string.IsNullOrEmpty(file)) return;
+            var limit = int.Parse(Environment.GetEnvironmentVariable("M8_CORPUS_N") ?? "2000");
+            var events = new List<(string, Dictionary<string, object>)>();
+            foreach (var line in File.ReadLines(file))
+            {
+                if (events.Count >= limit) break;
+                using (var doc = System.Text.Json.JsonDocument.Parse(line))
+                {
+                    var props = new Dictionary<string, object>();
+                    foreach (var kv in doc.RootElement.GetProperty("props").EnumerateObject())
+                        props[kv.Name] = kv.Value.ValueKind == System.Text.Json.JsonValueKind.String ? kv.Value.GetString()
+                            : kv.Value.ValueKind == System.Text.Json.JsonValueKind.True ? true : kv.Value.ValueKind == System.Text.Json.JsonValueKind.False ? false
+                            : kv.Value.TryGetInt64(out var l) ? (object)l : kv.Value.GetDouble();
+                    events.Add((doc.RootElement.GetProperty("name").GetString(), props));
+                }
+            }
+            using (var rig = new Rig())
+            {
+                rig.Enqueue(events.Count, i => events[i]);
+                var log = new List<string>();
+                for (var guard = 0; guard < 200 && rig.Queue.Pending > 0; guard++)
+                {
+                    var r = rig.Send(100);
+                    log.Add(r.Kind + " status=" + r.Status + " pending=" + rig.Queue.Pending);
+                    if (r.Kind != V7ResultKind.Delivered && r.Kind != V7ResultKind.Empty) { if (log.Count > 30) break; }
+                }
+                Console.WriteLine("CORPUS sent=" + events.Count + " db=" + rig.Count() + " pending=" + rig.Queue.Pending + "\n" + string.Join("\n", log.Take(40)));
+            }
+        }
+
         [Fact]
         public void ARegistrationAndTwoHundredFiftyEventsOverRealHttp()
         {

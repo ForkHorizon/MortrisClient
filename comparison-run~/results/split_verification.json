@@ -1,0 +1,10 @@
+{
+ "rule": "sha256(install_id) %% 5 == 0 -> train (same rule as the V7 catalog/dictionary training in night-run~/prep.py); the rest -> holdout",
+ "train_installs": 42,
+ "holdout_installs": 197,
+ "install_overlap": 0,
+ "slices_from_train_installs": 0,
+ "identical_event_lines_between_train20k_and_slices": 0,
+ "distinct_slice_lines": 60000,
+ "note": "identical lines can exist across different installs only when the whole event content coincides; installs themselves are disjoint"
+}

@@ -1,0 +1,33 @@
+{
+ "label": "puzzle_mortris_v8",
+ "sdk": "mortris_v8",
+ "host": "127.0.0.1:18190",
+ "net": "reverse",
+ "data": "puzzle_slice_10.jsonl",
+ "kv": [
+  "scenario=perframe",
+  "perframe=20",
+  "n=2000",
+  "marker=1",
+  "flush_at_end=1"
+ ],
+ "battery_start": "  level: 100   temperature: 250 ",
+ "db0": 18851,
+ "tail_s": 3.280090093612671,
+ "settled": "all_delivered",
+ "bat_end": "  level: 100   temperature: 250 ",
+ "final_stats": {
+  "events": 0,
+  "requests": 16,
+  "bytes_in": 33000,
+  "bytes_out": 12751,
+  "connections": 4,
+  "last": 1792991596.065692,
+  "last_activity_age_s": 0.0,
+  "kinds": {}
+ },
+ "db1": 20852,
+ "fatal": null,
+ "wall_s": 21.54149103164673,
+ "window_wall_s": 2.2454421520233154
+}

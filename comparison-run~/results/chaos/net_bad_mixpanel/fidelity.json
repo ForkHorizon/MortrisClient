@@ -1,0 +1,1 @@
+{"sdk": "mixpanel", "basis": "wire", "sent": 3000, "delivered_unique": 2829, "delivered_pct": 94.3, "duplicates": 0, "events_fully_preserved": 2829, "events_fully_preserved_pct_of_sent": 94.3, "props_total": 65353, "props_lost": 0, "props_lost_pct": 0.0, "lost_by_kind": {}, "strings_truncated": 0, "type_changed": 0, "value_changed": 0}

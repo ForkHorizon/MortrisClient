@@ -1,0 +1,76 @@
+{"t": 14.939, "conn": 1, "new_connection": true, "method": "POST", "path": "/v1/installs/register", "req_header_bytes": 177, "req_body_bytes": 295, "resp_header_bytes": 109, "resp_body_bytes": 163, "status": 200, "content_encoding": "", "decoded_body_bytes": 295, "events": -1, "user_agent": ""}
+{"t": 14.961, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/streams/sync", "req_header_bytes": 215, "req_body_bytes": 161, "resp_header_bytes": 109, "resp_body_bytes": 198, "status": 200, "content_encoding": "", "decoded_body_bytes": 161, "events": -1, "user_agent": ""}
+{"t": 14.974, "conn": 1, "new_connection": false, "method": "GET", "path": "/v2/assets/catalog/85da3175fb9ddb38", "req_header_bytes": 244, "req_body_bytes": 0, "resp_header_bytes": 177, "resp_body_bytes": 11541, "status": 200, "content_encoding": "", "decoded_body_bytes": 0, "events": -1, "user_agent": ""}
+{"t": 15.0, "conn": 1, "new_connection": false, "method": "GET", "path": "/v2/assets/dictionary/933536cf9fae4ac0", "req_header_bytes": 247, "req_body_bytes": 0, "resp_header_bytes": 177, "resp_body_bytes": 16397, "status": 200, "content_encoding": "", "decoded_body_bytes": 0, "events": -1, "user_agent": ""}
+{"t": 15.027, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 224, "req_body_bytes": 463, "resp_header_bytes": 109, "resp_body_bytes": 212, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 680, "events": -1, "user_agent": ""}
+{"t": 15.054, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/streams/sync", "req_header_bytes": 215, "req_body_bytes": 166, "resp_header_bytes": 109, "resp_body_bytes": 193, "status": 200, "content_encoding": "", "decoded_body_bytes": 166, "events": -1, "user_agent": ""}
+{"t": 15.23, "conn": 1, "new_connection": false, "method": "PUT", "path": "/v2/streams/aliases", "req_header_bytes": 217, "req_body_bytes": 370, "resp_header_bytes": 108, "resp_body_bytes": 92, "status": 200, "content_encoding": "", "decoded_body_bytes": 370, "events": -1, "user_agent": ""}
+{"t": 15.256, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 409, "resp_header_bytes": 109, "resp_body_bytes": 212, "status": 200, "content_encoding": "", "decoded_body_bytes": 409, "events": -1, "user_agent": ""}
+{"t": 15.292, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 354, "resp_header_bytes": 109, "resp_body_bytes": 212, "status": 200, "content_encoding": "", "decoded_body_bytes": 354, "events": -1, "user_agent": ""}
+{"t": 15.324, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 409, "resp_header_bytes": 109, "resp_body_bytes": 212, "status": 200, "content_encoding": "", "decoded_body_bytes": 409, "events": -1, "user_agent": ""}
+{"t": 15.391, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 337, "resp_header_bytes": 109, "resp_body_bytes": 212, "status": 200, "content_encoding": "", "decoded_body_bytes": 337, "events": -1, "user_agent": ""}
+{"t": 15.413, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 412, "resp_header_bytes": 109, "resp_body_bytes": 212, "status": 200, "content_encoding": "", "decoded_body_bytes": 412, "events": -1, "user_agent": ""}
+{"t": 15.432, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 427, "resp_header_bytes": 109, "resp_body_bytes": 212, "status": 200, "content_encoding": "", "decoded_body_bytes": 427, "events": -1, "user_agent": ""}
+{"t": 15.46, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 333, "resp_header_bytes": 109, "resp_body_bytes": 212, "status": 200, "content_encoding": "", "decoded_body_bytes": 333, "events": -1, "user_agent": ""}
+{"t": 15.48, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 409, "resp_header_bytes": 109, "resp_body_bytes": 212, "status": 200, "content_encoding": "", "decoded_body_bytes": 409, "events": -1, "user_agent": ""}
+{"t": 15.507, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 351, "resp_header_bytes": 109, "resp_body_bytes": 212, "status": 200, "content_encoding": "", "decoded_body_bytes": 351, "events": -1, "user_agent": ""}
+{"t": 15.516, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 362, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 362, "events": -1, "user_agent": ""}
+{"t": 15.558, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 348, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 348, "events": -1, "user_agent": ""}
+{"t": 15.601, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 366, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 366, "events": -1, "user_agent": ""}
+{"t": 15.641, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 398, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 398, "events": -1, "user_agent": ""}
+{"t": 15.68, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 348, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 348, "events": -1, "user_agent": ""}
+{"t": 15.739, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 392, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 392, "events": -1, "user_agent": ""}
+{"t": 15.77, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 399, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 399, "events": -1, "user_agent": ""}
+{"t": 15.786, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 411, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 411, "events": -1, "user_agent": ""}
+{"t": 15.802, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 351, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 351, "events": -1, "user_agent": ""}
+{"t": 15.832, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 401, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 401, "events": -1, "user_agent": ""}
+{"t": 15.859, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 459, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 459, "events": -1, "user_agent": ""}
+{"t": 15.891, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 399, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 399, "events": -1, "user_agent": ""}
+{"t": 15.95, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 404, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 404, "events": -1, "user_agent": ""}
+{"t": 15.966, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 413, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 413, "events": -1, "user_agent": ""}
+{"t": 15.984, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 400, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 400, "events": -1, "user_agent": ""}
+{"t": 15.997, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 412, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 412, "events": -1, "user_agent": ""}
+{"t": 16.025, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 346, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 346, "events": -1, "user_agent": ""}
+{"t": 16.042, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 351, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 351, "events": -1, "user_agent": ""}
+{"t": 16.056, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 411, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 411, "events": -1, "user_agent": ""}
+{"t": 16.094, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 422, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 422, "events": -1, "user_agent": ""}
+{"t": 16.11, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 409, "resp_header_bytes": 141, "resp_body_bytes": 156, "status": 429, "content_encoding": "", "decoded_body_bytes": 409, "events": -1, "user_agent": ""}
+{"t": 18.313, "conn": 1, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 409, "resp_header_bytes": 141, "resp_body_bytes": 156, "status": 429, "content_encoding": "", "decoded_body_bytes": 409, "events": -1, "user_agent": ""}
+{"t": 20.614, "conn": 2, "closed": true}
+{"t": 23.656, "conn": 3, "closed": true}
+{"t": 26.695, "conn": 4, "closed": true}
+{"t": 29.742, "conn": 5, "closed": true}
+{"t": 32.787, "conn": 6, "closed": true}
+{"t": 35.837, "conn": 7, "closed": true}
+{"t": 38.871, "conn": 8, "closed": true}
+{"t": 41.92, "conn": 9, "closed": true}
+{"t": 44.968, "conn": 10, "closed": true}
+{"t": 48.007, "conn": 11, "closed": true}
+{"t": 51.051, "conn": 12, "closed": true}
+{"t": 54.106, "conn": 13, "closed": true}
+{"t": 57.151, "conn": 14, "closed": true}
+{"t": 60.195, "conn": 15, "closed": true}
+{"t": 63.247, "conn": 16, "closed": true}
+{"t": 66.293, "conn": 17, "closed": true}
+{"t": 69.334, "conn": 18, "closed": true}
+{"t": 72.368, "conn": 19, "closed": true}
+{"t": 75.417, "conn": 20, "closed": true}
+{"t": 78.458, "conn": 21, "closed": true}
+{"t": 81.502, "conn": 22, "closed": true}
+{"t": 84.55, "conn": 23, "closed": true}
+{"t": 87.599, "conn": 24, "closed": true}
+{"t": 90.641, "conn": 25, "closed": true}
+{"t": 93.68, "conn": 26, "closed": true}
+{"t": 96.714, "conn": 27, "closed": true}
+{"t": 97.06, "conn": 1, "closed": true}
+{"t": 99.765, "conn": 28, "closed": true}
+{"t": 102.814, "conn": 29, "closed": true}
+{"t": 105.855, "conn": 30, "closed": true}
+{"t": 108.89, "conn": 31, "closed": true}
+{"t": 111.94, "conn": 32, "closed": true}
+{"t": 114.975, "conn": 33, "closed": true}
+{"t": 118.019, "conn": 34, "closed": true}
+{"t": 121.068, "conn": 35, "closed": true}
+{"t": 123.059, "conn": 36, "new_connection": true, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 409, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 409, "events": -1, "user_agent": ""}
+{"t": 123.075, "conn": 36, "new_connection": false, "method": "POST", "path": "/v2/events/packet", "req_header_bytes": 409, "req_body_bytes": 457, "resp_header_bytes": 109, "resp_body_bytes": 213, "status": 200, "content_encoding": "", "decoded_body_bytes": 457, "events": -1, "user_agent": ""}
+{"t": 123.345, "conn": 37, "closed": true}

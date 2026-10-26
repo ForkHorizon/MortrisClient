@@ -1,0 +1,10 @@
+project=puzzle_gravity_test
+sdk=ga
+host=127.0.0.1:18090
+server=http://127.0.0.1:18090
+data=replay.jsonl
+scenario=burst
+k=20000
+n=1
+flush_at_end=1
+tail_max_s=1200

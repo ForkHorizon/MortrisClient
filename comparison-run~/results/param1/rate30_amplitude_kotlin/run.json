@@ -1,0 +1,48 @@
+{
+ "label": "rate30_amplitude_kotlin",
+ "sdk": "amplitude_kotlin",
+ "host": "127.0.0.1:18190",
+ "net": "reverse",
+ "data": "puzzle_hold_100k.jsonl",
+ "kv": [
+  "scenario=rate",
+  "hz=30",
+  "n=3000"
+ ],
+ "battery_start": "  level: 100   temperature: 250 ",
+ "db0": null,
+ "tail_s": 114.4067120552063,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 250 ",
+ "final_stats": {
+  "events": 3001,
+  "requests": 104,
+  "bytes_in": 4010448,
+  "bytes_out": 16744,
+  "connections": 41,
+  "last": 1793003784.8578508,
+  "last_activity_age_s": 0.0,
+  "kinds": {
+   "session_start": 1,
+   "state_checkpoint": 687,
+   "detail_taken": 684,
+   "detail_released": 683,
+   "placement_resolved": 684,
+   "detail_returned": 144,
+   "hint_used": 8,
+   "wave_completed": 25,
+   "attempt_closed": 25,
+   "wave_attempt_started": 25,
+   "memory_sample": 11,
+   "house_completed": 10,
+   "house_run_started": 10,
+   "app_backgrounded": 2,
+   "app_foregrounded": 1,
+   "attempt_recovered": 1
+  }
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 235.3208622932434,
+ "window_wall_s": 100.39650678634644
+}

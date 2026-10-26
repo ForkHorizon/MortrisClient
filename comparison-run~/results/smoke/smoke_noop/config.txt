@@ -1,0 +1,9 @@
+sdk=noop
+host=127.0.0.1:18090
+server=http://127.0.0.1:18090
+data=replay.jsonl
+n=600
+perframe=1
+scenario=rate
+hz=30
+tail_max_s=40

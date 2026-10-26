@@ -1,0 +1,1 @@
+{"sdk": "amplitude", "basis": "wire", "sent": 3000, "delivered_unique": 30, "delivered_pct": 1.0, "duplicates": 0, "events_fully_preserved": 30, "events_fully_preserved_pct_of_sent": 1.0, "props_total": 693, "props_lost": 0, "props_lost_pct": 0.0, "lost_by_kind": {}, "strings_truncated": 0, "type_changed": 0, "value_changed": 0}

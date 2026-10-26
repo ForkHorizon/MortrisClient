@@ -1,0 +1,32 @@
+{
+ "label": "firebase_B_r2",
+ "sdk": "firebase",
+ "host": "127.0.0.1:18090",
+ "net": "reverse",
+ "data": "puzzle_slice_02.jsonl",
+ "kv": [
+  "scenario=perframe",
+  "perframe=20",
+  "n=3000",
+  "flush_at_end=1"
+ ],
+ "battery_start": "  level: 100   temperature: 280   Capacity level: 5 ",
+ "db0": null,
+ "tail_s": 60.43869996070862,
+ "settled": "fixed",
+ "bat_end": "  level: 100   temperature: 280   Capacity level: 5 ",
+ "final_stats": {
+  "events": 0,
+  "requests": 0,
+  "bytes_in": 0,
+  "bytes_out": 0,
+  "connections": 1,
+  "last": 1792991302.456039,
+  "last_activity_age_s": 0.0,
+  "kinds": {}
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 79.78281235694885,
+ "window_wall_s": 2.5234222412109375
+}

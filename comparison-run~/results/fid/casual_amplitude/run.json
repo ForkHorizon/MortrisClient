@@ -1,0 +1,42 @@
+{
+ "label": "casual_amplitude",
+ "sdk": "amplitude",
+ "host": "127.0.0.1:18190",
+ "net": "reverse",
+ "data": "casual_slice_00.jsonl",
+ "kv": [
+  "scenario=perframe",
+  "perframe=20",
+  "n=2000",
+  "marker=1",
+  "flush_at_end=1"
+ ],
+ "battery_start": "  level: 100   temperature: 250 ",
+ "db0": null,
+ "tail_s": 240.8787326812744,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 250 ",
+ "final_stats": {
+  "events": 1080,
+  "requests": 22,
+  "bytes_in": 1254062,
+  "bytes_out": 1562,
+  "connections": 83,
+  "last": 1792984864.53212,
+  "last_activity_age_s": 0.0,
+  "kinds": {
+   "obstacle_hit": 548,
+   "coin_collected": 269,
+   "level_start": 97,
+   "level_end": 74,
+   "skin_equipped": 29,
+   "ad_shown": 37,
+   "session_ping": 16,
+   "iap_purchase": 10
+  }
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 259.1902480125427,
+ "window_wall_s": 2.721298933029175
+}

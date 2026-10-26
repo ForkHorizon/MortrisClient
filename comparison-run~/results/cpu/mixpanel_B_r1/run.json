@@ -1,0 +1,47 @@
+{
+ "label": "mixpanel_B_r1",
+ "sdk": "mixpanel",
+ "host": "127.0.0.1:18090",
+ "net": "reverse",
+ "data": "puzzle_slice_01.jsonl",
+ "kv": [
+  "scenario=perframe",
+  "perframe=20",
+  "n=3000",
+  "flush_at_end=1"
+ ],
+ "battery_start": "  level: 100   temperature: 290   Capacity level: 5 ",
+ "db0": null,
+ "tail_s": 30.42826199531555,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 290   Capacity level: 5 ",
+ "final_stats": {
+  "events": 3001,
+  "requests": 76,
+  "bytes_in": 5933643,
+  "bytes_out": 4940,
+  "connections": 13,
+  "last": 1792988001.042065,
+  "last_activity_age_s": 0.0,
+  "kinds": {
+   "$identify": 1,
+   "state_checkpoint": 662,
+   "detail_taken": 662,
+   "detail_released": 661,
+   "placement_resolved": 661,
+   "detail_returned": 293,
+   "wave_completed": 15,
+   "attempt_closed": 15,
+   "wave_attempt_started": 15,
+   "house_completed": 5,
+   "house_run_started": 5,
+   "memory_sample": 4,
+   "app_backgrounded": 1,
+   "app_foregrounded": 1
+  }
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 48.8131787776947,
+ "window_wall_s": 2.519821882247925
+}

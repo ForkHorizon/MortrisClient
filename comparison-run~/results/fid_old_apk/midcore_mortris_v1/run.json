@@ -1,0 +1,33 @@
+{
+ "label": "midcore_mortris_v1",
+ "sdk": "mortris_v1",
+ "host": "127.0.0.1:18190",
+ "net": "reverse",
+ "data": "midcore_slice_00.jsonl",
+ "kv": [
+  "scenario=perframe",
+  "perframe=20",
+  "n=2000",
+  "marker=1",
+  "flush_at_end=1"
+ ],
+ "battery_start": "  level: 100   temperature: 250 ",
+ "db0": 3709,
+ "tail_s": 61.13950300216675,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 250 ",
+ "final_stats": {
+  "events": 0,
+  "requests": 20,
+  "bytes_in": 295509,
+  "bytes_out": 76211,
+  "connections": 23,
+  "last": 1792987397.852862,
+  "last_activity_age_s": 0.0,
+  "kinds": {}
+ },
+ "db1": 5510,
+ "fatal": null,
+ "wall_s": 79.42280006408691,
+ "window_wall_s": 2.443290948867798
+}

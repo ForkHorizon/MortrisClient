@@ -1,0 +1,31 @@
+{
+ "label": "rate100_mortris_v1",
+ "sdk": "mortris_v1",
+ "host": "127.0.0.1:18190",
+ "net": "reverse",
+ "data": "puzzle_hold_100k.jsonl",
+ "kv": [
+  "scenario=rate",
+  "hz=100",
+  "n=6000"
+ ],
+ "battery_start": "  level: 100   temperature: 250 ",
+ "db0": 55832,
+ "tail_s": 0.24258804321289062,
+ "settled": "all_delivered",
+ "bat_end": "  level: 100   temperature: 250 ",
+ "final_stats": {
+  "events": 0,
+  "requests": 63,
+  "bytes_in": 566760,
+  "bytes_out": 252974,
+  "connections": 3,
+  "last": 1793002802.53158,
+  "last_activity_age_s": 0.0,
+  "kinds": {}
+ },
+ "db1": 61834,
+ "fatal": null,
+ "wall_s": 77.91133189201355,
+ "window_wall_s": 59.288156032562256
+}

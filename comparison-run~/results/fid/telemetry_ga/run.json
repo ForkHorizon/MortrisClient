@@ -1,0 +1,37 @@
+{
+ "label": "telemetry_ga",
+ "sdk": "ga",
+ "host": "127.0.0.1:18190",
+ "net": "reverse",
+ "data": "telemetry_slice_00.jsonl",
+ "kv": [
+  "scenario=perframe",
+  "perframe=20",
+  "n=2000",
+  "marker=1",
+  "flush_at_end=1"
+ ],
+ "battery_start": "  level: 100   temperature: 250 ",
+ "db0": null,
+ "tail_s": 171.6016490459442,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 250 ",
+ "final_stats": {
+  "events": 2095,
+  "requests": 7,
+  "bytes_in": 181920,
+  "bytes_out": 576,
+  "connections": 60,
+  "last": 1792989404.288446,
+  "last_activity_age_s": 0.0,
+  "kinds": {
+   "user": 1,
+   "design": 2000,
+   "error": 94
+  }
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 189.83789801597595,
+ "window_wall_s": 2.6144330501556396
+}

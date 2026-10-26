@@ -1,0 +1,53 @@
+{"t": 15.105, "conn": 1, "new_connection": true, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 238, "req_body_bytes": 981, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "", "decoded_body_bytes": 981, "events": 1, "user_agent": "okhttp/4.12.0"}
+{"t": 20.107, "conn": 1, "closed": true}
+{"t": 20.121, "conn": 2, "new_connection": true, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 241, "req_body_bytes": 328574, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "", "decoded_body_bytes": 328574, "events": 250, "user_agent": "okhttp/4.12.0"}
+{"t": 25.147, "conn": 3, "new_connection": true, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 241, "req_body_bytes": 288031, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "", "decoded_body_bytes": 288031, "events": 251, "user_agent": "okhttp/4.12.0"}
+{"t": 30.151, "conn": 2, "closed": true}
+{"t": 30.151, "conn": 3, "closed": true}
+{"t": 30.158, "conn": 4, "new_connection": true, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 241, "req_body_bytes": 298545, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "", "decoded_body_bytes": 298545, "events": 251, "user_agent": "okhttp/4.12.0"}
+{"t": 35.156, "conn": 4, "closed": true}
+{"t": 35.159, "conn": 5, "new_connection": true, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 241, "req_body_bytes": 309313, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "", "decoded_body_bytes": 309313, "events": 251, "user_agent": "okhttp/4.12.0"}
+{"t": 35.273, "conn": 5, "closed": true}
+{"t": 45.5, "conn": 6, "new_connection": true, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 238, "req_body_bytes": 374, "resp_header_bytes": 70, "resp_body_bytes": 2, "status": 200, "content_encoding": "", "decoded_body_bytes": 374, "events": 1, "user_agent": "okhttp/4.12.0"}
+{"t": 46.457, "conn": 7, "closed": true}
+{"t": 49.46, "conn": 8, "closed": true}
+{"t": 52.471, "conn": 9, "closed": true}
+{"t": 55.476, "conn": 10, "closed": true}
+{"t": 58.486, "conn": 11, "closed": true}
+{"t": 61.497, "conn": 12, "closed": true}
+{"t": 64.503, "conn": 13, "closed": true}
+{"t": 67.517, "conn": 14, "closed": true}
+{"t": 70.522, "conn": 15, "closed": true}
+{"t": 73.524, "conn": 16, "closed": true}
+{"t": 76.533, "conn": 17, "closed": true}
+{"t": 79.535, "conn": 18, "closed": true}
+{"t": 82.54, "conn": 19, "closed": true}
+{"t": 85.551, "conn": 20, "closed": true}
+{"t": 88.555, "conn": 21, "closed": true}
+{"t": 91.567, "conn": 22, "closed": true}
+{"t": 94.573, "conn": 23, "closed": true}
+{"t": 97.576, "conn": 24, "closed": true}
+{"t": 100.579, "conn": 25, "closed": true}
+{"t": 103.594, "conn": 26, "closed": true}
+{"t": 106.593, "conn": 27, "closed": true}
+{"t": 109.596, "conn": 28, "closed": true}
+{"t": 112.607, "conn": 29, "closed": true}
+{"t": 115.619, "conn": 30, "closed": true}
+{"t": 118.627, "conn": 31, "closed": true}
+{"t": 121.631, "conn": 32, "closed": true}
+{"t": 124.64, "conn": 33, "closed": true}
+{"t": 127.644, "conn": 34, "closed": true}
+{"t": 130.651, "conn": 35, "closed": true}
+{"t": 133.658, "conn": 36, "closed": true}
+{"t": 136.66, "conn": 37, "closed": true}
+{"t": 139.666, "conn": 38, "closed": true}
+{"t": 142.668, "conn": 39, "closed": true}
+{"t": 145.672, "conn": 40, "closed": true}
+{"t": 148.676, "conn": 41, "closed": true}
+{"t": 151.691, "conn": 42, "closed": true}
+{"t": 154.702, "conn": 43, "closed": true}
+{"t": 157.707, "conn": 44, "closed": true}
+{"t": 160.712, "conn": 45, "closed": true}
+{"t": 163.719, "conn": 46, "closed": true}
+{"t": 166.728, "conn": 47, "closed": true}
+{"t": 169.057, "conn": 48, "closed": true}

@@ -1,0 +1,32 @@
+{
+ "label": "smoke_noop",
+ "sdk": "noop",
+ "host": "127.0.0.1:18090",
+ "net": "reverse",
+ "data": "puzzle_slice_00.jsonl",
+ "kv": [
+  "n=600",
+  "perframe=1",
+  "scenario=rate",
+  "hz=30"
+ ],
+ "battery_start": "  level: 93   temperature: 290   Capacity level: 4 ",
+ "db0": null,
+ "tail_s": 21.368842840194702,
+ "settled": "quiet",
+ "bat_end": "  level: 94   temperature: 290   Capacity level: 4 ",
+ "final_stats": {
+  "events": 0,
+  "requests": 0,
+  "bytes_in": 0,
+  "bytes_out": 0,
+  "connections": 9,
+  "last": 1792980746.744417,
+  "last_activity_age_s": 0.0,
+  "kinds": {}
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 57.73047709465027,
+ "window_wall_s": 20.029552936553955
+}

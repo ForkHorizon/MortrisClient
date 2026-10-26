@@ -1,0 +1,11 @@
+project=casual_test
+sdk=amplitude
+host=127.0.0.1:18190
+server=http://127.0.0.1:18190
+data=replay.jsonl
+scenario=perframe
+perframe=20
+n=2000
+marker=1
+flush_at_end=1
+tail_max_s=500

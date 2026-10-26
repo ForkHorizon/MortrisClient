@@ -1,0 +1,34 @@
+{
+ "label": "warm_telemetry_v8_1",
+ "sdk": "mortris_v8",
+ "host": "127.0.0.1:18190",
+ "net": "reverse",
+ "data": "telemetry_train_20k.jsonl",
+ "kv": [
+  "scenario=perframe",
+  "perframe=20",
+  "n=3000",
+  "marker=1",
+  "flush_at_end=1"
+ ],
+ "battery_start": "  level: 100   temperature: 250 ",
+ "db0": 0,
+ "watchdog_restarts": 1,
+ "tail_s": 0.2112126350402832,
+ "settled": "all_delivered",
+ "bat_end": "  level: 100   temperature: 250 ",
+ "final_stats": {
+  "events": 0,
+  "requests": 40,
+  "bytes_in": 381611,
+  "bytes_out": 14321,
+  "connections": 4,
+  "last": 1792988688.1275141,
+  "last_activity_age_s": 0.0,
+  "kinds": {}
+ },
+ "db1": 6004,
+ "fatal": null,
+ "wall_s": 170.61181116104126,
+ "window_wall_s": 3.2543423175811768
+}

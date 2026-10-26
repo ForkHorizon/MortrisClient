@@ -191,9 +191,12 @@ namespace Daliys.Analytics.Internal
 #if UNITY_ANDROID && !UNITY_EDITOR
             var jniAttached = false;
 #endif
+            // Only the flushes requested before this pass began are forced and completed by it; one that arrives meanwhile gets its own pass,
+            // otherwise it would complete with events still waiting for the next timer.
+            var mine = TakeFlushWaiters();
             try
             {
-                if (IsIdle())
+                if (IsIdle(mine.Count > 0))
                     return; // a timer tick with nothing buffered, no state change and no upload due: no need to attach to the JVM
 
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -210,7 +213,7 @@ namespace Daliys.Analytics.Internal
                     }
 
                     RecoverPreviousSession();
-                    var force = HasFlushWaiters();
+                    var force = mine.Count > 0;
                     while (Volatile.Read(ref _isDisposed) == 0)
                     {
                         if (Interlocked.Exchange(ref _clearRequested, 0) == 1)
@@ -230,7 +233,7 @@ namespace Daliys.Analytics.Internal
                 var background = Interlocked.Exchange(ref _backgroundUploadRequested, 0) == 1;
                 var upload = background
                     ? _uploader.Flush(_bridge, true, _options.BackgroundUploadTimeout)
-                    : _uploader.Flush(_bridge, HasFlushWaiters());
+                    : _uploader.Flush(_bridge, mine.Count > 0);
                 status = upload.Status;
             }
             catch (Exception exception)
@@ -246,7 +249,8 @@ namespace Daliys.Analytics.Internal
                     AndroidJNI.DetachCurrentThread();
 #endif
                 Interlocked.Exchange(ref _isScheduled, 0);
-                CompleteFlushes(status);
+                CompleteFlushes(mine, status);
+                if (HasFlushWaiters()) Schedule();
 
                 if (status == FlushStatus.PersistenceFailed && _buffer.Count > 0 && Interlocked.CompareExchange(ref _timerArmed, 1, 0) == 0)
                     _flushTimer.Change(RetryDelay, Timeout.InfiniteTimeSpan); // a transient write failure retries without waiting for new events
@@ -280,9 +284,9 @@ namespace Daliys.Analytics.Internal
             }
         }
 
-        private bool IsIdle() =>
+        private bool IsIdle(bool flushRequested) =>
             _bridge != null && _sessionRecovered && _buffer.Count == 0 && Volatile.Read(ref _clearRequested) == 0 && Volatile.Read(ref _heartbeatDue) == 0 &&
-            Volatile.Read(ref _backgroundUploadRequested) == 0 && !HasFlushWaiters() && (_session == null || _session.StateVersion == _savedSessionVersion) && _uploader.NothingToDo(_bridge, false);
+            Volatile.Read(ref _backgroundUploadRequested) == 0 && !flushRequested && !HasFlushWaiters() && (_session == null || _session.StateVersion == _savedSessionVersion) && _uploader.NothingToDo(_bridge, false);
 
         private IAnalyticsQueueBridge EnsureBridge() => _bridge ?? (_bridge = AndroidQueueBridge.TryCreate());
 
@@ -313,15 +317,18 @@ namespace Daliys.Analytics.Internal
             _savedSessionVersion = version;
         }
 
-        private void CompleteFlushes(FlushStatus status)
+        private List<TaskCompletionSource<FlushResult>> TakeFlushWaiters()
         {
-            List<TaskCompletionSource<FlushResult>> completions;
             lock (_sync)
             {
-                completions = new List<TaskCompletionSource<FlushResult>>(_flushWaiters);
+                var taken = new List<TaskCompletionSource<FlushResult>>(_flushWaiters);
                 _flushWaiters.Clear();
+                return taken;
             }
+        }
 
+        private void CompleteFlushes(List<TaskCompletionSource<FlushResult>> completions, FlushStatus status)
+        {
             var result = new FlushResult(status, HandoffCount);
             foreach (var completion in completions)
                 completion.TrySetResult(result);

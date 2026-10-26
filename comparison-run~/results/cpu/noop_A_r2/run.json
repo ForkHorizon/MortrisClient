@@ -1,0 +1,33 @@
+{
+ "label": "noop_A_r2",
+ "sdk": "noop",
+ "host": "127.0.0.1:18090",
+ "net": "reverse",
+ "data": "puzzle_slice_02.jsonl",
+ "kv": [
+  "scenario=rate",
+  "hz=10",
+  "n=400",
+  "flush_at_end=1"
+ ],
+ "battery_start": "  level: 100   temperature: 290   Capacity level: 5 ",
+ "db0": null,
+ "watchdog_restarts": 1,
+ "tail_s": 21.430722951889038,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 280   Capacity level: 5 ",
+ "final_stats": {
+  "events": 0,
+  "requests": 0,
+  "bytes_in": 0,
+  "bytes_out": 0,
+  "connections": 9,
+  "last": 1792991861.889397,
+  "last_activity_age_s": 0.0,
+  "kinds": {}
+ },
+ "db1": null,
+ "fatal": null,
+ "wall_s": 228.26069235801697,
+ "window_wall_s": 40.03620505332947
+}

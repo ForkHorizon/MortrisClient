@@ -1,0 +1,84 @@
+{"t": 18.759, "conn": 1, "new_connection": true, "method": "POST", "path": "/v1/installs/register", "req_header_bytes": 177, "req_body_bytes": 295, "resp_header_bytes": 109, "resp_body_bytes": 163, "status": 200, "content_encoding": "", "decoded_body_bytes": 295, "events": -1, "user_agent": ""}
+{"t": 18.773, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 224, "req_body_bytes": 457, "resp_header_bytes": 109, "resp_body_bytes": 212, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 672, "events": -1, "user_agent": ""}
+{"t": 19.018, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8944, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 119169, "events": -1, "user_agent": ""}
+{"t": 19.108, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8474, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 121882, "events": -1, "user_agent": ""}
+{"t": 19.209, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8687, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 117956, "events": -1, "user_agent": ""}
+{"t": 19.291, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8350, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 113048, "events": -1, "user_agent": ""}
+{"t": 19.392, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8514, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 114479, "events": -1, "user_agent": ""}
+{"t": 19.51, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8342, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 116961, "events": -1, "user_agent": ""}
+{"t": 19.657, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8686, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 116814, "events": -1, "user_agent": ""}
+{"t": 19.771, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8131, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 111422, "events": -1, "user_agent": ""}
+{"t": 19.877, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8553, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 114936, "events": -1, "user_agent": ""}
+{"t": 20.004, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8563, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 118220, "events": -1, "user_agent": ""}
+{"t": 20.086, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8635, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 113204, "events": -1, "user_agent": ""}
+{"t": 20.206, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8799, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 113555, "events": -1, "user_agent": ""}
+{"t": 20.324, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8938, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 112345, "events": -1, "user_agent": ""}
+{"t": 20.47, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8674, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 112829, "events": -1, "user_agent": ""}
+{"t": 20.582, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8850, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 112857, "events": -1, "user_agent": ""}
+{"t": 20.691, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8944, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 114854, "events": -1, "user_agent": ""}
+{"t": 20.849, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8760, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 112888, "events": -1, "user_agent": ""}
+{"t": 20.952, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8419, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 116542, "events": -1, "user_agent": ""}
+{"t": 21.063, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 9029, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 113106, "events": -1, "user_agent": ""}
+{"t": 21.213, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8614, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 114766, "events": -1, "user_agent": ""}
+{"t": 21.33, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 7862, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 117256, "events": -1, "user_agent": ""}
+{"t": 21.43, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 7888, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 117519, "events": -1, "user_agent": ""}
+{"t": 21.566, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8610, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 119373, "events": -1, "user_agent": ""}
+{"t": 21.666, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 7713, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 119455, "events": -1, "user_agent": ""}
+{"t": 21.776, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8373, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 122655, "events": -1, "user_agent": ""}
+{"t": 21.899, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 8475, "resp_header_bytes": 116, "resp_body_bytes": 4085, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 125050, "events": -1, "user_agent": ""}
+{"t": 21.974, "conn": 1, "new_connection": false, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 225, "req_body_bytes": 7379, "resp_header_bytes": 116, "resp_body_bytes": 3461, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 95501, "events": -1, "user_agent": ""}
+{"t": 23.148, "conn": 2, "closed": true}
+{"t": 26.196, "conn": 3, "closed": true}
+{"t": 29.241, "conn": 4, "closed": true}
+{"t": 32.274, "conn": 5, "closed": true}
+{"t": 35.323, "conn": 6, "closed": true}
+{"t": 38.37, "conn": 7, "closed": true}
+{"t": 41.405, "conn": 8, "closed": true}
+{"t": 44.448, "conn": 9, "closed": true}
+{"t": 47.489, "conn": 10, "closed": true}
+{"t": 50.53, "conn": 11, "closed": true}
+{"t": 53.572, "conn": 12, "closed": true}
+{"t": 56.609, "conn": 13, "closed": true}
+{"t": 59.655, "conn": 14, "closed": true}
+{"t": 62.709, "conn": 15, "closed": true}
+{"t": 65.742, "conn": 16, "closed": true}
+{"t": 68.78, "conn": 17, "closed": true}
+{"t": 71.816, "conn": 18, "closed": true}
+{"t": 74.865, "conn": 19, "closed": true}
+{"t": 77.904, "conn": 20, "closed": true}
+{"t": 80.929, "conn": 21, "closed": true}
+{"t": 83.956, "conn": 22, "closed": true}
+{"t": 86.989, "conn": 23, "closed": true}
+{"t": 90.026, "conn": 24, "closed": true}
+{"t": 93.056, "conn": 25, "closed": true}
+{"t": 96.089, "conn": 26, "closed": true}
+{"t": 99.118, "conn": 27, "closed": true}
+{"t": 102.156, "conn": 28, "closed": true}
+{"t": 105.191, "conn": 29, "closed": true}
+{"t": 108.228, "conn": 30, "closed": true}
+{"t": 111.271, "conn": 31, "closed": true}
+{"t": 114.314, "conn": 32, "closed": true}
+{"t": 117.363, "conn": 33, "closed": true}
+{"t": 120.417, "conn": 34, "closed": true}
+{"t": 121.986, "conn": 1, "closed": true}
+{"t": 123.468, "conn": 35, "closed": true}
+{"t": 126.516, "conn": 36, "closed": true}
+{"t": 129.552, "conn": 37, "closed": true}
+{"t": 132.601, "conn": 38, "closed": true}
+{"t": 135.642, "conn": 39, "closed": true}
+{"t": 138.683, "conn": 40, "closed": true}
+{"t": 141.724, "conn": 41, "closed": true}
+{"t": 144.762, "conn": 42, "closed": true}
+{"t": 147.809, "conn": 43, "closed": true}
+{"t": 150.855, "conn": 44, "closed": true}
+{"t": 153.906, "conn": 45, "closed": true}
+{"t": 156.95, "conn": 46, "closed": true}
+{"t": 159.979, "conn": 47, "closed": true}
+{"t": 163.025, "conn": 48, "closed": true}
+{"t": 166.073, "conn": 49, "closed": true}
+{"t": 169.128, "conn": 50, "closed": true}
+{"t": 172.166, "conn": 51, "closed": true}
+{"t": 175.198, "conn": 52, "closed": true}
+{"t": 177.824, "conn": 53, "new_connection": true, "method": "POST", "path": "/v1/events/batch", "req_header_bytes": 224, "req_body_bytes": 484, "resp_header_bytes": 109, "resp_body_bytes": 212, "status": 200, "content_encoding": "gzip", "decoded_body_bytes": 735, "events": -1, "user_agent": ""}
+{"t": 178.747, "conn": 53, "closed": true}
+{"t": 179.706, "conn": 54, "closed": true}
