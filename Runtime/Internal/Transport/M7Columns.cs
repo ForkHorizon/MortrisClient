@@ -18,7 +18,7 @@ namespace Daliys.Analytics.Internal.Transport
         public int[] Columns;
         public M7Cell[] Values;
     }
-    internal sealed class M7Columns
+    internal sealed partial class M7Columns
     {
         readonly System.Text.UTF8Encoding utf8 = new System.Text.UTF8Encoding(false, true);
         readonly long[] work = new long[500], original = new long[500], bestValues = new long[500], integerValues = new long[500], integerIndices = new long[500];
