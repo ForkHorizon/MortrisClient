@@ -20,7 +20,7 @@ namespace Daliys.Analytics.Internal.Transport
     internal static class EventRecordFormat
     {
         internal const byte Version = 1;
-        internal const byte TagNull = 0, TagFalse = 1, TagTrue = 2, TagInt = 3, TagUInt64 = 4, TagDouble = 5, TagString = 6;
+        internal const byte TagNull = 0, TagFalse = 1, TagTrue = 2, TagInt = 3, TagUInt64 = 4, TagDouble = 5, TagString = 6, TagSingle = 7;
         internal const int IdOffset = 1, SessionOffset = 17, FixedHeader = 33;
 
         internal static void WriteVarint(byte[] buffer, ref int position, ulong value)
@@ -132,6 +132,12 @@ namespace Daliys.Analytics.Internal.Transport
         [ThreadStatic] private static EventRecordWriter _forThread;
         internal static EventRecordWriter ForThread => _forThread ?? (_forThread = new EventRecordWriter());
 
+        /// <summary>
+        /// V8 mode: numbers keep the type they have in the game. A float is a float32 and a double a float64 whatever their value, so an event's shape does
+        /// not change when a float happens to be 0 or 0.5. When off (V1 and V7) the type is derived from the value, as the JSON path always did.
+        /// </summary>
+        internal bool TypedNumbers;
+
         private byte[] _buffer = new byte[2048];
         private int _position;
         private int _expected, _count;
@@ -186,6 +192,7 @@ namespace Daliys.Analytics.Internal.Transport
         /// </summary>
         internal void AddDouble(string key, double value)
         {
+            if (TypedNumbers) { AddRawDouble(key, value); return; }
             if (value == Math.Floor(value) && Math.Abs(value) < 1e15) AddInt(key, (long)value);
             else AddRawDouble(key, value);
         }
@@ -199,6 +206,14 @@ namespace Daliys.Analytics.Internal.Transport
         /// </summary>
         internal void AddSingle(string key, float value)
         {
+            if (TypedNumbers)
+            {
+                if (float.IsNaN(value) || float.IsInfinity(value)) throw new InvalidOperationException("Non-finite number.");
+                Key(key, EventRecordFormat.TagSingle); Ensure(4);
+                var bits = BitConverter.SingleToInt32Bits(value);
+                for (var i = 0; i < 4; i++) _buffer[_position++] = (byte)(bits >> (8 * i));
+                return;
+            }
             if (value == (float)Math.Floor(value) && Math.Abs(value) < 1e7f) { AddInt(key, (long)value); return; }
             if (TryShortestDouble(value, out var d)) { AddRawDouble(key, d); return; }
             AddLexeme(key, value.ToString("R", CultureInfo.InvariantCulture));
@@ -350,6 +365,11 @@ namespace Daliys.Analytics.Internal.Transport
                     case EventRecordFormat.TagNull: case EventRecordFormat.TagFalse: case EventRecordFormat.TagTrue: break;
                     case EventRecordFormat.TagInt: p.I = EventRecordFormat.UnZigZag(EventRecordFormat.ReadVarint(buffer, ref position, end)); break;
                     case EventRecordFormat.TagUInt64: p.U = EventRecordFormat.ReadVarint(buffer, ref position, end); break;
+                    case EventRecordFormat.TagSingle:
+                        if (position + 4 > end) throw new FormatException("Event record is truncated.");
+                        p.D = BitConverter.Int32BitsToSingle(buffer[position] | buffer[position + 1] << 8 | buffer[position + 2] << 16 | buffer[position + 3] << 24);
+                        position += 4;
+                        break;
                     case EventRecordFormat.TagDouble:
                         if (position + 8 > end) throw new FormatException("Event record is truncated.");
                         long bits = 0;
@@ -484,6 +504,7 @@ namespace Daliys.Analytics.Internal.Transport
                     case EventRecordFormat.TagInt: json.Append(p.I.ToString(CultureInfo.InvariantCulture)); break;
                     case EventRecordFormat.TagUInt64: json.Append(p.U.ToString(CultureInfo.InvariantCulture)); break;
                     case EventRecordFormat.TagDouble: json.Append(p.D.ToString("R", CultureInfo.InvariantCulture)); break;
+                    case EventRecordFormat.TagSingle: json.Append(((float)p.D).ToString("R", CultureInfo.InvariantCulture)); break;
                     default: AppendString(json, p.S); break;
                 }
             }

@@ -319,3 +319,93 @@ namespace M7Transport.Tests
         }
     }
 }
+
+namespace M7Transport.Tests
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using Daliys.Analytics.Internal.Transport;
+    using Xunit;
+
+    public class TypedNumberTests
+    {
+        private static readonly byte[] Ctx = EventContext.Build("1.0", "1", "android", "14", "phone", "en-US", 0);
+
+        private static ParsedEvent Round(bool typed, params (string key, object value)[] props)
+        {
+            var writer = new EventRecordWriter { TypedNumbers = typed };
+            writer.Begin(Guid.NewGuid(), Guid.NewGuid(), 1790000000000, 10, Ctx, "e", props.Length);
+            foreach (var p in props) writer.AddClr(p.key, p.value);
+            var length = writer.Finish();
+            var record = new byte[length];
+            Array.Copy(writer.Buffer, record, length);
+            var parsed = new ParsedEvent();
+            new EventRecordReader().Read(record, 0, record.Length, parsed);
+            return parsed;
+        }
+
+        [Fact]
+        public void TypedModeKeepsFloatsFloatsWhateverTheirValue()
+        {
+            var parsed = Round(true, ("a", 0f), ("b", 3f), ("c", 0.5f), ("d", 12.345679f), ("e", 3.0), ("f", 0.1), ("g", 7L));
+            var tags = new Dictionary<string, byte>();
+            for (var i = 0; i < parsed.PropertyCount; i++) tags[parsed.Properties[i].Key] = parsed.Properties[i].Tag;
+            Assert.Equal(EventRecordFormat.TagSingle, tags["a"]);
+            Assert.Equal(EventRecordFormat.TagSingle, tags["b"]);
+            Assert.Equal(EventRecordFormat.TagSingle, tags["c"]);
+            Assert.Equal(EventRecordFormat.TagSingle, tags["d"]);
+            Assert.Equal(EventRecordFormat.TagDouble, tags["e"]);
+            Assert.Equal(EventRecordFormat.TagDouble, tags["f"]);
+            Assert.Equal(EventRecordFormat.TagInt, tags["g"]);
+        }
+
+        [Fact]
+        public void TypedEventsHaveAStableShapeForTheTransport()
+        {
+            foreach (var value in new[] { 0f, 1f, 0.5f, 3.7f, -2f, 1e9f })
+            {
+                var e = M7Event.FromParsed(Round(true, ("speed", value)), 1, false, typedNumbers: true);
+                Assert.Equal(M7Catalog.TypeFloat32, e.Properties[0].Value.Type);
+                Assert.Equal((double)value, e.Properties[0].Value.D);
+            }
+            foreach (var value in new[] { 0.0, 1.0, 0.5, 3.7, 1e20 })
+            {
+                var e = M7Event.FromParsed(Round(true, ("speed", value)), 1, false, typedNumbers: true);
+                Assert.Equal(M7Catalog.TypeFloat64, e.Properties[0].Value.Type);
+            }
+        }
+
+        [Fact]
+        public void ALegacyTransportReadsATypedRecordLikeTheJsonPathAlwaysDid()
+        {
+            // a record written in typed mode, read by V7 (value-based types): integral -> int, exactly representable -> float32, else float64
+            Assert.Equal(M7Catalog.TypeInt, M7Event.FromParsed(Round(true, ("x", 3f)), 1, false).Properties[0].Value.Type);
+            Assert.Equal(M7Catalog.TypeFloat32, M7Event.FromParsed(Round(true, ("x", 0.5f)), 1, false).Properties[0].Value.Type);
+            var d = M7Event.FromParsed(Round(true, ("x", 12.345679f)), 1, false).Properties[0].Value;
+            Assert.Equal(M7Catalog.TypeFloat64, d.Type);
+            Assert.Equal(12.345679, d.D);
+        }
+
+        [Fact]
+        public void TheJsonPathPrintsAFloatAsItsShortestText()
+        {
+            var parsed = Round(true, ("x", 12.345679f), ("y", 0.1f), ("z", 3f));
+            var batch = new System.Text.StringBuilder();
+            EventRecordJson.Append(batch, parsed, Guid.NewGuid().ToString("D"), 1);
+            var json = batch.ToString();
+            Assert.Contains("\"x\":12.345679", json);
+            Assert.Contains("\"y\":0.1", json);
+            Assert.Contains("\"z\":3", json);
+        }
+
+        [Fact]
+        public void LegacyModeIsUnchanged()
+        {
+            var parsed = Round(false, ("a", 3f), ("b", 3.0), ("c", 0.1f));
+            Assert.Equal(EventRecordFormat.TagInt, parsed.Properties[0].Tag);
+            Assert.Equal(EventRecordFormat.TagInt, parsed.Properties[1].Tag);
+            Assert.Equal(EventRecordFormat.TagDouble, parsed.Properties[2].Tag);
+        }
+    }
+}

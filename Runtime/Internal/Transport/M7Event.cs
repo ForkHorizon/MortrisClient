@@ -60,10 +60,10 @@ namespace Daliys.Analytics.Internal.Transport
         }
 
         /// <summary>The event of a queue record (the sequence comes from the queue row). Same typing rules as <see cref="Parse"/>.</summary>
-        internal static M7Event FromParsed(ParsedEvent p, long sequence, bool logicalStrings) => new M7Event().Fill(p, sequence, logicalStrings);
+        internal static M7Event FromParsed(ParsedEvent p, long sequence, bool logicalStrings, bool typedNumbers = false) => new M7Event().Fill(p, sequence, logicalStrings, typedNumbers);
 
         /// <summary>Overwrites this event with the parsed one, reusing its property list (the encoder keeps one instance per batch).</summary>
-        internal M7Event Fill(ParsedEvent p, long sequence, bool logicalStrings)
+        internal M7Event Fill(ParsedEvent p, long sequence, bool logicalStrings, bool typedNumbers = false)
         {
             var e = this;
             e.Sequence = sequence; e.SessionId = p.SessionIdText; e.Name = p.Name; e.SessionElapsedMs = p.SessionElapsedMs; e.TimeMs = p.OccurredAtUnixMs;
@@ -83,7 +83,12 @@ namespace Daliys.Analytics.Internal.Transport
                     case EventRecordFormat.TagUInt64: value = new M7Value { Type = M7Catalog.TypeUInt64, U = property.U }; break;
                     case EventRecordFormat.TagDouble:
                         if (double.IsNaN(property.D) || double.IsInfinity(property.D)) throw new FormatException("Non-finite number.");
-                        value = new M7Value { Type = (double)(float)property.D == property.D ? M7Catalog.TypeFloat32 : M7Catalog.TypeFloat64, D = property.D };
+                        value = new M7Value { Type = typedNumbers ? M7Catalog.TypeFloat64 : (double)(float)property.D == property.D ? M7Catalog.TypeFloat32 : M7Catalog.TypeFloat64, D = property.D };
+                        break;
+                    case EventRecordFormat.TagSingle:
+                        if (double.IsNaN(property.D) || double.IsInfinity(property.D)) throw new FormatException("Non-finite number.");
+                        // typed (V8): a float32 stays float32. Otherwise it is read as the JSON path always read a float: its shortest text decides int, float32 or float64.
+                        value = typedNumbers ? new M7Value { Type = M7Catalog.TypeFloat32, D = property.D } : ClassifyNumber(((float)property.D).ToString("R", CultureInfo.InvariantCulture));
                         break;
                     default: value = new M7Value { Type = logicalStrings ? M7Catalog.TypeString : TextType(property.S), S = property.S }; break;
                 }
