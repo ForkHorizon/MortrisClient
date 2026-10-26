@@ -82,7 +82,7 @@ namespace M7Transport.Tests
                                 }
                             } continue; }
                             if (useDict) { withDict += r.Frame.Length; count += batch; int p2 = 28; ReadVar(r.Frame, ref p2); raw += ReadVar(r.Frame, ref p2); }
-                            else noDict += r.Frame.Length;
+                            else { noDict += r.Frame.Length; var dump = Environment.GetEnvironmentVariable("M7_DUMP"); if (!string.IsNullOrEmpty(dump)) { var vd = Path.Combine(dump, name); Directory.CreateDirectory(vd); File.WriteAllBytes(Path.Combine(vd, from.ToString("D8") + ".bin"), r.Frame); } }
                         }
                     }
                 }
