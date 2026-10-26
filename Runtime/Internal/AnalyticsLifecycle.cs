@@ -22,6 +22,7 @@ namespace Daliys.Analytics.Internal
             DontDestroyOnLoad(host);
             _instance = host.AddComponent<AnalyticsLifecycle>();
             _instance._runtime = runtime;
+            _instance.StartCoroutine(_instance.WatchNetwork());
         }
 
         /// <summary>Removes the forwarder (the runtime was replaced or disposed, as tests do).</summary>
@@ -31,6 +32,20 @@ namespace Daliys.Analytics.Internal
                 return;
             if (Application.isPlaying) Destroy(_instance.gameObject); else DestroyImmediate(_instance.gameObject);
             _instance = null;
+        }
+
+        /// <summary>
+        /// Tells the runtime whether the device has a network (every 5 seconds; <c>Application.internetReachability</c> is a property read and needs no permission). This is only
+        /// a hint: "reachable" can still mean a portal or a dead Wi-Fi, which the upload handles like any failure.
+        /// </summary>
+        private System.Collections.IEnumerator WatchNetwork()
+        {
+            var wait = new WaitForSecondsRealtime(5f);
+            while (true)
+            {
+                _runtime?.SetNetworkReachable(Application.internetReachability != NetworkReachability.NotReachable);
+                yield return wait;
+            }
         }
 
         private void OnApplicationPause(bool paused) => _runtime?.OnApplicationPause(paused);

@@ -41,7 +41,11 @@ namespace Daliys.Analytics.Internal
         private DateTimeOffset _nextAttemptAt;
         private DateTimeOffset _nextPolicyCheckAt;
         private DateTimeOffset _nextUploadAt;
-        private TimeSpan _backoff = InitialBackoff;
+        private static readonly System.Random SharedRandom = new System.Random();
+        private readonly RetryBackoff _retry = new RetryBackoff(InitialBackoff, MaximumBackoff, () => { lock (SharedRandom) return SharedRandom.NextDouble(); });
+        private PacketSizer _sizer;
+        private volatile bool _networkReachable = true;
+        private volatile bool _urgent;
         private bool _registered;
         private bool _installConflict;
         private bool _permanentFailure;
@@ -49,8 +53,9 @@ namespace Daliys.Analytics.Internal
         private readonly V7Session _v7;
         private readonly V8Session _v8;
         private HttpV7Transport _http;
-        /// <summary>The packet size in use: the option, lowered for good when the server says it takes fewer events per packet.</summary>
-        private int _packetCap;
+        /// <summary>Most events the server takes in one packet: the format's 500, lowered for good when the server says it takes fewer.</summary>
+        private int _packetCap = PacketLimit;
+        private const int PacketLimit = 500;
         private volatile CancellationTokenSourceBox _deadline = CancellationTokenSourceBox.None;
         private readonly EventRecordReader _reader = new EventRecordReader();
 
@@ -60,7 +65,6 @@ namespace Daliys.Analytics.Internal
             _device = device;
             _policyChanged = policyChanged;
             _nextUploadAt = DateTimeOffset.UtcNow.Add(options.UploadInterval);
-            _packetCap = options.MaxPacketEvents;
             _v7 = options.UseTransportV8 ? null : CreateV7Session();
             _v8 = options.UseTransportV8 ? CreateV8Session() : null;
         }
@@ -72,7 +76,6 @@ namespace Daliys.Analytics.Internal
             _device = device;
             _policyChanged = policyChanged;
             _nextUploadAt = DateTimeOffset.UtcNow.Add(options.UploadInterval);
-            _packetCap = options.MaxPacketEvents;
             _v7 = v7;
             _v8 = null;
         }
@@ -118,12 +121,44 @@ namespace Daliys.Analytics.Internal
 
         /// <summary>True when <see cref="Flush"/> would return without doing anything (backing off, nothing due): lets the worker skip attaching to the JVM on idle ticks.</summary>
         /// <summary>Events that make a "full" packet for the transport in use.</summary>
-        private int FullPacket() => _v7 != null && !_v7.Disabled ? _packetCap : Math.Min(_packetCap, MaximumV1BatchSize);
+        private int FullPacket()
+        {
+            var cap = Math.Min(_packetCap, _options.MaxPacketEvents);
+            return _v7 != null && !_v7.Disabled ? cap : Math.Min(cap, MaximumV1BatchSize);
+        }
+
+        /// <summary>The size of the next packet: the option while a few events wait, the backlog size while a lot waits, scaled down by what the connection managed so far.</summary>
+        private int NextPacketSize(IAnalyticsQueueBridge queue)
+        {
+            var backlog = queue.PendingCount > 2 * _options.MaxPacketEvents;
+            var ceiling = Math.Min(_packetCap, backlog ? Math.Max(_options.BacklogPacketEvents, _options.MaxPacketEvents) : _options.MaxPacketEvents);
+            if (!_options.AdaptivePacketSize) return ceiling;
+            return (_sizer ?? (_sizer = new PacketSizer(ceiling))).Next(ceiling);
+        }
+
+        /// <summary>The network is known to be gone (or back): while it is gone nothing is attempted unless forced. Set from the main thread.</summary>
+        internal void SetNetworkReachable(bool reachable) => _networkReachable = reachable;
+
+        /// <summary>The player returned to the game: forget the back-off so that what is due goes out at once (nothing becomes due that was not).</summary>
+        internal void ForgetBackoff()
+        {
+            _retry.Reset();
+            _nextAttemptAt = DateTimeOffset.MinValue;
+        }
+
+        /// <summary>The network came back: forget the back-off and make the next tick upload whatever waits.</summary>
+        internal void RequestUploadSoon()
+        {
+            _urgent = true;
+            _retry.Reset();
+            _nextAttemptAt = DateTimeOffset.MinValue;
+            _nextUploadAt = DateTimeOffset.MinValue;
+        }
 
         internal bool NothingToDo(IAnalyticsQueueBridge queue, bool force)
         {
             var now = DateTimeOffset.UtcNow;
-            if (_installConflict || _permanentFailure || (!force && now < _nextAttemptAt))
+            if (_installConflict || _permanentFailure || (!force && (now < _nextAttemptAt || !_networkReachable)))
                 return true;
             return !force && now < _nextUploadAt && queue.PendingCount < _options.UploadEventThreshold;
         }
@@ -188,11 +223,16 @@ namespace Daliys.Analytics.Internal
         private UploadResult FlushCore(IAnalyticsQueueBridge queue, bool force)
         {
             var now = DateTimeOffset.UtcNow;
-            if (_installConflict || _permanentFailure || (!force && now < _nextAttemptAt))
+            if (_installConflict || _permanentFailure || (!force && (now < _nextAttemptAt || !_networkReachable)))
                 return UploadResult.Deferred;
 
             try
             {
+                if (_urgent)
+                {
+                    _urgent = false;
+                    if (queue.PendingCount == 0) return UploadResult.Persisted;    // the trigger was only a hint: nothing waits
+                }
                 if (!force && now < _nextUploadAt && queue.PendingCount < _options.UploadEventThreshold)
                     return UploadResult.Persisted;
 
@@ -211,7 +251,7 @@ namespace Daliys.Analytics.Internal
                 if (_currentPolicy != null && _currentPolicy.Mode == ServerPolicyMode.DisableCollection)
                     return UploadResult.Uploaded;
 
-                var batchSize = _packetCap;
+                var batchSize = NextPacketSize(queue);
                 var sent = 0;
                 while (true)
                 {
@@ -223,9 +263,11 @@ namespace Daliys.Analytics.Internal
                         return UploadResult.Uploaded;
                     }
 
+                    var requestWatch = System.Diagnostics.Stopwatch.StartNew();
                     var v7 = _v8 != null && !_v8.Disabled ? _v8.Send(queue, () => queue.ReadOldest(batchSize))
                            : _v7 != null && !_v7.Disabled ? _v7.Send(queue, state, () => queue.ReadOldest(batchSize))
                            : null;
+                    requestWatch.Stop();
                     if (v7 != null)
                     {
                         switch (v7.Kind)
@@ -233,15 +275,21 @@ namespace Daliys.Analytics.Internal
                             case V7ResultKind.Delivered:
                             {
                                 sent++;
+                                _sizer?.OnSuccess(requestWatch.Elapsed, Math.Min(_packetCap, Math.Max(_options.BacklogPacketEvents, _options.MaxPacketEvents)));
                                 var policyResultAfterPacket = ApplyPolicy(new ServerPolicy(PolicyMode(v7.PolicyMode), v7.DiscardPending, v7.NextCheckSeconds));
                                 if (policyResultAfterPacket != null)
                                     return policyResultAfterPacket;
+                                batchSize = NextPacketSize(queue);
+                                // draining a backlog: a short pause between packets so the upload does not fight the game for the connection (a forced flush has no pause)
+                                if (!force && _options.BacklogPacketPause > TimeSpan.Zero && queue.PendingCount >= FullPacket())
+                                    Thread.Sleep(_options.BacklogPacketPause);
                                 continue;
                             }
                             case V7ResultKind.Empty:
                                 ResetBackoff();
                                 return UploadResult.Uploaded;
                             case V7ResultKind.Retry:
+                                _sizer?.OnFailure();
                                 return BackOff(now, v7.RetryAfter);
                             case V7ResultKind.Unauthorized:
                             {
@@ -456,14 +504,13 @@ namespace Daliys.Analytics.Internal
 
         private UploadResult BackOff(DateTimeOffset now, TimeSpan? retryAfter)
         {
-            _nextAttemptAt = now + (retryAfter ?? _backoff);
-            _backoff = TimeSpan.FromMilliseconds(Math.Min(_backoff.TotalMilliseconds * 2, MaximumBackoff.TotalMilliseconds));
+            _nextAttemptAt = now + _retry.OnFailure(retryAfter);
             return UploadResult.Deferred;
         }
 
         private void ResetBackoff()
         {
-            _backoff = InitialBackoff;
+            _retry.Reset();
             _nextAttemptAt = DateTimeOffset.MinValue;
             _nextUploadAt = DateTimeOffset.UtcNow.Add(_options.UploadInterval);
         }

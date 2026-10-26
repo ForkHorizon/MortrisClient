@@ -17,7 +17,7 @@ namespace Daliys.Analytics.Internal
     {
         /// <summary>Records that make the buffer write straight away instead of waiting for the window.</summary>
         private const int ImmediateThreshold = 128;
-        internal const int BufferCapacity = 1024, BufferBytes = 1024 * 1024;
+        internal const int BufferCapacity = 1 << 30;   // the buffer is bounded by bytes (AnalyticsOptions.EventBufferBytes), not by a number of events
         private static readonly TimeSpan RetryDelay = TimeSpan.FromSeconds(2);
         private static readonly TimeSpan HeartbeatInterval = TimeSpan.FromSeconds(30);
 
@@ -26,8 +26,10 @@ namespace Daliys.Analytics.Internal
         private readonly AnalyticsDeviceContext _device;
         private readonly AnalyticsUploader _uploader;
         private readonly Action<ServerPolicy> _policyChanged;
-        private readonly Timer _uploadTimer, _flushTimer, _heartbeatTimer;
-        private readonly EventBuffer _buffer = new EventBuffer(BufferCapacity, BufferBytes);
+        private readonly Timer _uploadTimer, _flushTimer, _heartbeatTimer, _restoreTimer;
+        private int _networkReachable = 1;
+        private static readonly System.Random RestoreJitter = new System.Random();
+        private readonly EventBuffer _buffer;
         private readonly AnalyticsCounters _counters = new AnalyticsCounters();
         private readonly List<TaskCompletionSource<FlushResult>> _flushWaiters = new List<TaskCompletionSource<FlushResult>>();
         private readonly object _writeSync = new object();
@@ -42,10 +44,14 @@ namespace Daliys.Analytics.Internal
         private int _heartbeatDue;
         private int _backgroundUploadRequested;
         private long _lastBackgroundUploadTicks;
+        private long _bufferFlushedByTrack;
+        private long _queueEvicted;
+        private long _lastEvictedReadTicks;
 
         internal AnalyticsPersistenceWorker(AnalyticsOptions options, Action<ServerPolicy> policyChanged)
         {
             _options = options;
+            _buffer = new EventBuffer(BufferCapacity, options.EventBufferBytes);
             _device = AnalyticsDeviceContext.Create(options);
             ContextBytes = EventContext.Build(_device.AppVersion, _device.BuildNumber, _device.Platform, _device.OSVersion, _device.DeviceClass, _device.Locale, _device.TimezoneOffsetMinutes);
             _policyChanged = policyChanged;
@@ -53,6 +59,7 @@ namespace Daliys.Analytics.Internal
             _uploadTimer = new Timer(_ => Schedule(), null, options.UploadInterval, options.UploadInterval);
             _flushTimer = new Timer(_ => { Volatile.Write(ref _timerArmed, 0); Schedule(); }, null, Timeout.Infinite, Timeout.Infinite);
             _heartbeatTimer = new Timer(_ => { Volatile.Write(ref _heartbeatDue, 1); Schedule(); }, null, HeartbeatInterval, HeartbeatInterval);
+            _restoreTimer = new Timer(_ => UploadSoon(), null, Timeout.Infinite, Timeout.Infinite);
         }
 
         /// <summary>The device fields every record carries, encoded once.</summary>
@@ -63,10 +70,21 @@ namespace Daliys.Analytics.Internal
 
         internal int HandoffCount => _buffer.Count;
 
+        internal long BufferFlushedByTrack => Interlocked.Read(ref _bufferFlushedByTrack);
+        internal long QueueEvicted => Interlocked.Read(ref _queueEvicted);
+
         internal bool TryEnqueue(byte[] record, int length, bool priority = false)
         {
-            if (Volatile.Read(ref _isDisposed) != 0 || !_buffer.TryAppend(record, length, priority))
+            if (Volatile.Read(ref _isDisposed) != 0)
                 return false;
+            if (!_buffer.TryAppend(record, length, priority))
+            {
+                // A burst filled the buffer. Nothing is dropped: this call writes the buffer to the durable queue itself (the frame gets longer, which is the price of not using
+                // Analytics.TrackBatchAsync) and then appends. Only where there is no queue to write to (the Editor) or the write failed does the event stay refused.
+                if (priority || !FlushBufferOnCaller() || !_buffer.TryAppend(record, length, priority))
+                    return false;
+                Interlocked.Increment(ref _bufferFlushedByTrack);
+            }
 
             if (_buffer.Count >= ImmediateThreshold || _options.EventBufferWindow <= TimeSpan.Zero)
                 Schedule();
@@ -91,6 +109,95 @@ namespace Daliys.Analytics.Internal
             Interlocked.Exchange(ref _backgroundUploadRequested, 1);
             Schedule();
         }
+
+        /// <summary>Writes everything buffered to the durable queue on the calling thread. False when there is no queue or the write failed (the records stay buffered).</summary>
+        private bool FlushBufferOnCaller()
+        {
+            if (!AndroidQueueBridge.IsSupported) return false;
+            try
+            {
+                lock (_writeSync)
+                {
+                    if (EnsureBridge() == null) return false;
+                    RecoverPreviousSession();
+                    while (_buffer.Count > 0) WriteBuffer();
+                }
+                return true;
+            }
+            catch (Exception exception)
+            {
+                if (_options.DebugLogging) Debug.LogException(exception);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Writes records that were already encoded (a frame: per record int32 length then the record) straight to the durable queue from any thread, after what the buffer
+        /// holds, so events tracked before the batch keep their place. Used by <c>TrackBatchAsync</c>; returns false when the queue is unavailable or refused the write.
+        /// </summary>
+        internal bool WriteFramesDirect(byte[] frames, int count)
+        {
+            if (!AndroidQueueBridge.IsSupported || Volatile.Read(ref _isDisposed) != 0) return false;
+#if UNITY_ANDROID && !UNITY_EDITOR
+            if (AndroidJNI.AttachCurrentThread() != 0) return false;
+#endif
+            try
+            {
+                lock (_writeSync)
+                {
+                    if (EnsureBridge() == null) return false;
+                    RecoverPreviousSession();
+                    while (_buffer.Count > 0) WriteBuffer();
+                    var counters = _counters.Snapshot();
+                    _bridge.EnqueueRecords(frames, count, _options.DurableEventLimit, _options.DurableByteLimit, (long)_options.MaxEventAge.TotalMilliseconds, counters);
+                }
+                return true;
+            }
+            catch (Exception exception)
+            {
+                if (_options.DebugLogging) Debug.LogException(exception);
+                return false;
+            }
+            finally
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR
+                AndroidJNI.DetachCurrentThread();
+#endif
+            }
+        }
+
+        /// <summary>
+        /// The platform says whether there is a network at all (<c>Application.internetReachability</c>, polled on the main thread; it needs no permission). While there is none
+        /// nothing is attempted. When it comes back an upload follows after 0-5 seconds of random delay, so a region that lost its network does not return in one instant.
+        /// </summary>
+        internal void SetNetworkReachable(bool reachable)
+        {
+            var was = Interlocked.Exchange(ref _networkReachable, reachable ? 1 : 0) == 1;
+            _uploader.SetNetworkReachable(reachable);
+            if (reachable && !was && Volatile.Read(ref _isDisposed) == 0)
+            {
+                int delay; lock (RestoreJitter) delay = RestoreJitter.Next(0, 5001);
+                _restoreTimer.Change(delay, Timeout.Infinite);
+            }
+        }
+
+        /// <summary>The player came back to the game: forget the back-off so what is due is sent without waiting for the old retry time.</summary>
+        internal void OnForeground()
+        {
+            if (Volatile.Read(ref _isDisposed) != 0) return;
+            _uploader.ForgetBackoff();
+            Schedule();
+        }
+
+        private void UploadSoon()
+        {
+            if (Volatile.Read(ref _isDisposed) != 0) return;
+            _uploader.RequestUploadSoon();
+            Schedule();
+        }
+
+        /// <summary>Wakes the worker (upload logic included) after records were written behind its back.</summary>
+        internal void WakeUp() => Schedule();
 
         /// <summary>
         /// The next number of a named counter (see <see cref="AnalyticsCounters"/>). The first call loads the stored values from the durable queue, which creates the
@@ -174,6 +281,7 @@ namespace Daliys.Analytics.Internal
             _uploadTimer.Dispose();
             _flushTimer.Dispose();
             _heartbeatTimer.Dispose();
+            _restoreTimer.Dispose();
         }
 
         private void Schedule()
@@ -225,6 +333,7 @@ namespace Daliys.Analytics.Internal
                             break;
                     }
                     SaveSessionState(false);
+                    RefreshEvictedCount();
                 }
 
                 // A clear requested after the write step above must not let the upload send what it was meant to remove; the finally block reschedules.
@@ -282,6 +391,16 @@ namespace Daliys.Analytics.Internal
                 if (counters != null) _counters.MarkDirty();
                 throw;
             }
+        }
+
+        /// <summary>The queue counts the events it had to drop (full or expired); read it at most every 5 seconds.</summary>
+        private void RefreshEvictedCount()
+        {
+            var now = System.Diagnostics.Stopwatch.GetTimestamp();
+            if (now - Interlocked.Read(ref _lastEvictedReadTicks) < 5 * System.Diagnostics.Stopwatch.Frequency) return;
+            Interlocked.Exchange(ref _lastEvictedReadTicks, now);
+            long.TryParse(_bridge.GetMeta("evicted_total"), System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var total);
+            Interlocked.Exchange(ref _queueEvicted, total);
         }
 
         private bool IsIdle(bool flushRequested) =>

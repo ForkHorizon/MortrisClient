@@ -87,6 +87,12 @@ namespace Daliys.Analytics.Internal
         private bool Write(string name, IReadOnlyDictionary<string, object> properties, Guid sessionId, long occurredAtUnixMs, long sessionElapsedMs, bool priority)
         {
             var writer = EventRecordWriter.ForThread;
+            var length = Encode(writer, name, properties, sessionId, occurredAtUnixMs, sessionElapsedMs);
+            return _persistenceWorker.TryEnqueue(writer.Buffer, length, priority);
+        }
+
+        private int Encode(EventRecordWriter writer, string name, IReadOnlyDictionary<string, object> properties, Guid sessionId, long occurredAtUnixMs, long sessionElapsedMs)
+        {
             writer.TypedNumbers = _typedNumbers;
             writer.Begin(name == "sys_session_end" ? SessionEndId(sessionId) : Guid.NewGuid(), sessionId, occurredAtUnixMs, sessionElapsedMs, _persistenceWorker.ContextBytes, name, properties == null ? 0 : properties.Count);
             if (properties is Dictionary<string, object> map)
@@ -99,8 +105,51 @@ namespace Daliys.Analytics.Internal
                 foreach (var property in properties)
                     writer.AddClr(property.Key, property.Value);
             }
-            var length = writer.Finish();
-            return _persistenceWorker.TryEnqueue(writer.Buffer, length, priority);
+            return writer.Finish();
+        }
+
+        /// <summary>
+        /// Encodes the events on a pool thread and writes them to the durable queue in chunks, without touching the in-memory buffer or the calling frame. Events keep the
+        /// time they carry (the moment of the call when they carry none). The collection and the property dictionaries must stay unchanged until the task completes.
+        /// </summary>
+        internal Task<BatchResult> TrackBatchAsync(IReadOnlyList<BatchEvent> events, CancellationToken cancellationToken)
+        {
+            if (!IsCollectionEnabled)
+                return Task.FromResult(new BatchResult(events.Count, 0, 0, 0, true, collectionDisabled: true));
+            var session = _session.Current;
+            var callTime = NowMs();
+            return Task.Run(() =>
+            {
+                const int ChunkEvents = 500, ChunkBytes = 1024 * 1024;
+                var writer = new EventRecordWriter { TypedNumbers = _typedNumbers };
+                var frame = new System.IO.MemoryStream();
+                int accepted = 0, invalid = 0, inChunk = 0, lost = 0; var completed = true;
+                bool Flush()
+                {
+                    if (inChunk == 0) return true;
+                    var ok = _persistenceWorker.WriteFramesDirect(frame.ToArray(), inChunk);
+                    if (ok) accepted += inChunk; else lost += inChunk;
+                    frame.SetLength(0); inChunk = 0;
+                    return ok;
+                }
+                for (var i = 0; i < events.Count; i++)
+                {
+                    if (cancellationToken.IsCancellationRequested) { completed = false; break; }
+                    var item = events[i];
+                    if (!EventValidator.IsValidPublicEventName(item.Name) || !EventValidator.HasValidProperties(item.Properties)) { invalid++; Interlocked.Increment(ref _invalidEvents); continue; }
+                    var at = item.Time.HasValue ? item.Time.Value.ToUnixTimeMilliseconds() : callTime;
+                    int length;
+                    try { length = Encode(writer, item.Name, item.Properties, session.Id, at, Math.Max(0, at - session.StartUnixMs)); }
+                    catch (InvalidOperationException) { invalid++; Interlocked.Increment(ref _invalidEvents); continue; }
+                    frame.WriteByte((byte)(length >> 24)); frame.WriteByte((byte)(length >> 16)); frame.WriteByte((byte)(length >> 8)); frame.WriteByte((byte)length);
+                    frame.Write(writer.Buffer, 0, length);
+                    inChunk++;
+                    if (inChunk >= ChunkEvents || frame.Length >= ChunkBytes) Flush();
+                }
+                Flush();
+                _persistenceWorker.WakeUp();
+                return new BatchResult(events.Count, accepted, invalid, lost, completed);
+            }, cancellationToken);
         }
 
         /// <summary>A lifecycle event (session start/end, background/foreground): stamped with the session and moment the tracker names, never dropped for want of room.</summary>
@@ -111,6 +160,8 @@ namespace Daliys.Analytics.Internal
             try { Write(name, properties, sessionId, occurredAtUnixMs, sessionElapsedMs, true); }
             catch (InvalidOperationException) { Interlocked.Increment(ref _invalidEvents); }
         }
+
+        internal void SetNetworkReachable(bool reachable) => _persistenceWorker.SetNetworkReachable(reachable);
 
         internal long NextId(string counter) => _persistenceWorker.NextId(counter);
 
@@ -134,12 +185,16 @@ namespace Daliys.Analytics.Internal
             _session.OnPause(paused);
             if (paused && _persistenceWorker.PersistNow())
                 _persistenceWorker.RequestBackgroundUpload();
+            else if (!paused)
+                _persistenceWorker.OnForeground();
         }
 
         internal void OnApplicationFocus(bool hasFocus)
         {
             if (!hasFocus)
                 _persistenceWorker.PersistNow();
+            else
+                _persistenceWorker.OnForeground();
         }
 
         internal void OnApplicationQuit()
@@ -157,7 +212,9 @@ namespace Daliys.Analytics.Internal
                 handoffCount: _persistenceWorker.HandoffCount,
                 handoffDropNewest: Interlocked.Read(ref _handoffDropNewest),
                 invalidEvents: Interlocked.Read(ref _invalidEvents),
-                rateLimited: _limiter.Limited);
+                rateLimited: _limiter.Limited,
+                queueEvictedEvents: _persistenceWorker.QueueEvicted,
+                bufferFlushedByTrack: _persistenceWorker.BufferFlushedByTrack);
         }
 
         internal void Dispose() => _persistenceWorker.Dispose();

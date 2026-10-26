@@ -51,6 +51,8 @@ public final class AnalyticsQueueInstrumentationTest extends Instrumentation {
             testStorageKeysSurviveReopenAndIdentityReset(getTargetContext());
             testCountersAreStoredInTheTransactionOfTheirBatch(getTargetContext());
             testAdoptedIdentityReplacesTheLocalOneAndKeepsTheQueue(getTargetContext());
+            testZeroEventLimitAndZeroAgeMeanNoLimit(getTargetContext());
+            testByteLimitCountsRowOverheadEvictsOldestAndCountsEvictions(getTargetContext());
             result.putString(REPORT_KEY_STREAMRESULT, "U1 device queue tests passed.\n");
             finish(Activity.RESULT_OK, result);
         } catch (Throwable failure) {
@@ -454,6 +456,43 @@ public final class AnalyticsQueueInstrumentationTest extends Instrumentation {
         return new AnalyticsQueue(context);
     }
 
+    private static void testZeroEventLimitAndZeroAgeMeanNoLimit(Context context) throws Exception {
+        AnalyticsQueue queue = new AnalyticsQueue(context);
+        queue.clearAllPendingEvents();
+        String[] ids = new String[300];
+        for (int i = 0; i < ids.length; i++) ids[i] = id(9000 + i);
+        int droppedBefore = new JSONObject(queue.getSequenceState()).getJSONArray("dropped").length();   // clearing the queue above journaled its old rows
+        long evictedBefore = longOf(queue.getMeta("evicted_total"));
+        enqueue(queue, 0, BYTE_LIMIT, 0, ids);                      // 0 = no limit by count, 0 = events never expire
+        assertEquals(300, queue.getState().getPendingCount());
+        assertEquals(droppedBefore, new JSONObject(queue.getSequenceState()).getJSONArray("dropped").length());
+        assertEquals(evictedBefore, longOf(queue.getMeta("evicted_total")));
+        boolean failed = false;
+        try { enqueue(queue, -1, BYTE_LIMIT, 0, id(9500)); } catch (IllegalArgumentException expected) { failed = true; }
+        assertTrue(failed);
+        failed = false;
+        try { enqueue(queue, 0, BYTE_LIMIT, -1, id(9501)); } catch (IllegalArgumentException expected) { failed = true; }
+        assertTrue(failed);
+        queue.close();
+    }
+
+    private static void testByteLimitCountsRowOverheadEvictsOldestAndCountsEvictions(Context context) throws Exception {
+        AnalyticsQueue queue = new AnalyticsQueue(context);
+        queue.clearAllPendingEvents();
+        long before = longOf(queue.getMeta("evicted_total"));
+        // a record is 33 + 8 bytes; with the 40 bytes of row overhead every event costs 81: a limit of 810 holds exactly ten
+        String[] ids = new String[25];
+        for (int i = 0; i < ids.length; i++) ids[i] = id(9600 + i);
+        enqueue(queue, 0, 810, 0, ids);
+        assertEquals(10, queue.getState().getPendingCount());
+        JSONArray pending = new JSONArray(pendingJson(queue, 100));
+        assertEquals(ids[15], pending.getJSONObject(0).getString("event_id"));  // the oldest fifteen went
+        assertEquals(15L, longOf(queue.getMeta("evicted_total")) - before);
+        queue.close();
+    }
+
+    private static long longOf(String text) { return text == null || text.isEmpty() ? 0L : Long.parseLong(text); }
+
     private static String id(int n) {
         return String.format("%08x-aaaa-4aaa-8aaa-%012x", n, n);
     }
@@ -583,6 +622,10 @@ public final class AnalyticsQueueInstrumentationTest extends Instrumentation {
     private static void assertEquals(Object expected, Object actual) {
         if (expected == null ? actual != null : !expected.equals(actual))
             throw new AssertionError("Expected " + expected + " but was " + actual + ".");
+    }
+
+    private static void assertTrue(boolean condition) {
+        if (!condition) throw new AssertionError("Expected true.");
     }
 
     private static void assertNotEquals(Object unexpected, Object actual) {

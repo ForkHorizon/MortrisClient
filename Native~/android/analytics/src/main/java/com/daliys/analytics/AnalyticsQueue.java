@@ -40,6 +40,9 @@ public final class AnalyticsQueue implements Closeable {
     private static final String META_DROPPED_VERSION = "dropped_version";
     private static final String META_SESSION_STATE = "session_state";
     private static final String META_COUNTERS = "counters";
+    private static final String META_EVICTED_TOTAL = "evicted_total";
+    /** What a stored event costs besides its payload (SQLite row, indexes): counted against the byte limit so it bounds the disk the queue really uses. */
+    private static final long ROW_OVERHEAD = 40;
     /** Older ranges are merged beyond this bound; a wider skip is safe because skips only mean "do not wait for". */
     private static final int MAX_DROPPED_RANGES = 1024;
 
@@ -172,7 +175,7 @@ public final class AnalyticsQueue implements Closeable {
     }
 
     private static boolean isAppMetaKey(String key) {
-        return key.equals(META_SESSION_STATE) || key.equals(META_COUNTERS) || (key.startsWith("v8.") && key.length() <= 32);
+        return key.equals(META_SESSION_STATE) || key.equals(META_COUNTERS) || key.equals(META_EVICTED_TOTAL) || (key.startsWith("v8.") && key.length() <= 32);
     }
 
     /** The rows an identity reset must not touch: the saved session state, the counters and what the V8 transport keeps here. */
@@ -232,8 +235,9 @@ public final class AnalyticsQueue implements Closeable {
     public synchronized int enqueueRecords(byte[] data, int count, int eventLimit, long byteLimit, long maxAgeMillis, String counters) {
         if (counters != null && counters.length() > 65536)
             throw new IllegalArgumentException("Invalid counters.");
-        if (eventLimit <= 0 || byteLimit <= 0 || maxAgeMillis <= 0)
-            throw new IllegalArgumentException("Queue limits must be positive.");
+        if (eventLimit < 0 || byteLimit <= 0 || maxAgeMillis < 0)
+            throw new IllegalArgumentException("Queue limits must not be negative and the byte limit must be positive (0 = no limit by count / no expiry).");
+        if (eventLimit == 0) eventLimit = Integer.MAX_VALUE;
         if (data == null || count < 0)
             throw new IllegalArgumentException("Invalid record batch.");
 
@@ -268,7 +272,7 @@ public final class AnalyticsQueue implements Closeable {
                 putMetadata(META_NEXT_SEQUENCE, Long.toString(sequence));
                 nextSequence = sequence;
             }
-            expireIfDue(now, maxAgeMillis);
+            if (maxAgeMillis > 0) expireIfDue(now, maxAgeMillis);
             enforceBounds(eventLimit, byteLimit);
             if (counters != null && !counters.isEmpty()) putMetadata(META_COUNTERS, counters);
             database.setTransactionSuccessful();
@@ -506,12 +510,16 @@ public final class AnalyticsQueue implements Closeable {
         lastExpiryCheckMillis = now;
         String[] args = {Long.toString(now - maxAgeMillis)};
         recordDroppedWhere("created_at_epoch_ms < ?", args);
-        if (database.delete("pending_events", "created_at_epoch_ms < ?", args) > 0) refreshCounters();
+        int expired = database.delete("pending_events", "created_at_epoch_ms < ?", args);
+        if (expired > 0) {
+            refreshCounters();
+            putMetadata(META_EVICTED_TOTAL, Long.toString(longMetadata(META_EVICTED_TOTAL, 0) + expired));
+        }
     }
 
     private void enforceBounds(int eventLimit, long byteLimit) {
         int evicted = 0;
-        while (pendingCount > eventLimit || pendingBytes > byteLimit) {
+        while (pendingCount > eventLimit || pendingBytes + ROW_OVERHEAD * pendingCount > byteLimit) {
             try (Cursor cursor = database.query("pending_events", new String[]{"row_id", "sequence", "size"}, null,
                     null, null, null, "row_id ASC", "1")) {
                 if (!cursor.moveToFirst()) break;
@@ -521,7 +529,10 @@ public final class AnalyticsQueue implements Closeable {
                 pendingBytes -= cursor.getLong(2);
             }
         }
-        if (evicted > 0) bumpDroppedVersion();
+        if (evicted > 0) {
+            bumpDroppedVersion();
+            putMetadata(META_EVICTED_TOTAL, Long.toString(longMetadata(META_EVICTED_TOTAL, 0) + evicted));
+        }
     }
 
     /** Journals the sequences of rows about to be deleted without acknowledgement. */

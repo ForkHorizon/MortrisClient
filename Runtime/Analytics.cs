@@ -43,6 +43,24 @@ namespace Daliys.Analytics
             return runtime == null ? TrackResult.NotInitialized : runtime.Track(eventName, properties);
         }
 
+        /// <summary>
+        /// Records many events without making the calling frame longer: they are encoded and written to the on-device queue on a background thread, in order, behind
+        /// whatever <see cref="Track"/> has buffered so far. Meant for a game that exports a large number of its own events at once (a statistics dump, a replay of
+        /// what happened offline); a stream of single events belongs to <see cref="Track"/>. Each event may carry the time it happened. The per-name rate limit does
+        /// not apply. Do not change the list or the dictionaries until the task completes. The order of sequence numbers between a batch and <c>Track</c> calls made
+        /// while it runs is not defined; event times are exact.
+        /// </summary>
+        public static Task<BatchResult> TrackBatchAsync(IReadOnlyList<BatchEvent> events, CancellationToken cancellationToken = default)
+        {
+            if (events == null)
+                throw new ArgumentNullException(nameof(events));
+            cancellationToken.ThrowIfCancellationRequested();
+            var runtime = Volatile.Read(ref _runtime);
+            return runtime == null
+                ? Task.FromResult(new BatchResult(events.Count, 0, 0, events.Count, true))
+                : runtime.TrackBatchAsync(events, cancellationToken);
+        }
+
         public static Task<FlushResult> FlushAsync(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();

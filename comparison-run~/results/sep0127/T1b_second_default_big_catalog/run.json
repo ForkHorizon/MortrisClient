@@ -1,0 +1,33 @@
+{
+ "label": "T1b_second_default_big_catalog",
+ "sdk": "mortris_v8",
+ "host": "127.0.0.1:18190",
+ "net": "reverse",
+ "data": "midcore_slice_00.jsonl",
+ "kv": [
+  "scenario=perframe",
+  "perframe=20",
+  "n=2000",
+  "marker=1",
+  "flush_at_end=1"
+ ],
+ "battery_start": "  level: 100   temperature: 250 ",
+ "db0": 1896,
+ "tail_s": 151.7946081161499,
+ "settled": "quiet",
+ "bat_end": "  level: 100   temperature: 250 ",
+ "final_stats": {
+  "events": 0,
+  "requests": 17,
+  "bytes_in": 130251,
+  "bytes_out": 41130,
+  "connections": 54,
+  "last": 1793024421.166754,
+  "last_activity_age_s": 0.0,
+  "kinds": {}
+ },
+ "db1": 3792,
+ "fatal": null,
+ "wall_s": 172.0387978553772,
+ "window_wall_s": 2.188430070877075
+}

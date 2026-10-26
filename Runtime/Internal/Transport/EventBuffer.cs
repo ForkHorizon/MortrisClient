@@ -9,6 +9,8 @@ namespace Daliys.Analytics.Internal.Transport
     internal sealed class EventBuffer
     {
         private readonly object _sync = new object();
+        /// <summary>A buffer array bigger than this is given back after it was drained.</summary>
+        private const int ShrinkAbove = 256 * 1024;
         private byte[] _data = new byte[16 * 1024];
         private int _length, _count;
 
@@ -46,6 +48,7 @@ namespace Daliys.Analytics.Internal.Transport
                 var frame = new byte[_length];
                 Buffer.BlockCopy(_data, 0, frame, 0, _length);
                 _length = 0; _count = 0;
+                if (_data.Length > ShrinkAbove) _data = new byte[16 * 1024];   // a burst grew the array; do not keep it for the rest of the process
                 return frame;
             }
         }
