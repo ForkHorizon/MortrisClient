@@ -144,3 +144,12 @@ if (R / 'server').exists():
         r = json.loads((d / 'result.json').read_text()); lg = r.get('loadgen') or {}
         rows.append([d.name, r['db_events'], lg.get('requests', '—'), lg.get('wall_s', '—'), lg.get('errors', '—'), f"{r['server_cpu_us_per_event']:.0f}", f"{r['pg_cpu_us_per_event']:.0f}", f"{r['server_rss_peak_mb']:.0f}", f"{r['pg_rss_peak_mb']:.0f}"])
     print('\n## Таблица F. Нагрузка на сервер (N параллельных установок, 100-событийные пачки, реальные события holdout)\n'); print(table(['запуск', 'событий в БД', 'запросов', 'время, с', 'ошибок установок', 'CPU сервера мкс/событие', 'CPU PostgreSQL мкс/событие', 'RSS сервера МБ', 'RSS PG МБ'], rows))
+if (R / 'chaos_b').exists():
+    rows = []
+    for d in sorted((R / 'chaos_b').glob('offline_*')):
+        run, fid = cell_info(d)
+        if not fid: continue
+        sdk = fid['sdk']; w = wirestat(d, sdk, fid['delivered_unique'])
+        rows.append([NAMES.get(sdk, sdk), f"{fid['delivered_unique']}/{fid['sent']}", fid['duplicates'], f"{w['per_event_up']:.1f}" if w else '—', run.get('settled'), round(run.get('tail_s', 0)), round(run.get('backend_back_at', 0))])
+    if rows:
+        print('\n## Таблица C4b. Повтор оффлайна: 3 минуты без сервера (1800 событий), затем ожидание до 10 минут тишины\n'); print(table(['SDK', 'доставлено после возврата', 'дубликаты', 'байт/событие вверх', 'как закончили', 'хвост до тишины, с', 'сервер вернулся на с'], rows))
