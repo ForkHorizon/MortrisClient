@@ -1,0 +1,22 @@
+{
+  "base": {
+    "binary_bytes": 934,
+    "json_bytes": 2272,
+    "schema_id": "e4f0f8f5f929fcfe"
+  },
+  "rich": {
+    "binary_bytes": 1157,
+    "json_bytes": 2869,
+    "schema_id": "c3cdb6379251503c"
+  },
+  "alt": {
+    "binary_bytes": 4785,
+    "json_bytes": 27964,
+    "schema_id": "76909c91e71e8fb6"
+  },
+  "drift": {
+    "binary_bytes": 1953,
+    "json_bytes": 11418,
+    "schema_id": "bcd22f344b462945"
+  }
+}

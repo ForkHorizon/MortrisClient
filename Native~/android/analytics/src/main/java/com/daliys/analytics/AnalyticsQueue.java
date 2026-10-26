@@ -39,6 +39,7 @@ public final class AnalyticsQueue implements Closeable {
     private static final String META_STREAM_EPOCH = "stream_epoch";
     private static final String META_DROPPED_VERSION = "dropped_version";
     private static final String META_SESSION_STATE = "session_state";
+    private static final String META_COUNTERS = "counters";
     /** Older ranges are merged beyond this bound; a wider skip is safe because skips only mean "do not wait for". */
     private static final int MAX_DROPPED_RANGES = 1024;
 
@@ -153,10 +154,10 @@ public final class AnalyticsQueue implements Closeable {
         try {
             long next = android.database.DatabaseUtils.longForQuery(database,
                     "SELECT COALESCE(MAX(sequence), 0) + 1 FROM pending_events", null);
-            String sessionState = getMetadata(META_SESSION_STATE);
+            java.util.List<String[]> kept = readKeptMetadata();
             database.delete("metadata", null, null);
             identity = newIdentity(next);
-            if (sessionState != null) putMetadata(META_SESSION_STATE, sessionState);
+            for (String[] pair : kept) putMetadata(pair[0], pair[1]);
             database.setTransactionSuccessful();
         } finally {
             try {
@@ -170,12 +171,67 @@ public final class AnalyticsQueue implements Closeable {
         return getState();
     }
 
+    private static boolean isAppMetaKey(String key) {
+        return key.equals(META_SESSION_STATE) || key.equals(META_COUNTERS) || (key.startsWith("v8.") && key.length() <= 32);
+    }
+
+    /** The rows an identity reset must not touch: the saved session state, the counters and what the V8 transport keeps here. */
+    private java.util.List<String[]> readKeptMetadata() {
+        java.util.List<String[]> kept = new java.util.ArrayList<>();
+        try (Cursor cursor = database.query("metadata", new String[]{"key", "value"}, null, null, null, null, null)) {
+            while (cursor.moveToNext()) if (isAppMetaKey(cursor.getString(0))) kept.add(new String[]{cursor.getString(0), cursor.getString(1)});
+        }
+        return kept;
+    }
+
+    /** Reads a value the SDK keeps in the queue's durable storage ("v8.*" keys and "counters"); a missing key reads as the empty string. */
+    public synchronized String getMeta(String key) {
+        if (key == null || !isAppMetaKey(key)) throw new IllegalArgumentException("Not a storage key: " + key);
+        String value = getMetadata(key);
+        return value == null ? "" : value;
+    }
+
+    public synchronized void setMeta(String key, String value) {
+        if (key == null || !isAppMetaKey(key)) throw new IllegalArgumentException("Not a storage key: " + key);
+        if (value == null || value.length() > 262144) throw new IllegalArgumentException("Invalid storage value.");
+        putMetadata(key, value);
+    }
+
+    /**
+     * Takes the installation identity the V8 server issued (internal id and credential), so a batch the V8 transport has to send through V1 belongs to the
+     * same installation and carries the ids the server derives. Queued rows, sequence numbers and the stream are untouched.
+     */
+    public synchronized void adoptIdentity(String installationId, String credential) {
+        if (!isUuid(installationId) || credential == null || credential.length() != 43)
+            throw new IllegalArgumentException("Invalid installation identity.");
+        if (installationId.equals(identity.installationId) && credential.equals(identity.credential)) return;
+        database.beginTransaction();
+        try {
+            putMetadata(META_INSTALL_ID, installationId);
+            putMetadata(META_CREDENTIAL, credential);
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
+        identity = new Identity(installationId, credential);
+    }
+
     /**
      * Stores binary event records in one transaction. {@code data} is {@code count} entries of {@code int32 length (big-endian)} followed by the
      * record (format byte 1, 16-byte event id, ... see EventRecord.cs); the queue reads nothing but the id from it and assigns the sequence numbers.
      * Returns the number of rows queued afterwards.
      */
     public synchronized int enqueueRecords(byte[] data, int count, int eventLimit, long byteLimit, long maxAgeMillis) {
+        return enqueueRecords(data, count, eventLimit, byteLimit, maxAgeMillis, null);
+    }
+
+    /**
+     * As above, and stores {@code counters} (the SDK's counter values, JSON) in the same transaction when it is neither null nor empty: after a crash a counter and the
+     * events that used its numbers are either both there or both gone.
+     */
+    public synchronized int enqueueRecords(byte[] data, int count, int eventLimit, long byteLimit, long maxAgeMillis, String counters) {
+        if (counters != null && counters.length() > 65536)
+            throw new IllegalArgumentException("Invalid counters.");
         if (eventLimit <= 0 || byteLimit <= 0 || maxAgeMillis <= 0)
             throw new IllegalArgumentException("Queue limits must be positive.");
         if (data == null || count < 0)
@@ -214,6 +270,7 @@ public final class AnalyticsQueue implements Closeable {
             }
             expireIfDue(now, maxAgeMillis);
             enforceBounds(eventLimit, byteLimit);
+            if (counters != null && !counters.isEmpty()) putMetadata(META_COUNTERS, counters);
             database.setTransactionSuccessful();
             committed = true;
         } finally {
@@ -410,8 +467,10 @@ public final class AnalyticsQueue implements Closeable {
             String credential = getMetadata(META_CREDENTIAL);
             if (!isUuid(installId) || credential == null || credential.isEmpty()) {
                 database.delete("pending_events", null, null);
+                java.util.List<String[]> kept = readKeptMetadata();
                 database.delete("metadata", null, null);
                 Identity identity = newIdentity(1);
+                for (String[] pair : kept) putMetadata(pair[0], pair[1]);
                 installId = identity.installationId;
                 credential = identity.credential;
             }

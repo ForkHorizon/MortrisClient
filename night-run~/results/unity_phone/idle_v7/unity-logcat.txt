@@ -1,0 +1,55 @@
+--------- beginning of main
+10-21 16:42:07.764  7505  7505 I Unity   : applyWindowUIChanges fullScreen = true, renderOutsideSafeArea = true
+10-21 16:42:07.805  7505  7524 I Unity   : UnityApplication::CreateInstance
+10-21 16:42:07.805  7505  7524 I Unity   : GameActivity Package Version '4.4.0'
+10-21 16:42:07.806  7505  7524 I Unity   : Starting Game Loop
+10-21 16:42:07.820  7505  7524 I Unity   : Handle cmd APP_CMD_START(11)
+10-21 16:42:07.826  7505  7505 I Unity   : onResume
+10-21 16:42:07.836  7505  7524 I Unity   : Handle cmd APP_CMD_RESUME(12)
+10-21 16:42:07.862  7505  7524 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-21 16:42:07.879  7505  7524 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-21 16:42:07.879  7505  7524 I Unity   : Handle cmd APP_CMD_CONTENT_RECT_CHANGED(5)
+10-21 16:42:07.882  7505  7524 I Unity   : Handle cmd APP_CMD_INIT_WINDOW(1)
+10-21 16:42:07.901  7505  7524 I Unity   : MemoryManager: Using 'Dynamic Heap' Allocator.
+10-21 16:42:07.928  7505  7505 I Unity   : windowFocusChanged: true
+10-21 16:42:07.928  7505  7505 I Unity   : resumeUnity
+10-21 16:42:07.954  7505  7524 I Unity   : SetGameState: isLoading: true, mode: UNKNOWN, label: -2, quality: -1
+10-21 16:42:07.967  7505  7524 I Unity   : SystemInfo CPU = ARM64 FP ASIMD AES, Cores = 8, Memory = 7412mb
+10-21 16:42:07.967  7505  7524 I Unity   : SystemInfo ARM big.LITTLE configuration: 2 big (mask: 0xc0), 6 little (mask: 0x3f)
+10-21 16:42:07.968  7505  7524 I Unity   : ApplicationInfo 'com.daliys.v7perfphone', Version '1.0', Min API Level '25', Target API Level '36'
+10-21 16:42:07.968  7505  7524 I Unity   : Built from '6000.3/staging' branch, Version '6000.3.16f1 (a56f230f6470)', Build type 'Development', Scripting Backend 'il2cpp', CPU 'arm64-v8a', Stripping 'Enabled'
+10-21 16:42:07.968  7505  7524 I Unity   : Device Model 'Nothing A142', OS 'Android OS 16 (API 36)'
+10-21 16:42:07.984  7505  7505 I Unity   : applyWindowUIChanges fullScreen = true, renderOutsideSafeArea = true
+10-21 16:42:08.037  7505  7524 I Unity   : Company Name: DefaultCompany
+10-21 16:42:08.037  7505  7524 I Unity   : Product Name: project
+10-21 16:42:08.047  7505  7505 I Unity   : applyWindowUIChanges fullScreen = true, renderOutsideSafeArea = true
+10-21 16:42:08.171  7505  7505 I Unity   : m_RunWithoutFocus: false
+10-21 16:42:08.171  7505  7524 I Unity   : SetGameState: isLoading: false, mode: UNKNOWN, label: -1, quality: 2
+10-21 16:42:08.172  7505  7524 I Unity   :     HasWindow = 1, HasFocus = 0
+10-21 16:42:08.172  7505  7524 I Unity   : Handle cmd APP_CMD_WINDOW_RESIZED(3)
+10-21 16:42:08.172  7505  7524 I Unity   : Handle cmd APP_CMD_WINDOW_REDRAW_NEEDED(4)
+10-21 16:42:08.172  7505  7524 I Unity   : Handle cmd APP_CMD_GAINED_FOCUS(7)
+10-21 16:42:08.172  7505  7524 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-21 16:42:08.229  7505  7524 I Unity   : SetGameState: isLoading: true, mode: UNKNOWN, label: 0, quality: 2
+10-21 16:42:10.277  7505  7524 I Unity   : SetGameState: isLoading: false, mode: UNKNOWN, label: 0, quality: 2
+10-21 16:42:10.328  7505  7524 I Unity   : V7PERF loaded events=100 mode=v7
+10-21 16:42:10.328  7505  7524 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+10-21 16:42:10.328  7505  7524 I Unity   : <Run>d__8:MoveNext()
+10-21 16:42:10.328  7505  7524 I Unity   : UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+10-21 16:42:10.328  7505  7524 I Unity   : 
+10-21 16:43:13.414  7505  7524 I Unity   : V7PERF idle mode=v7 hold_s=60 cpu_ticks=1646 threads=70 top=7566:UnityGfxDeviceW=756;7524:UnityMain=293;7564:mali-event-hand=166;7574:Thread-4=71;7600:Thread-6=71;7518:binder:7505_1=66;7546:Background Job.=51;7536:binder:7505_4=39
+10-21 16:43:13.414  7505  7524 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+10-21 16:43:13.414  7505  7524 I Unity   : <Run>d__8:MoveNext()
+10-21 16:43:13.414  7505  7524 I Unity   : UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+10-21 16:43:13.414  7505  7524 I Unity   : 
+10-21 16:43:13.415  7505  7524 I Unity   : Quit requested
+10-21 16:43:13.415  7505  7524 I Unity   : UnityApplication::DestroyInstance
+10-21 16:43:13.680  7505  7524 I Unity   : Starting Idle Loop
+10-21 16:43:13.714  7505  7505 I Unity   : onPause
+10-21 16:43:13.719  7505  7505 I Unity   : pauseUnity
+10-21 16:43:13.783  7505  7505 I Unity   : windowFocusChanged: false
+10-21 16:43:14.328  7505  7505 I Unity   : onDestroy
+10-21 16:43:14.330  7505  7524 I Unity   : UnityApplication::FinalDestroyInstance
+10-21 16:43:14.361  7505  7524 I Unity   : ##utp:{"type":"MemoryLeaks","version":2,"phase":"Immediate","time":1792593794361,"processId":7505,"allocatedMemory":331808,"memoryLabels":[{"Default":312},{"Permanent":8},{"Thread":2240},{"Manager":7687},{"GfxDevice":5504},{"Audio":752},{"Serialization":416},{"JobScheduler":32768},{"ScriptingNativeRuntime":267136},{"File":16},{"String":477},{"DynamicArray":8196},{"HashMap":2048},{"Utility":4048},{"PoolAlloc":48},{"VR":152}]}
+10-21 16:43:14.366  7505  7524 I Unity   : No leftover JNI Proxy objects detected
+10-21 16:43:14.366  7505  7524 I Unity   : Quitting process

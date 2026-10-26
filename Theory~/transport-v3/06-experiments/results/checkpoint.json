@@ -1,0 +1,20 @@
+{
+  "base": {
+    "string_values": 10653,
+    "zstd_literals_bytes": 38588,
+    "zstd_sparse_bytes": 41059,
+    "note": "value stage, no dict, different representation; not additive with whole-frame savings"
+  },
+  "rich": {
+    "string_values": 19112,
+    "zstd_literals_bytes": 96547,
+    "zstd_sparse_bytes": 102821,
+    "note": "value stage, no dict, different representation; not additive with whole-frame savings"
+  },
+  "alt": {
+    "string_values": 2698,
+    "zstd_literals_bytes": 246951,
+    "zstd_sparse_bytes": 260405,
+    "note": "value stage, no dict, different representation; not additive with whole-frame savings"
+  }
+}

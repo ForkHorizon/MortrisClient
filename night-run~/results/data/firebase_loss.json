@@ -1,0 +1,10 @@
+{
+ "events": 994564,
+ "properties_total": 21931241,
+ "firebase_params_dropped_by_25_limit": 651831,
+ "share_properties_dropped_pct": 2.97,
+ "events_with_dropped_params": 217277,
+ "share_events_pct": 21.85,
+ "string_values_truncated_at_100": 226893,
+ "chars_cut": 15746334
+}

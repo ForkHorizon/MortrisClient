@@ -57,6 +57,17 @@ namespace Daliys.Analytics
             Volatile.Read(ref _runtime)?.SetCollectionEnabled(enabled, clearPendingWhenDisabled);
         }
 
+        /// <summary>
+        /// The next number of a named counter: 1, 2, 3... for attempts, runs, levels, anything the game wants to number. Unlike a number the game keeps in its own save
+        /// data, it never goes back: the SDK stores the counter together with the events that used it, so a number the server has seen is not handed out again after a
+        /// crash. Returns 0 before <see cref="Initialize"/>. A counter name is 1 to 64 characters of a-z, 0-9 and _; at most 64 counters.
+        /// </summary>
+        public static long NextId(string counter)
+        {
+            var runtime = Volatile.Read(ref _runtime);
+            return runtime == null ? 0 : runtime.NextId(counter);
+        }
+
         /// <summary>Limits one event name to <paramref name="perSecond"/> events per second (0 = back to the default from the options, negative = never limit it).</summary>
         public static void SetEventRateLimit(string eventName, int perSecond)
         {

@@ -15,6 +15,11 @@ namespace Daliys.Analytics
         /// project supports it and silently keeps using V1 batches when it does not, or when the native library is unavailable.
         /// </summary>
         public bool UseTransportV7 { get; set; }
+        /// <summary>
+        /// Opt in to the V8 binary transport (short server-issued installation id, token, shapes registered by the SDK, per-project dictionary). It replaces V7 and
+        /// falls back to V1 the same way. Events keep the type of their numbers (a float stays a float whatever its value). See Theory~/transport-v8.
+        /// </summary>
+        public bool UseTransportV8 { get; set; }
         /// <summary>How often the queue is uploaded. Fewer, fuller packets cost fewer bytes and less battery; events wait at most about this long.</summary>
         public TimeSpan UploadInterval { get; set; } = TimeSpan.FromSeconds(120);
         /// <summary>Queued events that start an upload before the interval is up.</summary>

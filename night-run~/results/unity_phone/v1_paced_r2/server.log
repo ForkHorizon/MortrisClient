@@ -1,0 +1,21 @@
+{"time":"2026-10-21T16:32:46.073346+02:00","level":"INFO","msg":"retention mode","require_verified_export":false}
+{"time":"2026-10-21T16:32:46.073436+02:00","level":"INFO","msg":"gameplay results mode","imported_results_only":false}
+{"time":"2026-10-21T16:32:46.073515+02:00","level":"INFO","msg":"listening","addr":"0.0.0.0:18082"}
+{"time":"2026-10-21T16:32:46.073654+02:00","level":"WARN","msg":"disk state changed","from":"normal","to":"critical","percent_used":85.86027383658943,"free_bytes":140635152384}
+{"time":"2026-10-21T16:32:46.075974+02:00","level":"INFO","msg":"precompute: project idle in window, writing empty cache","project_id":"puzzle_gravity_test"}
+{"time":"2026-10-21T16:32:46.076463+02:00","level":"INFO","msg":"maintenance run","kind":"unactivated_cleanup","rows_affected":0,"duration_ms":2}
+{"time":"2026-10-21T16:32:46.077671+02:00","level":"INFO","msg":"maintenance run","kind":"retention_delete","rows_affected":0,"duration_ms":0}
+{"time":"2026-10-21T16:32:59.198676+02:00","level":"INFO","msg":"request","request_id":"850af521cea11825","method":"POST","route":"POST /v1/installs/register","status":200,"latency_ms":7}
+{"time":"2026-10-21T16:32:59.239705+02:00","level":"INFO","msg":"request","request_id":"89db839063316aee","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":21,"accepted":68,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T16:33:02.553343+02:00","level":"INFO","msg":"request","request_id":"4366d7812bbac867","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":28,"accepted":100,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T16:33:05.891499+02:00","level":"INFO","msg":"request","request_id":"ae552844d6164a14","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":27,"accepted":100,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T16:33:09.22988+02:00","level":"INFO","msg":"request","request_id":"b57e2bb99914bb89","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":25,"accepted":100,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T16:33:12.569336+02:00","level":"INFO","msg":"request","request_id":"09f3a81afe2e9cb6","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":26,"rejected":0,"accepted":100,"duplicates":0}
+{"time":"2026-10-21T16:33:15.90843+02:00","level":"INFO","msg":"request","request_id":"168876c95949cc78","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":27,"accepted":100,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T16:33:19.250892+02:00","level":"INFO","msg":"request","request_id":"f914de436e44a524","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":28,"accepted":100,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T16:33:22.605814+02:00","level":"INFO","msg":"request","request_id":"34c6310302a9e2d6","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":32,"accepted":100,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T16:33:25.936171+02:00","level":"INFO","msg":"request","request_id":"a2660c6c22d36fe2","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":30,"rejected":0,"accepted":100,"duplicates":0}
+{"time":"2026-10-21T16:33:29.265948+02:00","level":"INFO","msg":"request","request_id":"3b289709ccbb2a3c","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":28,"accepted":100,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T16:33:32.618116+02:00","level":"INFO","msg":"request","request_id":"4b136ff3aae6c7a6","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":32,"duplicates":0,"rejected":0,"accepted":100}
+{"time":"2026-10-21T16:33:35.9625+02:00","level":"INFO","msg":"request","request_id":"7dae4c9707e25181","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":36,"accepted":100,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T16:33:37.097254+02:00","level":"INFO","msg":"request","request_id":"c8e18cc4b7510f86","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":11,"accepted":32,"duplicates":0,"rejected":0}

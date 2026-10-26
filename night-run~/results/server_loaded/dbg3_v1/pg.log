@@ -1,0 +1,392 @@
+2026-10-21 05:14:54.620 CEST [65400] LOG:  starting PostgreSQL 18.6 (Homebrew) on aarch64-apple-darwin27.0.0, compiled by Apple clang version 21.0.0 (clang-2100.3.34.2), 64-bit
+2026-10-21 05:14:54.621 CEST [65400] LOG:  listening on IPv4 address "127.0.0.1", port 54341
+2026-10-21 05:14:54.625 CEST [65406] LOG:  database system was shut down at 2026-10-21 05:14:54 CEST
+2026-10-21 05:14:54.626 CEST [65400] LOG:  database system is ready to accept connections
+2026-10-21 05:15:04.529 CEST [65659] ERROR:  deadlock detected
+2026-10-21 05:15:04.529 CEST [65659] DETAIL:  Process 65659 waits for ShareLock on transaction 879; blocked by process 65660.
+	Process 65660 waits for ShareLock on transaction 880; blocked by process 65659.
+	Process 65659: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65660: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:04.529 CEST [65659] HINT:  See server log for query details.
+2026-10-21 05:15:04.529 CEST [65659] CONTEXT:  while inserting index tuple (484,3) in relation "event_catalog"
+2026-10-21 05:15:04.529 CEST [65659] STATEMENT:  
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:05.530 CEST [65660] ERROR:  deadlock detected
+2026-10-21 05:15:05.530 CEST [65660] DETAIL:  Process 65660 waits for ShareLock on transaction 884; blocked by process 65654.
+	Process 65654 waits for ShareLock on transaction 883; blocked by process 65661.
+	Process 65661 waits for ShareLock on transaction 879; blocked by process 65660.
+	Process 65660: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65654: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65661: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:05.530 CEST [65660] HINT:  See server log for query details.
+2026-10-21 05:15:05.530 CEST [65660] CONTEXT:  while locking tuple (484,1) in relation "event_catalog"
+2026-10-21 05:15:05.530 CEST [65660] STATEMENT:  
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:06.532 CEST [65655] ERROR:  deadlock detected
+2026-10-21 05:15:06.532 CEST [65655] DETAIL:  Process 65655 waits for ShareLock on transaction 884; blocked by process 65654.
+	Process 65654 waits for ShareLock on transaction 883; blocked by process 65661.
+	Process 65661 waits for ShareLock on transaction 886; blocked by process 65483.
+	Process 65483 waits for ShareLock on transaction 885; blocked by process 65655.
+	Process 65655: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65654: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65661: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65483: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:06.532 CEST [65655] HINT:  See server log for query details.
+2026-10-21 05:15:06.532 CEST [65655] CONTEXT:  while inserting index tuple (484,1) in relation "event_catalog"
+2026-10-21 05:15:06.532 CEST [65655] STATEMENT:  
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:07.537 CEST [65485] ERROR:  deadlock detected
+2026-10-21 05:15:07.537 CEST [65485] DETAIL:  Process 65485 waits for ShareLock on transaction 884; blocked by process 65654.
+	Process 65654 waits for ShareLock on transaction 883; blocked by process 65661.
+	Process 65661 waits for ShareLock on transaction 886; blocked by process 65483.
+	Process 65483 waits for ShareLock on transaction 887; blocked by process 65485.
+	Process 65485: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65654: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65661: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65483: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:07.537 CEST [65485] HINT:  See server log for query details.
+2026-10-21 05:15:07.537 CEST [65485] CONTEXT:  while inserting index tuple (484,1) in relation "event_catalog"
+2026-10-21 05:15:07.537 CEST [65485] STATEMENT:  
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:08.539 CEST [65483] ERROR:  deadlock detected
+2026-10-21 05:15:08.539 CEST [65483] DETAIL:  Process 65483 waits for ShareLock on transaction 884; blocked by process 65654.
+	Process 65654 waits for ShareLock on transaction 883; blocked by process 65661.
+	Process 65661 waits for ShareLock on transaction 886; blocked by process 65483.
+	Process 65483: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65654: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65661: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:08.539 CEST [65483] HINT:  See server log for query details.
+2026-10-21 05:15:08.539 CEST [65483] CONTEXT:  while inserting index tuple (484,1) in relation "event_catalog"
+2026-10-21 05:15:08.539 CEST [65483] STATEMENT:  
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:09.541 CEST [65661] ERROR:  deadlock detected
+2026-10-21 05:15:09.541 CEST [65661] DETAIL:  Process 65661 waits for ShareLock on transaction 884; blocked by process 65654.
+	Process 65654 waits for ShareLock on transaction 883; blocked by process 65661.
+	Process 65661: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65654: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:09.541 CEST [65661] HINT:  See server log for query details.
+2026-10-21 05:15:09.541 CEST [65661] CONTEXT:  while inserting index tuple (484,1) in relation "event_catalog"
+2026-10-21 05:15:09.541 CEST [65661] STATEMENT:  
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:10.548 CEST [65654] ERROR:  deadlock detected
+2026-10-21 05:15:10.548 CEST [65654] DETAIL:  Process 65654 waits for ShareLock on transaction 882; blocked by process 65656.
+	Process 65656 waits for ShareLock on transaction 895; blocked by process 65485.
+	Process 65485 waits for ShareLock on transaction 884; blocked by process 65654.
+	Process 65654: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65656: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65485: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:10.548 CEST [65654] HINT:  See server log for query details.
+2026-10-21 05:15:10.548 CEST [65654] CONTEXT:  while inserting index tuple (484,2) in relation "event_catalog"
+2026-10-21 05:15:10.548 CEST [65654] STATEMENT:  
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:11.549 CEST [65485] ERROR:  deadlock detected
+2026-10-21 05:15:11.549 CEST [65485] DETAIL:  Process 65485 waits for ShareLock on transaction 891; blocked by process 65660.
+	Process 65660 waits for ShareLock on transaction 882; blocked by process 65656.
+	Process 65656 waits for ShareLock on transaction 895; blocked by process 65485.
+	Process 65485: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65660: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65656: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:11.549 CEST [65485] HINT:  See server log for query details.
+2026-10-21 05:15:11.549 CEST [65485] CONTEXT:  while locking tuple (484,1) in relation "event_catalog"
+2026-10-21 05:15:11.549 CEST [65485] STATEMENT:  
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:12.554 CEST [65656] ERROR:  deadlock detected
+2026-10-21 05:15:12.554 CEST [65656] DETAIL:  Process 65656 waits for ShareLock on transaction 891; blocked by process 65660.
+	Process 65660 waits for ShareLock on transaction 882; blocked by process 65656.
+	Process 65656: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65660: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:12.554 CEST [65656] HINT:  See server log for query details.
+2026-10-21 05:15:12.554 CEST [65656] CONTEXT:  while inserting index tuple (484,1) in relation "event_catalog"
+2026-10-21 05:15:12.554 CEST [65656] STATEMENT:  
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:13.576 CEST [65656] ERROR:  deadlock detected
+2026-10-21 05:15:13.576 CEST [65656] DETAIL:  Process 65656 waits for ShareLock on transaction 889; blocked by process 65659.
+	Process 65659 waits for ShareLock on transaction 905; blocked by process 65656.
+	Process 65656: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65659: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:13.576 CEST [65656] HINT:  See server log for query details.
+2026-10-21 05:15:13.576 CEST [65656] CONTEXT:  while inserting index tuple (503,4) in relation "event_catalog"
+2026-10-21 05:15:13.576 CEST [65656] STATEMENT:  
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:14.642 CEST [65660] ERROR:  deadlock detected
+2026-10-21 05:15:14.642 CEST [65660] DETAIL:  Process 65660 waits for ShareLock on transaction 909; blocked by process 65656.
+	Process 65656 waits for ShareLock on transaction 912; blocked by process 65660.
+	Process 65660: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65656: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:14.642 CEST [65660] HINT:  See server log for query details.
+2026-10-21 05:15:14.642 CEST [65660] CONTEXT:  while inserting index tuple (487,6) in relation "event_catalog"
+2026-10-21 05:15:14.642 CEST [65660] STATEMENT:  
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:15.673 CEST [65659] ERROR:  deadlock detected
+2026-10-21 05:15:15.673 CEST [65659] DETAIL:  Process 65659 waits for ShareLock on transaction 914; blocked by process 65485.
+	Process 65485 waits for ShareLock on transaction 915; blocked by process 65659.
+	Process 65659: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65485: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:15.673 CEST [65659] HINT:  See server log for query details.
+2026-10-21 05:15:15.673 CEST [65659] CONTEXT:  while inserting index tuple (569,5) in relation "event_catalog"
+2026-10-21 05:15:15.673 CEST [65659] STATEMENT:  
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:16.699 CEST [65654] ERROR:  deadlock detected
+2026-10-21 05:15:16.699 CEST [65654] DETAIL:  Process 65654 waits for ShareLock on transaction 919; blocked by process 65656.
+	Process 65656 waits for ShareLock on transaction 901; blocked by process 65654.
+	Process 65654: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65656: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:16.699 CEST [65654] HINT:  See server log for query details.
+2026-10-21 05:15:16.699 CEST [65654] CONTEXT:  while inserting index tuple (589,2) in relation "event_catalog"
+2026-10-21 05:15:16.699 CEST [65654] STATEMENT:  
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:17.705 CEST [65485] ERROR:  deadlock detected
+2026-10-21 05:15:17.705 CEST [65485] DETAIL:  Process 65485 waits for ShareLock on transaction 919; blocked by process 65656.
+	Process 65656 waits for ShareLock on transaction 921; blocked by process 65485.
+	Process 65485: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65656: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:17.705 CEST [65485] HINT:  See server log for query details.
+2026-10-21 05:15:17.705 CEST [65485] CONTEXT:  while inserting index tuple (589,2) in relation "event_catalog"
+2026-10-21 05:15:17.705 CEST [65485] STATEMENT:  
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:18.783 CEST [65656] ERROR:  deadlock detected
+2026-10-21 05:15:18.783 CEST [65656] DETAIL:  Process 65656 waits for ShareLock on transaction 923; blocked by process 65485.
+	Process 65485 waits for ShareLock on transaction 926; blocked by process 65656.
+	Process 65656: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65485: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:18.783 CEST [65656] HINT:  See server log for query details.
+2026-10-21 05:15:18.783 CEST [65656] CONTEXT:  while inserting index tuple (591,5) in relation "event_catalog"
+2026-10-21 05:15:18.783 CEST [65656] STATEMENT:  
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:19.786 CEST [65485] ERROR:  deadlock detected
+2026-10-21 05:15:19.786 CEST [65485] DETAIL:  Process 65485 waits for ShareLock on transaction 928; blocked by process 65655.
+	Process 65655 waits for ShareLock on transaction 923; blocked by process 65485.
+	Process 65485: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65655: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:19.786 CEST [65485] HINT:  See server log for query details.
+2026-10-21 05:15:19.786 CEST [65485] CONTEXT:  while locking tuple (638,6) in relation "event_catalog"
+2026-10-21 05:15:19.786 CEST [65485] STATEMENT:  
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:20.788 CEST [65661] ERROR:  deadlock detected
+2026-10-21 05:15:20.788 CEST [65661] DETAIL:  Process 65661 waits for ShareLock on transaction 928; blocked by process 65655.
+	Process 65655 waits for ShareLock on transaction 899; blocked by process 65661.
+	Process 65661: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+	Process 65655: 
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		
+2026-10-21 05:15:20.788 CEST [65661] HINT:  See server log for query details.
+2026-10-21 05:15:20.788 CEST [65661] CONTEXT:  while inserting index tuple (638,5) in relation "event_catalog"
+2026-10-21 05:15:20.788 CEST [65661] STATEMENT:  
+			INSERT INTO event_catalog (project_id, name, kind, first_seen_at, last_seen_at)
+			VALUES ($1, $2, 'product', $3, $3)
+			ON CONFLICT (project_id, name) DO UPDATE SET last_seen_at = $3
+		

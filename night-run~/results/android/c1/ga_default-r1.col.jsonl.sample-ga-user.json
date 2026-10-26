@@ -1,0 +1,26 @@
+[
+ {
+  "v": 2,
+  "user_id": "u-bench-1",
+  "event_uuid": "9fbed056-d454-4134-98f3-15d84343b918",
+  "google_aid": "150c4721-c57c-45d6-a80c-076dee6f1da4",
+  "google_aid_src": "service",
+  "client_ts": 1792554527,
+  "sdk_version": "android 7.2.0",
+  "os_version": "android 15",
+  "manufacturer": "Google",
+  "device": "sdk_gphone64_arm64",
+  "platform": "android",
+  "session_id": "3d4bbbc2-536f-46d9-95dd-392911c1e747",
+  "session_num": 1,
+  "current_session_length": 0,
+  "lifetime_session_length": 0,
+  "connection_type": "wwan",
+  "android_bundle_id": "bench.sdk",
+  "android_app_version": "1",
+  "android_app_build": "1",
+  "android_app_signature": "3ad249eb021719d884a50153c5ad51b2f700592e",
+  "category": "user",
+  "install": true
+ }
+]

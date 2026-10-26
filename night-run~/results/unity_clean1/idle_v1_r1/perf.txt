@@ -1,0 +1,4 @@
+V7PERF loaded events=100 mode=v1
+V7PERF idle mode=v1 hold_s=60 cpu_ticks=1357 threads=67 top=16044:UnityMain=681;16038:UnityGfxDeviceW=614;16000:UnityMain=40;15986:Jit thread pool=3;16049:Thread-4=2;15992:binder:15978_2=1;16016:Background Job.=1;16042:AChoreographer_=1
+host_load_start=5.66 3.58 3.23 host_load_end=5.99 4.08 3.45
+db_events=0 packets_v2=0 batches_v1=0

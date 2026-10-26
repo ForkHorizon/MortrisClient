@@ -1,0 +1,15 @@
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/bench/bin/Release/net10.0/V7Bench
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/bench/bin/Release/net10.0/V7Bench.deps.json
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/bench/bin/Release/net10.0/V7Bench.runtimeconfig.json
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/bench/bin/Release/net10.0/V7Bench.dll
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/bench/bin/Release/net10.0/V7Bench.pdb
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/bench/obj/Release/net10.0/V7Bench.GeneratedMSBuildEditorConfig.editorconfig
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/bench/obj/Release/net10.0/V7Bench.AssemblyInfoInputs.cache
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/bench/obj/Release/net10.0/V7Bench.AssemblyInfo.cs
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/bench/obj/Release/net10.0/V7Bench.csproj.CoreCompileInputs.cache
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/bench/obj/Release/net10.0/V7Bench.sourcelink.json
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/bench/obj/Release/net10.0/V7Bench.dll
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/bench/obj/Release/net10.0/refint/V7Bench.dll
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/bench/obj/Release/net10.0/V7Bench.pdb
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/bench/obj/Release/net10.0/V7Bench.genruntimeconfig.cache
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/bench/obj/Release/net10.0/ref/V7Bench.dll

@@ -1,0 +1,9 @@
+{
+  "decoded_packets": 1316,
+  "decoded_events": 128787,
+  "rejected_packets": 112,
+  "all_source_typed_values_equal": true,
+  "signed_zero_and_decimal_lexemes_preserved": true,
+  "runtime_inputs": "catalog + registered aliases + dictionary + authenticated project/origin; no fixture rows/column hints",
+  "scope": "Offline Go full M7 decoder; no HTTP/persistence/ACK or production integration"
+}

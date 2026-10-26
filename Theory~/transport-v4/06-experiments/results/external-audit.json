@@ -1,0 +1,63 @@
+{
+  "supplied_selftests": {
+    "exit": 0,
+    "stdout": "1. Auditing V3 Hex Dump (\u00a79):\n   Verified: {'v3_outer_header_bytes': 5, 'codec': 2, 'kind': 1, 'dict_id': 1, 'raw_len': 1559, 'redundant_zstd_header_bytes': 2, 'zstd_fhd': 0, 'zstd_window_descriptor': 8, 'zstd_last_block': 1, 'zstd_block_type': 2, 'zstd_compressed_block_bytes': 462, 'total_frame_bytes': 472}\n\n2. Testing ALP-Exact Lossless Float/Decimal Round-Trip:\n   Lexeme '120.0'                    -> subtag=1, 3 bytes -> exact roundtrip OK\n   Lexeme '-0.0'                     -> subtag=1, 2 bytes -> exact roundtrip OK\n   Lexeme '0.0005'                   -> subtag=1, 2 bytes -> exact roundtrip OK\n   Lexeme '123456.789'               -> subtag=1, 5 bytes -> exact roundtrip OK\n   Lexeme '1.7976931348623157e+308'  -> subtag=2, 8 bytes -> exact roundtrip OK\n   Lexeme '1e-07'                    -> subtag=2, 8 bytes -> exact roundtrip OK\n\n3. Testing V4 Per-Event Raw Allocation Guard (Anti-Decompression Bomb):\n   Rejected forged 2MB 1-event frame BEFORE allocation: BAD_FRAME: declared raw size 2000016 exceeds ceiling 12800 for n=1\n\n4. Testing Drift Corpus Integer + Bitmap Compression:\n   100 sequences encoded in 3 bytes (0.03 B/ev)\n   100 cell_x (0..9) encoded in 53 bytes (0.53 B/ev vs 100 B uvarint)\n",
+    "stderr": ""
+  },
+  "lexeme_roundtrips": {
+    "-0.00": {
+      "decoded": "0.00",
+      "exact": false,
+      "consumed": true
+    },
+    "-0.000": {
+      "decoded": "0.000",
+      "exact": false,
+      "consumed": true
+    },
+    "0.0": {
+      "decoded": "0.0",
+      "exact": true,
+      "consumed": true
+    },
+    "120.00": {
+      "decoded": "120.00",
+      "exact": true,
+      "consumed": true
+    },
+    "1.7976931348623157e+308": {
+      "decoded": "1.7976931348623157e+308",
+      "exact": true,
+      "consumed": true
+    },
+    "5e-324": {
+      "decoded": "5e-324",
+      "exact": true,
+      "consumed": true
+    }
+  },
+  "digest_omitted_fields_collision": true,
+  "digest_order_sensitive": true,
+  "empty": {
+    "exact": true,
+    "consumed": false
+  },
+  "uint64": {
+    "error": "ValueError: svarint out of int64 domain: 18446744073709551615"
+  },
+  "int64_jump": {
+    "error": "ValueError: svarint out of int64 domain: 18446744073709551615"
+  },
+  "zstd_header_still_present": true,
+  "deflate_bomb": "ValueError",
+  "deflate_bomb_python_peak_bytes": 7591512,
+  "truncated_zlib_accepted": true,
+  "ack_same_first_count_ignores_sequence_gaps": true,
+  "missing_full_codec_functions": [
+    "encode_batch",
+    "decode_batch",
+    "rANS",
+    "Chimp128",
+    "EliasFano"
+  ]
+}

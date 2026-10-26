@@ -1,0 +1,821 @@
+{
+ "config": "dict32 level1 train seed 11 only; sequence identity",
+ "rows": [
+  {
+   "events": 1800,
+   "batches": 1800,
+   "bytes": {
+    "v1_json": 1178956,
+    "v1_gzip1": 762579,
+    "v7_seq": 126000,
+    "v7_full_uuid": 154801
+   },
+   "B_event": {
+    "v1_json": 654.9755555555555,
+    "v1_gzip1": 423.655,
+    "v7_seq": 70.0,
+    "v7_full_uuid": 86.00055555555555
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 7108,
+   "ratio_v7_over_v1": 0.16522878285397316,
+   "per_install_B_event": {
+    "min": 69.76333333333334,
+    "p50": 69.96666666666667,
+    "max": 70.53666666666666,
+    "n": 6
+   },
+   "profile": "low",
+   "split": "validation",
+   "seed": 22,
+   "batch_cap": 1,
+   "train_seed": 11,
+   "catalog_bytes": 790,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 34742.666666666664,
+   "breakeven_events_vs_v1": 98.23886744614573
+  },
+  {
+   "events": 1800,
+   "batches": 180,
+   "bytes": {
+    "v1_json": 837136,
+    "v1_gzip1": 175668,
+    "v7_seq": 23988,
+    "v7_full_uuid": 55002
+   },
+   "B_event": {
+    "v1_json": 465.0755555555556,
+    "v1_gzip1": 97.59333333333333,
+    "v7_seq": 13.326666666666666,
+    "v7_full_uuid": 30.55666666666667
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 7108,
+   "ratio_v7_over_v1": 0.1365530432406585,
+   "per_install_B_event": {
+    "min": 13.226666666666667,
+    "p50": 13.306666666666667,
+    "max": 13.52,
+    "n": 6
+   },
+   "profile": "low",
+   "split": "validation",
+   "seed": 22,
+   "batch_cap": 10,
+   "train_seed": 11,
+   "catalog_bytes": 790,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 34742.666666666664,
+   "breakeven_events_vs_v1": 412.29430379746833
+  },
+  {
+   "events": 1800,
+   "batches": 18,
+   "bytes": {
+    "v1_json": 802954,
+    "v1_gzip1": 107497,
+    "v7_seq": 7639,
+    "v7_full_uuid": 37225
+   },
+   "B_event": {
+    "v1_json": 446.0855555555556,
+    "v1_gzip1": 59.720555555555556,
+    "v7_seq": 4.243888888888889,
+    "v7_full_uuid": 20.680555555555557
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 3325,
+   "ratio_v7_over_v1": 0.07106244825436989,
+   "per_install_B_event": {
+    "min": 4.176666666666667,
+    "p50": 4.233333333333333,
+    "max": 4.34,
+    "n": 6
+   },
+   "profile": "low",
+   "split": "validation",
+   "seed": 22,
+   "batch_cap": 100,
+   "train_seed": 11,
+   "catalog_bytes": 790,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 34112.166666666664,
+   "breakeven_events_vs_v1": 614.8921468485248
+  },
+  {
+   "events": 1800,
+   "batches": 6,
+   "bytes": {
+    "v1_json": 800422,
+    "v1_gzip1": 102820,
+    "v7_seq": 6430,
+    "v7_full_uuid": 36242
+   },
+   "B_event": {
+    "v1_json": 444.6788888888889,
+    "v1_gzip1": 57.12222222222222,
+    "v7_seq": 3.5722222222222224,
+    "v7_full_uuid": 20.134444444444444
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 1938,
+   "ratio_v7_over_v1": 0.06253647150359852,
+   "per_install_B_event": {
+    "min": 3.4966666666666666,
+    "p50": 3.58,
+    "max": 3.6533333333333333,
+    "n": 6
+   },
+   "profile": "low",
+   "split": "validation",
+   "seed": 22,
+   "batch_cap": 500,
+   "train_seed": 11,
+   "catalog_bytes": 790,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 33881.0,
+   "breakeven_events_vs_v1": 632.6984126984128
+  },
+  {
+   "events": 1800,
+   "batches": 1800,
+   "bytes": {
+    "v1_json": 1179642,
+    "v1_gzip1": 764167,
+    "v7_seq": 126384,
+    "v7_full_uuid": 155185
+   },
+   "B_event": {
+    "v1_json": 655.3566666666667,
+    "v1_gzip1": 424.5372222222222,
+    "v7_seq": 70.21333333333334,
+    "v7_full_uuid": 86.21388888888889
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 7629,
+   "ratio_v7_over_v1": 0.1653879322190045,
+   "per_install_B_event": {
+    "min": 69.73,
+    "p50": 70.34666666666666,
+    "max": 70.63,
+    "n": 6
+   },
+   "profile": "low",
+   "split": "test",
+   "seed": 33,
+   "batch_cap": 1,
+   "train_seed": 11,
+   "catalog_bytes": 790,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 34829.5,
+   "breakeven_events_vs_v1": 98.29848083125452
+  },
+  {
+   "events": 1800,
+   "batches": 180,
+   "bytes": {
+    "v1_json": 837822,
+    "v1_gzip1": 176703,
+    "v7_seq": 24224,
+    "v7_full_uuid": 55214
+   },
+   "B_event": {
+    "v1_json": 465.45666666666665,
+    "v1_gzip1": 98.16833333333334,
+    "v7_seq": 13.457777777777778,
+    "v7_full_uuid": 30.674444444444443
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 7629,
+   "ratio_v7_over_v1": 0.1370887874003271,
+   "per_install_B_event": {
+    "min": 13.263333333333334,
+    "p50": 13.533333333333333,
+    "max": 13.666666666666666,
+    "n": 6
+   },
+   "profile": "low",
+   "split": "test",
+   "seed": 33,
+   "batch_cap": 10,
+   "train_seed": 11,
+   "catalog_bytes": 790,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 34829.5,
+   "breakeven_events_vs_v1": 411.1589136864748
+  },
+  {
+   "events": 1800,
+   "batches": 18,
+   "bytes": {
+    "v1_json": 803640,
+    "v1_gzip1": 108102,
+    "v7_seq": 7792,
+    "v7_full_uuid": 37361
+   },
+   "B_event": {
+    "v1_json": 446.46666666666664,
+    "v1_gzip1": 60.056666666666665,
+    "v7_seq": 4.328888888888889,
+    "v7_full_uuid": 20.75611111111111
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 3426,
+   "ratio_v7_over_v1": 0.07208007252409761,
+   "per_install_B_event": {
+    "min": 4.296666666666667,
+    "p50": 4.3133333333333335,
+    "max": 4.383333333333334,
+    "n": 6
+   },
+   "profile": "low",
+   "split": "test",
+   "seed": 33,
+   "batch_cap": 100,
+   "train_seed": 11,
+   "catalog_bytes": 790,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 34129.0,
+   "breakeven_events_vs_v1": 612.423487189712
+  },
+  {
+   "events": 1800,
+   "batches": 6,
+   "bytes": {
+    "v1_json": 801108,
+    "v1_gzip1": 103038,
+    "v7_seq": 6536,
+    "v7_full_uuid": 36212
+   },
+   "B_event": {
+    "v1_json": 445.06,
+    "v1_gzip1": 57.24333333333333,
+    "v7_seq": 3.631111111111111,
+    "v7_full_uuid": 20.11777777777778
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 2035,
+   "ratio_v7_over_v1": 0.06343290824744269,
+   "per_install_B_event": {
+    "min": 3.5633333333333335,
+    "p50": 3.65,
+    "max": 3.66,
+    "n": 6
+   },
+   "profile": "low",
+   "split": "test",
+   "seed": 33,
+   "batch_cap": 500,
+   "train_seed": 11,
+   "catalog_bytes": 790,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 33897.166666666664,
+   "breakeven_events_vs_v1": 632.2656525253362
+  },
+  {
+   "events": 1800,
+   "batches": 1800,
+   "bytes": {
+    "v1_json": 1477484,
+    "v1_gzip1": 951029,
+    "v7_seq": 276388,
+    "v7_full_uuid": 305688
+   },
+   "B_event": {
+    "v1_json": 820.8244444444445,
+    "v1_gzip1": 528.3494444444444,
+    "v7_seq": 153.54888888888888,
+    "v7_full_uuid": 169.82666666666665
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 6702,
+   "ratio_v7_over_v1": 0.2906199495493828,
+   "per_install_B_event": {
+    "min": 153.06,
+    "p50": 153.65,
+    "max": 154.06,
+    "n": 6
+   },
+   "profile": "high",
+   "split": "validation",
+   "seed": 22,
+   "batch_cap": 1,
+   "train_seed": 11,
+   "catalog_bytes": 1844,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 35729.0,
+   "breakeven_events_vs_v1": 95.32803372460316
+  },
+  {
+   "events": 1800,
+   "batches": 180,
+   "bytes": {
+    "v1_json": 1135664,
+    "v1_gzip1": 361013,
+    "v7_seq": 151627,
+    "v7_full_uuid": 180765
+   },
+   "B_event": {
+    "v1_json": 630.9244444444445,
+    "v1_gzip1": 200.56277777777777,
+    "v7_seq": 84.23722222222223,
+    "v7_full_uuid": 100.425
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 6702,
+   "ratio_v7_over_v1": 0.4200042657743627,
+   "per_install_B_event": {
+    "min": 84.00333333333333,
+    "p50": 84.26333333333334,
+    "max": 84.48666666666666,
+    "n": 6
+   },
+   "profile": "high",
+   "split": "validation",
+   "seed": 22,
+   "batch_cap": 10,
+   "train_seed": 11,
+   "catalog_bytes": 1844,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 35729.0,
+   "breakeven_events_vs_v1": 307.1466096109578
+  },
+  {
+   "events": 1800,
+   "batches": 18,
+   "bytes": {
+    "v1_json": 1101482,
+    "v1_gzip1": 292813,
+    "v7_seq": 129231,
+    "v7_full_uuid": 158206
+   },
+   "B_event": {
+    "v1_json": 611.9344444444445,
+    "v1_gzip1": 162.67388888888888,
+    "v7_seq": 71.795,
+    "v7_full_uuid": 87.89222222222222
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 3250,
+   "ratio_v7_over_v1": 0.44134310976630137,
+   "per_install_B_event": {
+    "min": 71.62666666666667,
+    "p50": 71.78,
+    "max": 72.04,
+    "n": 6
+   },
+   "profile": "high",
+   "split": "validation",
+   "seed": 22,
+   "batch_cap": 100,
+   "train_seed": 11,
+   "catalog_bytes": 1844,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 35153.666666666664,
+   "breakeven_events_vs_v1": 386.81884314900174
+  },
+  {
+   "events": 1800,
+   "batches": 6,
+   "bytes": {
+    "v1_json": 1098950,
+    "v1_gzip1": 285011,
+    "v7_seq": 127077,
+    "v7_full_uuid": 156098
+   },
+   "B_event": {
+    "v1_json": 610.5277777777778,
+    "v1_gzip1": 158.33944444444444,
+    "v7_seq": 70.59833333333333,
+    "v7_full_uuid": 86.72111111111111
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 1870,
+   "ratio_v7_over_v1": 0.4458670016244987,
+   "per_install_B_event": {
+    "min": 70.42333333333333,
+    "p50": 70.66666666666667,
+    "max": 70.69333333333333,
+    "n": 6
+   },
+   "profile": "high",
+   "split": "validation",
+   "seed": 22,
+   "batch_cap": 500,
+   "train_seed": 11,
+   "catalog_bytes": 1844,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 34923.666666666664,
+   "breakeven_events_vs_v1": 398.0308230020135
+  },
+  {
+   "events": 1800,
+   "batches": 1800,
+   "bytes": {
+    "v1_json": 1474696,
+    "v1_gzip1": 951355,
+    "v7_seq": 275872,
+    "v7_full_uuid": 305149
+   },
+   "B_event": {
+    "v1_json": 819.2755555555556,
+    "v1_gzip1": 528.5305555555556,
+    "v7_seq": 153.26222222222222,
+    "v7_full_uuid": 169.52722222222224
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 6444,
+   "ratio_v7_over_v1": 0.2899779787776382,
+   "per_install_B_event": {
+    "min": 152.59333333333333,
+    "p50": 153.58666666666667,
+    "max": 153.64333333333335,
+    "n": 6
+   },
+   "profile": "high",
+   "split": "test",
+   "seed": 33,
+   "batch_cap": 1,
+   "train_seed": 11,
+   "catalog_bytes": 1844,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 35686.0,
+   "breakeven_events_vs_v1": 95.09462118217631
+  },
+  {
+   "events": 1800,
+   "batches": 180,
+   "bytes": {
+    "v1_json": 1132876,
+    "v1_gzip1": 360882,
+    "v7_seq": 151682,
+    "v7_full_uuid": 180820
+   },
+   "B_event": {
+    "v1_json": 629.3755555555556,
+    "v1_gzip1": 200.49,
+    "v7_seq": 84.26777777777778,
+    "v7_full_uuid": 100.45555555555555
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 6444,
+   "ratio_v7_over_v1": 0.42030913151667304,
+   "per_install_B_event": {
+    "min": 84.13666666666667,
+    "p50": 84.3,
+    "max": 84.38,
+    "n": 6
+   },
+   "profile": "high",
+   "split": "test",
+   "seed": 33,
+   "batch_cap": 10,
+   "train_seed": 11,
+   "catalog_bytes": 1844,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 35686.0,
+   "breakeven_events_vs_v1": 307.04971319311665
+  },
+  {
+   "events": 1800,
+   "batches": 18,
+   "bytes": {
+    "v1_json": 1098694,
+    "v1_gzip1": 292299,
+    "v7_seq": 129361,
+    "v7_full_uuid": 158420
+   },
+   "B_event": {
+    "v1_json": 610.3855555555556,
+    "v1_gzip1": 162.38833333333332,
+    "v7_seq": 71.86722222222222,
+    "v7_full_uuid": 88.0111111111111
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 3211,
+   "ratio_v7_over_v1": 0.4425639499279847,
+   "per_install_B_event": {
+    "min": 71.76666666666667,
+    "p50": 71.87666666666667,
+    "max": 71.95,
+    "n": 6
+   },
+   "profile": "high",
+   "split": "test",
+   "seed": 33,
+   "batch_cap": 100,
+   "train_seed": 11,
+   "catalog_bytes": 1844,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 35147.166666666664,
+   "breakeven_events_vs_v1": 388.27590862782165
+  },
+  {
+   "events": 1800,
+   "batches": 6,
+   "bytes": {
+    "v1_json": 1096162,
+    "v1_gzip1": 284237,
+    "v7_seq": 127252,
+    "v7_full_uuid": 156168
+   },
+   "B_event": {
+    "v1_json": 608.9788888888888,
+    "v1_gzip1": 157.90944444444443,
+    "v7_seq": 70.69555555555556,
+    "v7_full_uuid": 86.76
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 1843,
+   "ratio_v7_over_v1": 0.44769681638914005,
+   "per_install_B_event": {
+    "min": 70.52,
+    "p50": 70.67666666666666,
+    "max": 70.98666666666666,
+    "n": 6
+   },
+   "profile": "high",
+   "split": "test",
+   "seed": 33,
+   "batch_cap": 500,
+   "train_seed": 11,
+   "catalog_bytes": 1844,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 34919.166666666664,
+   "breakeven_events_vs_v1": 400.38538713889864
+  },
+  {
+   "events": 1800,
+   "batches": 1800,
+   "bytes": {
+    "v1_json": 1474112,
+    "v1_gzip1": 950385,
+    "v7_seq": 273588,
+    "v7_full_uuid": 302884
+   },
+   "B_event": {
+    "v1_json": 818.9511111111111,
+    "v1_gzip1": 527.9916666666667,
+    "v7_seq": 151.99333333333334,
+    "v7_full_uuid": 168.26888888888888
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 62467,
+   "ratio_v7_over_v1": 0.2878707050300668,
+   "per_install_B_event": {
+    "min": 151.48333333333332,
+    "p50": 152.00666666666666,
+    "max": 152.93,
+    "n": 6
+   },
+   "profile": "high_short_sessions",
+   "split": "validation",
+   "seed": 22,
+   "batch_cap": 1,
+   "train_seed": 11,
+   "catalog_bytes": 1844,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 45023.166666666664,
+   "breakeven_events_vs_v1": 119.74299531469553
+  },
+  {
+   "events": 1800,
+   "batches": 180,
+   "bytes": {
+    "v1_json": 1132292,
+    "v1_gzip1": 370547,
+    "v7_seq": 151204,
+    "v7_full_uuid": 180319
+   },
+   "B_event": {
+    "v1_json": 629.0511111111111,
+    "v1_gzip1": 205.85944444444445,
+    "v7_seq": 84.00222222222222,
+    "v7_full_uuid": 100.17722222222223
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 31813,
+   "ratio_v7_over_v1": 0.4080561979991742,
+   "per_install_B_event": {
+    "min": 83.85333333333334,
+    "p50": 83.96666666666667,
+    "max": 84.2,
+    "n": 6
+   },
+   "profile": "high_short_sessions",
+   "split": "validation",
+   "seed": 22,
+   "batch_cap": 10,
+   "train_seed": 11,
+   "catalog_bytes": 1844,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 39914.166666666664,
+   "breakeven_events_vs_v1": 327.5486338747988
+  },
+  {
+   "events": 1800,
+   "batches": 18,
+   "bytes": {
+    "v1_json": 1098110,
+    "v1_gzip1": 303286,
+    "v7_seq": 130441,
+    "v7_full_uuid": 159415
+   },
+   "B_event": {
+    "v1_json": 610.0611111111111,
+    "v1_gzip1": 168.4922222222222,
+    "v7_seq": 72.46722222222222,
+    "v7_full_uuid": 88.56388888888888
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 12506,
+   "ratio_v7_over_v1": 0.43009238804296934,
+   "per_install_B_event": {
+    "min": 72.20333333333333,
+    "p50": 72.49666666666667,
+    "max": 72.63,
+    "n": 6
+   },
+   "profile": "high_short_sessions",
+   "split": "validation",
+   "seed": 22,
+   "batch_cap": 100,
+   "train_seed": 11,
+   "catalog_bytes": 1844,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 36696.333333333336,
+   "breakeven_events_vs_v1": 382.153952963638
+  },
+  {
+   "events": 1800,
+   "batches": 6,
+   "bytes": {
+    "v1_json": 1095578,
+    "v1_gzip1": 295595,
+    "v7_seq": 127651,
+    "v7_full_uuid": 156579
+   },
+   "B_event": {
+    "v1_json": 608.6544444444445,
+    "v1_gzip1": 164.21944444444443,
+    "v7_seq": 70.91722222222222,
+    "v7_full_uuid": 86.98833333333333
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 10147,
+   "ratio_v7_over_v1": 0.43184424635058105,
+   "per_install_B_event": {
+    "min": 70.79,
+    "p50": 70.89333333333333,
+    "max": 71.11,
+    "n": 6
+   },
+   "profile": "high_short_sessions",
+   "split": "validation",
+   "seed": 22,
+   "batch_cap": 500,
+   "train_seed": 11,
+   "catalog_bytes": 1844,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 36303.166666666664,
+   "breakeven_events_vs_v1": 389.09219739913306
+  },
+  {
+   "events": 1800,
+   "batches": 1800,
+   "bytes": {
+    "v1_json": 1475904,
+    "v1_gzip1": 950785,
+    "v7_seq": 274147,
+    "v7_full_uuid": 303413
+   },
+   "B_event": {
+    "v1_json": 819.9466666666667,
+    "v1_gzip1": 528.2138888888888,
+    "v7_seq": 152.30388888888888,
+    "v7_full_uuid": 168.56277777777777
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 60140,
+   "ratio_v7_over_v1": 0.28833753161860987,
+   "per_install_B_event": {
+    "min": 151.93333333333334,
+    "p50": 152.44333333333333,
+    "max": 152.55666666666667,
+    "n": 6
+   },
+   "profile": "high_short_sessions",
+   "split": "test",
+   "seed": 33,
+   "batch_cap": 1,
+   "train_seed": 11,
+   "catalog_bytes": 1844,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 44635.333333333336,
+   "breakeven_events_vs_v1": 118.73941457618403
+  },
+  {
+   "events": 1800,
+   "batches": 180,
+   "bytes": {
+    "v1_json": 1134084,
+    "v1_gzip1": 370677,
+    "v7_seq": 151240,
+    "v7_full_uuid": 180265
+   },
+   "B_event": {
+    "v1_json": 630.0466666666666,
+    "v1_gzip1": 205.93166666666667,
+    "v7_seq": 84.02222222222223,
+    "v7_full_uuid": 100.14722222222223
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 31348,
+   "ratio_v7_over_v1": 0.40801020834850826,
+   "per_install_B_event": {
+    "min": 83.86333333333333,
+    "p50": 84.05,
+    "max": 84.19,
+    "n": 6
+   },
+   "profile": "high_short_sessions",
+   "split": "test",
+   "seed": 33,
+   "batch_cap": 10,
+   "train_seed": 11,
+   "catalog_bytes": 1844,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 39836.666666666664,
+   "breakeven_events_vs_v1": 326.77260443772013
+  },
+  {
+   "events": 1800,
+   "batches": 18,
+   "bytes": {
+    "v1_json": 1099902,
+    "v1_gzip1": 302675,
+    "v7_seq": 130117,
+    "v7_full_uuid": 159170
+   },
+   "B_event": {
+    "v1_json": 611.0566666666666,
+    "v1_gzip1": 168.15277777777777,
+    "v7_seq": 72.28722222222223,
+    "v7_full_uuid": 88.42777777777778
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 12138,
+   "ratio_v7_over_v1": 0.4298901461964153,
+   "per_install_B_event": {
+    "min": 72.21333333333334,
+    "p50": 72.27333333333333,
+    "max": 72.38333333333334,
+    "n": 6
+   },
+   "profile": "high_short_sessions",
+   "split": "test",
+   "seed": 33,
+   "batch_cap": 100,
+   "train_seed": 11,
+   "catalog_bytes": 1844,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 36635.0,
+   "breakeven_events_vs_v1": 382.14976993242857
+  },
+  {
+   "events": 1800,
+   "batches": 6,
+   "bytes": {
+    "v1_json": 1097370,
+    "v1_gzip1": 295448,
+    "v7_seq": 127637,
+    "v7_full_uuid": 156501
+   },
+   "B_event": {
+    "v1_json": 609.65,
+    "v1_gzip1": 164.13777777777779,
+    "v7_seq": 70.90944444444445,
+    "v7_full_uuid": 86.945
+   },
+   "fallback_events": 0,
+   "alias_setup_bytes": 9804,
+   "ratio_v7_over_v1": 0.4320117245674366,
+   "per_install_B_event": {
+    "min": 70.67,
+    "p50": 70.91666666666667,
+    "max": 71.23,
+    "n": 6
+   },
+   "profile": "high_short_sessions",
+   "split": "test",
+   "seed": 33,
+   "batch_cap": 500,
+   "train_seed": 11,
+   "catalog_bytes": 1844,
+   "dict_bytes": 32768,
+   "cold_setup_bytes_per_install": 36246.0,
+   "breakeven_events_vs_v1": 388.78738580903513
+  }
+ ]
+}

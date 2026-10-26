@@ -1,0 +1,10 @@
+{
+  "required_files": 12,
+  "claims_C1_C15": 15,
+  "v2_files_unchanged": 41,
+  "deterministic_reproductions_identical": 12,
+  "summary_lines": 15,
+  "python_scripts_compiled": 21,
+  "two_stopping_passes_below_2pct": true,
+  "status": "OK"
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "configured_miss_rate": 0,
+    "observed_misses": 0,
+    "requests": 23,
+    "events": 2236,
+    "body_B_per_event_including_failed_requests": 11.91010733452594,
+    "warm_H2_B_per_event_model": 15.790697674418604
+  },
+  {
+    "configured_miss_rate": 0.01,
+    "observed_misses": 0,
+    "requests": 23,
+    "events": 2236,
+    "body_B_per_event_including_failed_requests": 11.91010733452594,
+    "warm_H2_B_per_event_model": 15.790697674418604
+  },
+  {
+    "configured_miss_rate": 0.05,
+    "observed_misses": 3,
+    "requests": 26,
+    "events": 2236,
+    "body_B_per_event_including_failed_requests": 13.605992844364938,
+    "warm_H2_B_per_event_model": 18.010286225402506
+  },
+  {
+    "configured_miss_rate": 0.2,
+    "observed_misses": 6,
+    "requests": 29,
+    "events": 2236,
+    "body_B_per_event_including_failed_requests": 15.261627906976743,
+    "warm_H2_B_per_event_model": 20.166368515205725
+  },
+  {
+    "configured_miss_rate": 0.5,
+    "observed_misses": 12,
+    "requests": 35,
+    "events": 2236,
+    "body_B_per_event_including_failed_requests": 18.836314847942756,
+    "warm_H2_B_per_event_model": 24.834973166368517
+  },
+  {
+    "configured_miss_rate": 1,
+    "observed_misses": 21,
+    "requests": 44,
+    "events": 2236,
+    "body_B_per_event_including_failed_requests": 23.892665474060824,
+    "warm_H2_B_per_event_model": 31.485688729874777
+  }
+]

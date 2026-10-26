@@ -1,0 +1,1 @@
+{"t": 1792557180.218884, "host": "app.adjust.com", "method": "POST", "path": "/event", "hdr": 825, "body": 2285, "decoded": 2285, "enc": "", "ctype": "application/x-www-form-urlencoded"}

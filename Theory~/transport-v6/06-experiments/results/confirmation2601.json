@@ -1,0 +1,118 @@
+{
+  "base": {
+    "1": {
+      "events": 1449,
+      "batches": 1449,
+      "body_B_event": 114.24982746721876,
+      "with_aliases_B_event": 114.67701863354037,
+      "strict_ids_B_event": 130.47135955831607,
+      "conditional_replay_B_event": 112.88198757763975,
+      "boundary": "session-aware backlog cap, not real-time flush cadence"
+    },
+    "7": {
+      "events": 1449,
+      "batches": 208,
+      "body_B_event": 38.42857142857143,
+      "with_aliases_B_event": 38.85576259489303,
+      "strict_ids_B_event": 54.42857142857143,
+      "conditional_replay_B_event": 34.666666666666664,
+      "boundary": "session-aware backlog cap, not real-time flush cadence"
+    },
+    "100": {
+      "events": 1449,
+      "batches": 16,
+      "body_B_event": 18.904071773636993,
+      "with_aliases_B_event": 19.33126293995859,
+      "strict_ids_B_event": 35.115251897860595,
+      "conditional_replay_B_event": 12.721877156659765,
+      "boundary": "session-aware backlog cap, not real-time flush cadence"
+    }
+  },
+  "rich": {
+    "1": {
+      "events": 1324,
+      "batches": 1324,
+      "body_B_event": 174.05438066465257,
+      "with_aliases_B_event": 174.52190332326285,
+      "strict_ids_B_event": 191.4939577039275,
+      "conditional_replay_B_event": 172.7484894259819,
+      "boundary": "session-aware backlog cap, not real-time flush cadence"
+    },
+    "7": {
+      "events": 1324,
+      "batches": 191,
+      "body_B_event": 80.1963746223565,
+      "with_aliases_B_event": 80.66389728096676,
+      "strict_ids_B_event": 97.12009063444108,
+      "conditional_replay_B_event": 75.8844410876133,
+      "boundary": "session-aware backlog cap, not real-time flush cadence"
+    },
+    "100": {
+      "events": 1324,
+      "batches": 15,
+      "body_B_event": 42.46148036253776,
+      "with_aliases_B_event": 42.929003021148034,
+      "strict_ids_B_event": 59.553625377643506,
+      "conditional_replay_B_event": 36.11404833836858,
+      "boundary": "session-aware backlog cap, not real-time flush cadence"
+    }
+  },
+  "alt": {
+    "1": {
+      "events": 900,
+      "batches": 900,
+      "body_B_event": 291.3566666666667,
+      "with_aliases_B_event": 292.2188888888889,
+      "strict_ids_B_event": 312.18,
+      "conditional_replay_B_event": 291.3566666666667,
+      "boundary": "session-aware backlog cap, not real-time flush cadence"
+    },
+    "7": {
+      "events": 900,
+      "batches": 129,
+      "body_B_event": 217.66666666666666,
+      "with_aliases_B_event": 218.5288888888889,
+      "strict_ids_B_event": 235.56555555555556,
+      "conditional_replay_B_event": 217.66666666666666,
+      "boundary": "session-aware backlog cap, not real-time flush cadence"
+    },
+    "100": {
+      "events": 900,
+      "batches": 9,
+      "body_B_event": 159.22,
+      "with_aliases_B_event": 160.0822222222222,
+      "strict_ids_B_event": 176.15222222222224,
+      "conditional_replay_B_event": 159.22,
+      "boundary": "session-aware backlog cap, not real-time flush cadence"
+    }
+  },
+  "drift": {
+    "1": {
+      "events": 120,
+      "batches": 120,
+      "body_B_event": 72.93333333333334,
+      "with_aliases_B_event": 85.475,
+      "strict_ids_B_event": 88.96666666666667,
+      "conditional_replay_B_event": 72.93333333333334,
+      "boundary": "session-aware backlog cap, not real-time flush cadence"
+    },
+    "7": {
+      "events": 120,
+      "batches": 22,
+      "body_B_event": 29.85,
+      "with_aliases_B_event": 42.391666666666666,
+      "strict_ids_B_event": 46.0,
+      "conditional_replay_B_event": 29.85,
+      "boundary": "session-aware backlog cap, not real-time flush cadence"
+    },
+    "100": {
+      "events": 120,
+      "batches": 8,
+      "body_B_event": 18.941666666666666,
+      "with_aliases_B_event": 31.483333333333334,
+      "strict_ids_B_event": 34.95,
+      "conditional_replay_B_event": 18.941666666666666,
+      "boundary": "session-aware backlog cap, not real-time flush cadence"
+    }
+  }
+}

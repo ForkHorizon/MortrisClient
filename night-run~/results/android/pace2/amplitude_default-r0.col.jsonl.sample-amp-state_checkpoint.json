@@ -1,0 +1,56 @@
+[
+ {
+  "event_type": "state_checkpoint",
+  "timestamp": 1792553411363,
+  "user_id": "u-bench-1",
+  "device_id": "b8ecb8b5-95c0-45d6-a61c-d298687c97feR",
+  "session_id": 1792553365555,
+  "uuid": "4795877c-c801-415e-8153-197509eca524",
+  "sequence_number": 92,
+  "version_name": "1",
+  "os_name": "android",
+  "os_version": "15",
+  "api_level": 35,
+  "device_brand": "google",
+  "device_manufacturer": "Google",
+  "device_model": "sdk_gphone64_arm64",
+  "carrier": "T-Mobile",
+  "country": "US",
+  "language": "en",
+  "platform": "Android",
+  "library": {
+   "name": "amplitude-android",
+   "version": "2.40.0"
+  },
+  "api_properties": {
+   "androidADID": "150c4721-c57c-45d6-a80c-076dee6f1da4",
+   "limit_ad_tracking": false,
+   "gps_enabled": true
+  },
+  "event_properties": {
+   "origin": "player",
+   "city_id": 1,
+   "house_id": 1,
+   "attempt_id": "f8911633-1c41-4f67-9c48-9928a7f9f76f",
+   "wave_index": 0,
+   "app_version": "1.1.14",
+   "house_run_id": "36a2aa4a-e52a-4b8c-889f-0a7ea34d7d2a",
+   "interaction_id": "dba144a8-fd7b-44dc-973e-ae6aaae52707",
+   "schema_version": 3,
+   "progress_origin": "natural",
+   "wave_attempt_id": "f8911633-1c41-4f67-9c48-9928a7f9f76f",
+   "placed_block_ids": "3,17,20,21",
+   "active_elapsed_ms": 64672,
+   "house_event_index": 17,
+   "interaction_index": 4,
+   "placed_state_hash": "bc2047278d3c6233aa838df82d7c102cc27706ea7350ca692de519272b4e9611",
+   "checkpoint_trigger": "placement_committed",
+   "placed_block_count": 4,
+   "attempt_event_index": 17
+  },
+  "user_properties": {},
+  "groups": {},
+  "group_properties": {},
+  "event_id": 92
+ }
+]

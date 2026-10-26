@@ -1,0 +1,56 @@
+--------- beginning of main
+10-21 16:47:01.792  7870  7870 I Unity   : onPause
+10-21 16:47:01.799  7870  7898 I Unity   : Handle cmd APP_CMD_PAUSE(14)
+10-21 16:47:01.856  7870  7870 I Unity   : windowFocusChanged: false
+10-21 16:47:02.016  7870  7898 I Unity   : SetGameState: isLoading: true, mode: UNKNOWN, label: 0, quality: 2
+10-21 16:47:02.280  7870  7898 I Unity   : SetGameState: isLoading: true, mode: CONTENT, label: -6, quality: 2
+10-21 16:47:02.282  7870  7898 I Unity   : Handle cmd APP_CMD_LOST_FOCUS(8)
+10-21 16:47:02.282  7870  7898 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-21 16:47:02.388  7870  7898 I Unity   : Handle cmd APP_CMD_TERM_WINDOW(2)
+10-21 16:47:03.085  7870  7898 I Unity   : Handle cmd APP_CMD_LOW_MEMORY(10)
+10-21 16:47:03.089  7870  7898 I Unity   : Handle cmd APP_CMD_STOP(15)
+10-21 16:47:03.092  7870  7898 I Unity   : Handle cmd APP_CMD_SAVE_STATE(13)
+10-21 16:47:23.418  7870  7898 I Unity   : Handle cmd APP_CMD_START(11)
+10-21 16:47:23.420  7870  7870 I Unity   : onResume
+10-21 16:47:23.433  7870  7898 I Unity   : Handle cmd APP_CMD_RESUME(12)
+10-21 16:47:23.464  7870  7898 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-21 16:47:23.474  7870  7898 I Unity   : Handle cmd APP_CMD_INIT_WINDOW(1)
+10-21 16:47:23.564  7870  7898 I Unity   :     HasWindow = 1, HasFocus = 0
+10-21 16:47:23.564  7870  7898 I Unity   : Handle cmd APP_CMD_WINDOW_REDRAW_NEEDED(4)
+10-21 16:47:23.577  7870  7870 I Unity   : windowFocusChanged: true
+10-21 16:47:23.577  7870  7870 I Unity   : resumeUnity
+10-21 16:47:23.577  7870  7898 I Unity   : Handle cmd APP_CMD_GAINED_FOCUS(7)
+10-21 16:47:23.590  7870  7898 I Unity   : SetGameState: isLoading: false, mode: CONTENT, label: -6, quality: 2
+10-21 16:47:23.612  7870  7898 I Unity   : SetGameState: isLoading: false, mode: UNKNOWN, label: 0, quality: 2
+10-21 16:47:23.944  7870  7898 I Unity   : V7PERF loaded events=1200 mode=v7
+10-21 16:47:23.944  7870  7898 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+10-21 16:47:23.944  7870  7898 I Unity   : UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+10-21 16:47:23.944  7870  7898 I Unity   : UnityEngine.Logger:Log(LogType, Object)
+10-21 16:47:23.944  7870  7898 I Unity   : <Run>d__8:MoveNext()
+10-21 16:47:23.944  7870  7898 I Unity   : UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+10-21 16:47:23.944  7870  7898 I Unity   : 
+10-21 16:47:31.691  7870  7898 I Unity   : V7PERF threads mode=v7 replay_ms=4278 top=8684:Thread-9=397;7898:UnityMain=88;7942:UnityGfxDeviceW=51;7879:HeapTaskDaemon=34;7878:Jit thread pool=16;7940:mali-event-hand=11;7883:binder:7870_1=5;8500:Thread-6=5;7918:Background Job.=5;8660:Thread-7=4;8665:UnityGfxDeviceW=2;7941:mali-mem-purge=2;7916:Job.Worker 1=2;7914:GC Finalizer=2;7906:binder:7870_4=2;8491:Loading.Preload=1;8678:Filter1=1;8683:UnityMain=1;7949:binder:7870_1=1;8685:IL2CPP Threadpo=1
+10-21 16:47:31.691  7870  7898 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+10-21 16:47:31.691  7870  7898 I Unity   : UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+10-21 16:47:31.691  7870  7898 I Unity   : UnityEngine.Logger:Log(LogType, Object)
+10-21 16:47:31.691  7870  7898 I Unity   : <Run>d__8:MoveNext()
+10-21 16:47:31.691  7870  7898 I Unity   : UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+10-21 16:47:31.691  7870  7898 I Unity   : 
+10-21 16:47:35.952  7870  7898 I Unity   : V7PERF result mode=v7 events=1200 accepted=1200 handoff_full_retries=86 other_results=0 replay_ms=4278 drain_ms=4260 cpu_ticks_replay=631 cpu_ticks_drain=479 cpu_ticks_total=1116 track_us_p50=266.6 track_us_p95=1409.2 track_us_p99=4550.5 track_us_max=9053.9 frame_ms_p50=3.13 frame_ms_p99=25.64 frame_ms_max=32.38 gc0=46 gc1=46 gc2=46 mono_start_kb=4484 mono_end_replay_kb=4984 mono_peak_kb=0 unity_total_start_kb=57036 unity_total_end_kb=58270 pss_start_kb=353375 pss_peak_kb=374246 heap_start_kb=4124 calib_start=132.589 calibs=
+10-21 16:47:35.952  7870  7898 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+10-21 16:47:35.952  7870  7898 I Unity   : UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+10-21 16:47:35.952  7870  7898 I Unity   : UnityEngine.Logger:Log(LogType, Object)
+10-21 16:47:35.952  7870  7898 I Unity   : <Run>d__8:MoveNext()
+10-21 16:47:35.952  7870  7898 I Unity   : UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+10-21 16:47:35.952  7870  7898 I Unity   : 
+10-21 16:47:38.861  7870  7898 I Unity   : Quit requested
+10-21 16:47:38.861  7870  7898 I Unity   : UnityApplication::DestroyInstance
+10-21 16:47:38.900  7870  7898 D Unity   : [Physics::Module] Cleanup current backend.
+10-21 16:47:38.900  7870  7898 D Unity   : [Physics::Module] Id: 0xf2b8ea05
+10-21 16:47:38.911  7870  7898 D Unity   : PlayerConnection::Cleanup
+10-21 16:47:38.915  7870  7898 D Unity   : ASensorManager_destroyEventQueue returned 0
+10-21 16:47:38.917  7870  7898 D Unity   : Vulkan PSO: Pipeline cache has not changed skipping save handle[0]
+10-21 16:47:38.929  7870  7898 I Unity   : Starting Idle Loop
+10-21 16:47:38.957  7870  7870 I Unity   : onPause
+10-21 16:47:38.958  7870  7870 I Unity   : pauseUnity
+10-21 16:47:38.999  7870  7870 I Unity   : windowFocusChanged: false

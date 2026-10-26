@@ -1,0 +1,15 @@
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/Theory~/transport-v7/audit/repro/bin/Debug/net10.0/RedirectBodyProbe
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/Theory~/transport-v7/audit/repro/bin/Debug/net10.0/RedirectBodyProbe.deps.json
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/Theory~/transport-v7/audit/repro/bin/Debug/net10.0/RedirectBodyProbe.runtimeconfig.json
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/Theory~/transport-v7/audit/repro/bin/Debug/net10.0/RedirectBodyProbe.dll
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/Theory~/transport-v7/audit/repro/bin/Debug/net10.0/RedirectBodyProbe.pdb
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/Theory~/transport-v7/audit/repro/obj/Debug/net10.0/RedirectBodyProbe.GeneratedMSBuildEditorConfig.editorconfig
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/Theory~/transport-v7/audit/repro/obj/Debug/net10.0/RedirectBodyProbe.AssemblyInfoInputs.cache
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/Theory~/transport-v7/audit/repro/obj/Debug/net10.0/RedirectBodyProbe.AssemblyInfo.cs
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/Theory~/transport-v7/audit/repro/obj/Debug/net10.0/RedirectBodyProbe.csproj.CoreCompileInputs.cache
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/Theory~/transport-v7/audit/repro/obj/Debug/net10.0/RedirectBodyProbe.sourcelink.json
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/Theory~/transport-v7/audit/repro/obj/Debug/net10.0/RedirectBodyProbe.dll
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/Theory~/transport-v7/audit/repro/obj/Debug/net10.0/refint/RedirectBodyProbe.dll
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/Theory~/transport-v7/audit/repro/obj/Debug/net10.0/RedirectBodyProbe.pdb
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/Theory~/transport-v7/audit/repro/obj/Debug/net10.0/RedirectBodyProbe.genruntimeconfig.cache
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/Theory~/transport-v7/audit/repro/obj/Debug/net10.0/ref/RedirectBodyProbe.dll

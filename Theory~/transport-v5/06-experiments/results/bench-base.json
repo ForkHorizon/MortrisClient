@@ -1,0 +1,116 @@
+{
+  "profile": "base",
+  "prior_raw_bytes": 155965,
+  "prior_zlib_bytes": 33998,
+  "probability_table_bytes": 65536,
+  "v4_dictionary_raw_bytes": 65536,
+  "v4_dictionary_zlib_bytes": 40849,
+  "tables": 152,
+  "table_entries": 222,
+  "ema_entries": 940,
+  "rows": {
+    "historical": {
+      "seed": 101,
+      "stateless": {
+        "events": 8944,
+        "batches": 93,
+        "bytes": 117755,
+        "B_per_event": 13.165809481216458
+      },
+      "stateful_ideal": {
+        "B_per_event": 12.015429338103758,
+        "bytes": 107466,
+        "events": 8944,
+        "batches": 93,
+        "session_resets": 0,
+        "condition": "ideal hit, full ACK for each batch"
+      },
+      "stateful_session_reset": {
+        "B_per_event": 12.022137745974955,
+        "bytes": 107526,
+        "events": 8944,
+        "batches": 93,
+        "session_resets": 7,
+        "condition": "ideal hit, full ACK for each batch"
+      },
+      "V4_B_per_event": 16.62097495527728
+    },
+    "validation": {
+      "seed": 303,
+      "stateless": {
+        "events": 3121,
+        "batches": 32,
+        "bytes": 41638,
+        "B_per_event": 13.341236783082346
+      },
+      "stateful_ideal": {
+        "B_per_event": 12.19256648510093,
+        "bytes": 38053,
+        "events": 3121,
+        "batches": 32,
+        "session_resets": 0,
+        "condition": "ideal hit, full ACK for each batch"
+      },
+      "stateful_session_reset": {
+        "B_per_event": 12.19256648510093,
+        "bytes": 38053,
+        "events": 3121,
+        "batches": 32,
+        "session_resets": 3,
+        "condition": "ideal hit, full ACK for each batch"
+      },
+      "V4_B_per_event": 16.777635373277796
+    },
+    "fresh_holdout": {
+      "seed": 1729,
+      "stateless": {
+        "events": 6646,
+        "batches": 69,
+        "bytes": 87677,
+        "B_per_event": 13.192446584411677
+      },
+      "stateful_ideal": {
+        "B_per_event": 12.080800481492627,
+        "bytes": 80289,
+        "events": 6646,
+        "batches": 69,
+        "session_resets": 0,
+        "condition": "ideal hit, full ACK for each batch"
+      },
+      "stateful_session_reset": {
+        "B_per_event": 12.090129401143544,
+        "bytes": 80351,
+        "events": 6646,
+        "batches": 69,
+        "session_resets": 7,
+        "condition": "ideal hit, full ACK for each batch"
+      },
+      "V4_B_per_event": 16.622630153475775
+    },
+    "fresh_session_deadline30s": {
+      "stateless": {
+        "events": 6646,
+        "batches": 256,
+        "bytes": 113666,
+        "B_per_event": 17.102919049052062
+      },
+      "V4_B_per_event": 24.17980740294914,
+      "stateful_ideal": {
+        "B_per_event": 13.36172133614204,
+        "bytes": 88802,
+        "events": 6646,
+        "batches": 256,
+        "session_resets": 0,
+        "condition": "ideal hit, full ACK for each batch"
+      }
+    }
+  },
+  "python_pipeline": {
+    "sample_batches": 12,
+    "p50_ms": 65.8536665,
+    "p95_ms": 68.976917,
+    "tracemalloc_peak_warm_cache_bytes": 945786,
+    "cache": "CacheInfo(hits=764309, misses=6149, maxsize=32768, currsize=6149)",
+    "not_ARM_or_CSharp": true
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "prior": "base train202 used on different drift product",
+  "test": "fresh drift1733",
+  "V5": {
+    "events": 2400,
+    "batches": 569,
+    "bytes": 182018,
+    "B_per_event": 75.84083333333334
+  },
+  "V4_wrong_dictionary_B_per_event": 57.67958333333333,
+  "not_generalization_proof": "Cross-product mismatch, not adjacent real releases"
+}

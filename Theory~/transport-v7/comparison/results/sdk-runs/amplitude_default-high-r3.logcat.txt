@@ -1,0 +1,2 @@
+10-17 20:20:07.551  4277  4294 I BENCH   : replay_done sdk=amplitude events=600 track_mean_us=78 track_max_us=508 wall_ms=60876
+10-17 20:20:52.552  4277  4294 I BENCH   : tail_done

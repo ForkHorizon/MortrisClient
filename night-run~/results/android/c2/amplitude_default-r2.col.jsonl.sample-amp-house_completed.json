@@ -1,0 +1,53 @@
+[
+ {
+  "event_type": "house_completed",
+  "timestamp": 1792558334670,
+  "user_id": "u-bench-1",
+  "device_id": "8d3d3201-4a6f-4e92-b8ca-6556dae071ffR",
+  "session_id": 1792558334617,
+  "uuid": "a3929f2e-3d01-4682-9cd2-5d03f2fff1e8",
+  "sequence_number": 2374,
+  "version_name": "1",
+  "os_name": "android",
+  "os_version": "7.1.1",
+  "api_level": 25,
+  "device_brand": "google",
+  "device_manufacturer": "Google",
+  "device_model": "Android SDK built for arm64",
+  "carrier": "Android",
+  "country": "US",
+  "language": "en",
+  "platform": "Android",
+  "library": {
+   "name": "amplitude-android",
+   "version": "2.40.0"
+  },
+  "api_properties": {
+   "androidADID": "a73237d6-3fbb-4d54-a386-581a141c83d8",
+   "limit_ad_tracking": false,
+   "gps_enabled": true
+  },
+  "event_properties": {
+   "origin": "player",
+   "city_id": 2,
+   "house_id": 4,
+   "attempt_id": "aa8c3b48-a5b9-47eb-b815-86f81c8739a5",
+   "wave_index": 1,
+   "app_version": "1.1.14",
+   "house_run_id": "26f3f3bc-eb08-48e0-8abf-43792ce80e26",
+   "schema_version": 3,
+   "progress_origin": "natural",
+   "wave_attempt_id": "aa8c3b48-a5b9-47eb-b815-86f81c8739a5",
+   "placed_block_ids": "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37",
+   "active_elapsed_ms": 87772,
+   "house_event_index": 243,
+   "placed_state_hash": "4631bbd8c5d9183580007f7ad3a732f8b2025d8305028309c5c409cd6a4a0d51",
+   "placed_block_count": 38,
+   "attempt_event_index": 149
+  },
+  "user_properties": {},
+  "groups": {},
+  "group_properties": {},
+  "event_id": 2374
+ }
+]

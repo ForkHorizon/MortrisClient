@@ -47,6 +47,7 @@ namespace Daliys.Analytics.Internal
         private bool _permanentFailure;
         private ServerPolicy _currentPolicy;
         private readonly V7Session _v7;
+        private readonly V8Session _v8;
         private HttpV7Transport _http;
         /// <summary>The packet size in use: the option, lowered for good when the server says it takes fewer events per packet.</summary>
         private int _packetCap;
@@ -60,7 +61,8 @@ namespace Daliys.Analytics.Internal
             _policyChanged = policyChanged;
             _nextUploadAt = DateTimeOffset.UtcNow.Add(options.UploadInterval);
             _packetCap = options.MaxPacketEvents;
-            _v7 = CreateV7Session();
+            _v7 = options.UseTransportV8 ? null : CreateV7Session();
+            _v8 = options.UseTransportV8 ? CreateV8Session() : null;
         }
 
         /// <summary>Test seam: a session with injected HTTP, storage and compressor.</summary>
@@ -72,6 +74,7 @@ namespace Daliys.Analytics.Internal
             _nextUploadAt = DateTimeOffset.UtcNow.Add(options.UploadInterval);
             _packetCap = options.MaxPacketEvents;
             _v7 = v7;
+            _v8 = null;
         }
 
         private V7Session CreateV7Session()
@@ -84,6 +87,27 @@ namespace Daliys.Analytics.Internal
                 var settings = new V7Settings { ProjectId = _options.ProjectId, SdkName = AnalyticsDeviceContext.SdkName, SdkVersion = AnalyticsDeviceContext.SdkVersion };
                 _http = new HttpV7Transport(_client, _options.ServerUrl);
                 return new V7Session(settings, _http, new FileV7AssetStore(directory));
+            }
+            catch (Exception exception)
+            {
+                if (_options.DebugLogging) Debug.LogException(exception);
+                return null;
+            }
+        }
+
+        private V8Session CreateV8Session()
+        {
+            try
+            {
+                // Created on the Unity main thread (the worker is constructed by Analytics.Initialize), where persistentDataPath is legal.
+                var directory = Path.Combine(Application.persistentDataPath, "daliys-analytics", "v8");
+                var settings = new V8Settings
+                {
+                    ProjectId = _options.ProjectId, SdkName = AnalyticsDeviceContext.SdkName, SdkVersion = AnalyticsDeviceContext.SdkVersion,
+                    AppVersion = _device.AppVersion, BuildNumber = _device.BuildNumber, Platform = _device.Platform,
+                };
+                _http = new HttpV7Transport(_client, _options.ServerUrl);
+                return new V8Session(settings, _http, new FileV7AssetStore(directory));
             }
             catch (Exception exception)
             {
@@ -128,6 +152,39 @@ namespace Daliys.Analytics.Internal
             }
         }
 
+        /// <summary>V1 registration and the periodic policy check. Returns a result when the upload must stop.</summary>
+        private UploadResult PrepareV1(IAnalyticsQueueBridge queue, ref AnalyticsQueueState state, DateTimeOffset now)
+        {
+            if (!_registered)
+            {
+                var registration = RegisterWithCredentialRecovery(queue, state);
+                state = registration.State;
+                if (!registration.Response.IsSuccess)
+                    return HandleFailure(registration.Response, now);
+                _registered = true;
+                return ApplyPolicy(ParseRegistrationPolicy(registration.Response.Body));
+            }
+
+            if (now < _nextPolicyCheckAt)
+                return null;
+
+            var policy = FetchPolicy(state);
+            if (policy.StatusCode == 401)
+            {
+                _registered = false;
+                var registration = RegisterWithCredentialRecovery(queue, state);
+                state = registration.State;
+                if (!registration.Response.IsSuccess)
+                    return HandleFailure(registration.Response, now);
+                _registered = true;
+                return ApplyPolicy(ParseRegistrationPolicy(registration.Response.Body));
+            }
+
+            if (!policy.IsSuccess)
+                return HandleFailure(policy, now);
+            return ApplyPolicy(ParsePolicy(policy.Body));
+        }
+
         private UploadResult FlushCore(IAnalyticsQueueBridge queue, bool force)
         {
             var now = DateTimeOffset.UtcNow;
@@ -141,40 +198,12 @@ namespace Daliys.Analytics.Internal
 
                 var state = queue.GetState();
 
-                if (!_registered)
+                // V8 registers by itself (hello) and learns the policy from the server's version number; the V1 registration waits until a batch has to go through V1.
+                if (!(_v8 != null && !_v8.Disabled))
                 {
-                    var registration = RegisterWithCredentialRecovery(queue, state);
-                    state = registration.State;
-                    if (!registration.Response.IsSuccess)
-                        return HandleFailure(registration.Response, now);
-                    _registered = true;
-                    var policyResult = ApplyPolicy(ParseRegistrationPolicy(registration.Response.Body));
-                    if (policyResult != null)
-                        return policyResult;
-                }
-                else if (now >= _nextPolicyCheckAt)
-                {
-                    var policy = FetchPolicy(state);
-                    if (policy.StatusCode == 401)
-                    {
-                        _registered = false;
-                        var registration = RegisterWithCredentialRecovery(queue, state);
-                        state = registration.State;
-                        if (!registration.Response.IsSuccess)
-                            return HandleFailure(registration.Response, now);
-                        _registered = true;
-                        var policyResult = ApplyPolicy(ParseRegistrationPolicy(registration.Response.Body));
-                        if (policyResult != null)
-                            return policyResult;
-                    }
-                    else
-                    {
-                        if (!policy.IsSuccess)
-                            return HandleFailure(policy, now);
-                        var policyResult = ApplyPolicy(ParsePolicy(policy.Body));
-                        if (policyResult != null)
-                            return policyResult;
-                    }
+                    var preparation = PrepareV1(queue, ref state, now);
+                    if (preparation != null)
+                        return preparation;
                 }
 
                 if (_currentPolicy != null && _currentPolicy.Mode == ServerPolicyMode.PauseUpload)
@@ -194,9 +223,11 @@ namespace Daliys.Analytics.Internal
                         return UploadResult.Uploaded;
                     }
 
-                    if (_v7 != null && !_v7.Disabled)
+                    var v7 = _v8 != null && !_v8.Disabled ? _v8.Send(queue, () => queue.ReadOldest(batchSize))
+                           : _v7 != null && !_v7.Disabled ? _v7.Send(queue, state, () => queue.ReadOldest(batchSize))
+                           : null;
+                    if (v7 != null)
                     {
-                        var v7 = _v7.Send(queue, state, () => queue.ReadOldest(batchSize));
                         switch (v7.Kind)
                         {
                             case V7ResultKind.Delivered:
@@ -237,6 +268,16 @@ namespace Daliys.Analytics.Internal
                                 break; // Fallback: this batch goes through V1
                         }
                     }
+
+                    if (_v8 != null && !_registered)
+                    {
+                        // V8 let this batch go to V1: the installation it was issued (adopted into the queue) is registered there the first time
+                        var registration = RegisterWithCredentialRecovery(queue, queue.GetState());
+                        if (!registration.Response.IsSuccess)
+                            return HandleFailure(registration.Response, now);
+                        _registered = true;
+                    }
+                    state = queue.GetState();
 
                     var events = queue.ReadOldest(Math.Min(batchSize, MaximumV1BatchSize));
                     if (events.Count == 0)
@@ -318,6 +359,7 @@ namespace Daliys.Analytics.Internal
         public void Dispose()
         {
             _v7?.Dispose();
+            _v8?.Dispose();
             _client.Dispose();
         }
 
@@ -495,7 +537,7 @@ namespace Daliys.Analytics.Internal
         {
             derivedJson = null;
             derivedToOriginal = null;
-            if (!_options.UseTransportV7)
+            if (!_options.UseTransportV7 && !_options.UseTransportV8)
                 return false;
             try
             {

@@ -1,0 +1,3 @@
+{'profile': 'drift', 'test': 'hold909', 'cap': 0, 'stateful': False, 'hash_rule': False, 'events': 2400, 'batches': 560, 'B_per_event': 22.805833333333332, 'binary_decisions_per_event': 406.3475, 'py_encode_us_per_event': 217.754825304534}
+{'profile': 'drift', 'test': 'hold909', 'cap': 0, 'stateful': True, 'hash_rule': False, 'events': 2400, 'batches': 560, 'B_per_event': 10.540833333333333, 'binary_decisions_per_event': 177.865, 'py_encode_us_per_event': 114.21169692766853}
+{'profile': 'drift', 'test': 'hold909', 'cap': 0, 'stateful': False, 'hash_rule': False, 'events': 2400, 'batches': 560, 'B_per_event': 62.163333333333334, 'binary_decisions_per_event': 657.0575, 'py_encode_us_per_event': 302.35953265218996, 'note': 'prior trained on base, not drift'}

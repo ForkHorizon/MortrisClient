@@ -1,0 +1,49 @@
+--------- beginning of main
+10-21 16:30:54.530  3894  3894 I Unity   : applyWindowUIChanges fullScreen = true, renderOutsideSafeArea = true
+10-21 16:30:54.561  3894  3912 I Unity   : UnityApplication::CreateInstance
+10-21 16:30:54.561  3894  3912 I Unity   : GameActivity Package Version '4.4.0'
+10-21 16:30:54.563  3894  3912 I Unity   : Starting Game Loop
+10-21 16:30:54.576  3894  3912 I Unity   : Handle cmd APP_CMD_START(11)
+10-21 16:30:54.579  3894  3894 I Unity   : onResume
+10-21 16:30:54.591  3894  3912 I Unity   : Handle cmd APP_CMD_RESUME(12)
+10-21 16:30:54.619  3894  3912 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-21 16:30:54.631  3894  3912 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-21 16:30:54.633  3894  3912 I Unity   : Handle cmd APP_CMD_CONTENT_RECT_CHANGED(5)
+10-21 16:30:54.637  3894  3912 I Unity   : Handle cmd APP_CMD_INIT_WINDOW(1)
+10-21 16:30:54.667  3894  3912 I Unity   : MemoryManager: Using 'Dynamic Heap' Allocator.
+10-21 16:30:54.681  3894  3894 I Unity   : windowFocusChanged: true
+10-21 16:30:54.681  3894  3894 I Unity   : resumeUnity
+10-21 16:30:54.723  3894  3912 I Unity   : SetGameState: isLoading: true, mode: UNKNOWN, label: -2, quality: -1
+10-21 16:30:54.738  3894  3912 I Unity   : SystemInfo CPU = ARM64 FP ASIMD AES, Cores = 8, Memory = 7412mb
+10-21 16:30:54.738  3894  3912 I Unity   : SystemInfo ARM big.LITTLE configuration: 2 big (mask: 0xc0), 6 little (mask: 0x3f)
+10-21 16:30:54.738  3894  3912 I Unity   : ApplicationInfo 'com.daliys.v7perfphone', Version '1.0', Min API Level '25', Target API Level '36'
+10-21 16:30:54.738  3894  3912 I Unity   : Built from '6000.3/staging' branch, Version '6000.3.16f1 (a56f230f6470)', Build type 'Development', Scripting Backend 'il2cpp', CPU 'arm64-v8a', Stripping 'Enabled'
+10-21 16:30:54.738  3894  3912 I Unity   : Device Model 'Nothing A142', OS 'Android OS 16 (API 36)'
+10-21 16:30:54.750  3894  3894 I Unity   : applyWindowUIChanges fullScreen = true, renderOutsideSafeArea = true
+10-21 16:30:54.805  3894  3912 I Unity   : Company Name: DefaultCompany
+10-21 16:30:54.805  3894  3912 I Unity   : Product Name: project
+10-21 16:30:54.814  3894  3894 I Unity   : applyWindowUIChanges fullScreen = true, renderOutsideSafeArea = true
+10-21 16:30:54.928  3894  3894 I Unity   : m_RunWithoutFocus: false
+10-21 16:30:54.929  3894  3912 I Unity   : SetGameState: isLoading: false, mode: UNKNOWN, label: -1, quality: 2
+10-21 16:30:54.929  3894  3912 I Unity   :     HasWindow = 1, HasFocus = 0
+10-21 16:30:54.929  3894  3912 I Unity   : Handle cmd APP_CMD_WINDOW_RESIZED(3)
+10-21 16:30:54.929  3894  3912 I Unity   : Handle cmd APP_CMD_WINDOW_REDRAW_NEEDED(4)
+10-21 16:30:54.929  3894  3912 I Unity   : Handle cmd APP_CMD_GAINED_FOCUS(7)
+10-21 16:30:54.929  3894  3912 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-21 16:30:55.000  3894  3912 I Unity   : SetGameState: isLoading: true, mode: UNKNOWN, label: 0, quality: 2
+10-21 16:30:57.057  3894  3912 I Unity   : SetGameState: isLoading: false, mode: UNKNOWN, label: 0, quality: 2
+10-21 16:30:57.215  3894  3912 I Unity   : V7PERF loaded events=2800 mode=v1
+10-21 16:30:57.215  3894  3912 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+10-21 16:30:57.215  3894  3912 I Unity   : <Run>d__8:MoveNext()
+10-21 16:30:57.215  3894  3912 I Unity   : UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+10-21 16:30:57.215  3894  3912 I Unity   : 
+10-21 16:31:04.917  3894  3912 I Unity   : V7PERF threads mode=v1 replay_ms=4704 top=4016:Thread-120=79;3912:UnityMain=53;4015:Thread-118=49;4023:Thread-119=38;3973:UnityGfxDeviceW=23;4022:Thread-114=22;4021:Thread-117=21;4026:Thread-111=10;3902:HeapTaskDaemon=9;3901:Jit thread pool=4;3971:mali-event-hand=4;3981:Thread-4=2;3906:binder:3894_1=2;4024:Thread-7=1;3944:Background Job.=1;4006:Thread-6=1;3988:UnityGfxDeviceW=1
+10-21 16:31:04.917  3894  3912 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+10-21 16:31:04.917  3894  3912 I Unity   : <Run>d__8:MoveNext()
+10-21 16:31:04.917  3894  3912 I Unity   : UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+10-21 16:31:04.917  3894  3912 I Unity   : 
+10-21 16:31:05.024  3894  3912 I Unity   : V7PERF result mode=v1 events=2800 accepted=2800 handoff_full_retries=0 other_results=0 replay_ms=4704 drain_ms=106 cpu_ticks_replay=332 cpu_ticks_drain=2 cpu_ticks_total=335 track_us_p50=88.0 track_us_p95=230.2 track_us_p99=843.7 track_us_max=4189.9 frame_ms_p50=2.26 frame_ms_p99=6.35 frame_ms_max=7.77 gc0=54 gc1=54 gc2=54 mono_start_kb=13976 mono_end_replay_kb=16912 mono_peak_kb=20032 unity_total_start_kb=54695 unity_total_end_kb=56611 pss_start_kb=327174 pss_peak_kb=356109 heap_start_kb=13136 calib_start=22.851 calibs=23.838
+10-21 16:31:05.024  3894  3912 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+10-21 16:31:05.024  3894  3912 I Unity   : <Run>d__8:MoveNext()
+10-21 16:31:05.024  3894  3912 I Unity   : UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+10-21 16:31:05.024  3894  3912 I Unity   : 

@@ -1,0 +1,5 @@
+msgpack==1.2.3
+cbor2==6.1.5
+brotli==1.2.0
+zstandard==0.25.0
+hpack==4.2.0

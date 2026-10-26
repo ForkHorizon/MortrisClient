@@ -72,6 +72,8 @@ namespace M7Transport.Tests
                 Assert.Equal(1, rig.V8.Epoch);
                 Assert.Equal(Enumerable.Range(1, 30).Select(i => (long)i), rig.Server.StoredSequences);
                 Assert.Equal("active", result.PolicyMode);
+                Assert.Equal(FakeV8Server.InstallUuid(1), rig.Queue.InstallId);     // the V1 identity is the one the server issued
+                Assert.Contains("AdoptIdentity", rig.Queue.Calls);
                 var hello = rig.Server.Calls.First(c => c.Path == "/v3/hello");
                 Assert.Null(hello.Credential);                      // the first call carries no token, only the nonce
                 Assert.Contains("\"nonce\":", hello.Body);

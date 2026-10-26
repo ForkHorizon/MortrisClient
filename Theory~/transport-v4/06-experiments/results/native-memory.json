@@ -1,0 +1,114 @@
+{
+  "native_version": 10507,
+  "platform": "macOS arm64",
+  "rows": [
+    {
+      "level": 1,
+      "by_reference": false,
+      "CDict_bytes": 113216,
+      "CCtx_after_bytes": 103392,
+      "DDict_bytes": 92888,
+      "compressed_bytes": 34,
+      "dict_source_bytes": 65536
+    },
+    {
+      "level": 1,
+      "by_reference": true,
+      "CDict_bytes": 47680,
+      "CCtx_after_bytes": 103392,
+      "DDict_bytes": 92888,
+      "compressed_bytes": 34,
+      "dict_source_bytes": 65536
+    },
+    {
+      "level": 3,
+      "by_reference": false,
+      "CDict_bytes": 473664,
+      "CCtx_after_bytes": 267232,
+      "DDict_bytes": 92888,
+      "compressed_bytes": 34,
+      "dict_source_bytes": 65536
+    },
+    {
+      "level": 3,
+      "by_reference": true,
+      "CDict_bytes": 408128,
+      "CCtx_after_bytes": 267232,
+      "DDict_bytes": 92888,
+      "compressed_bytes": 34,
+      "dict_source_bytes": 65536
+    },
+    {
+      "level": 6,
+      "by_reference": false,
+      "CDict_bytes": 735808,
+      "CCtx_after_bytes": 234464,
+      "DDict_bytes": 92888,
+      "compressed_bytes": 34,
+      "dict_source_bytes": 65536
+    },
+    {
+      "level": 6,
+      "by_reference": true,
+      "CDict_bytes": 670272,
+      "CCtx_after_bytes": 234464,
+      "DDict_bytes": 92888,
+      "compressed_bytes": 34,
+      "dict_source_bytes": 65536
+    },
+    {
+      "level": 9,
+      "by_reference": false,
+      "CDict_bytes": 735808,
+      "CCtx_after_bytes": 234464,
+      "DDict_bytes": 92888,
+      "compressed_bytes": 34,
+      "dict_source_bytes": 65536
+    },
+    {
+      "level": 9,
+      "by_reference": true,
+      "CDict_bytes": 670272,
+      "CCtx_after_bytes": 234464,
+      "DDict_bytes": 92888,
+      "compressed_bytes": 34,
+      "dict_source_bytes": 65536
+    },
+    {
+      "level": 15,
+      "by_reference": false,
+      "CDict_bytes": 1653312,
+      "CCtx_after_bytes": 1017304,
+      "DDict_bytes": 92888,
+      "compressed_bytes": 34,
+      "dict_source_bytes": 65536
+    },
+    {
+      "level": 15,
+      "by_reference": true,
+      "CDict_bytes": 1587776,
+      "CCtx_after_bytes": 1017304,
+      "DDict_bytes": 92888,
+      "compressed_bytes": 34,
+      "dict_source_bytes": 65536
+    },
+    {
+      "level": 19,
+      "by_reference": false,
+      "CDict_bytes": 1653312,
+      "CCtx_after_bytes": 2328024,
+      "DDict_bytes": 92888,
+      "compressed_bytes": 34,
+      "dict_source_bytes": 65536
+    },
+    {
+      "level": 19,
+      "by_reference": true,
+      "CDict_bytes": 1587776,
+      "CCtx_after_bytes": 2328024,
+      "DDict_bytes": 92888,
+      "compressed_bytes": 34,
+      "dict_source_bytes": 65536
+    }
+  ]
+}

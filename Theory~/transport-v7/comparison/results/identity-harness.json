@@ -1,0 +1,98 @@
+{
+  "crash_after_commit": {
+    "rows": 50,
+    "contiguous": true,
+    "next_is_max_plus_1": true,
+    "next_after_restart": 51
+  },
+  "crash_mid_txn": {
+    "rows": 50,
+    "contiguous": true,
+    "next_is_max_plus_1": true,
+    "next_after_restart": 51
+  },
+  "concurrent_4x200": {
+    "rows": 800,
+    "unique_contiguous": true
+  },
+  "reset_with_queue": {
+    "old_rows_keep_origin": true,
+    "new_origin_differs": true,
+    "works_without_server": true,
+    "old_flush_ok": true,
+    "new_flush_ok": true,
+    "same_seq_diff_origin_no_conflict": true
+  },
+  "overflow": {
+    "keys": [
+      [
+        0,
+        9223372036854775806
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ]
+    ],
+    "epoch_rotated_no_wrap": true
+  },
+  "retry": [
+    "NEW",
+    "DUP_SAME",
+    "CONFLICT"
+  ],
+  "backup_restore": {
+    "reused_key": [
+      0,
+      4
+    ],
+    "server_verdict": "CONFLICT",
+    "note": "detected only because server holds old content; client alone cannot know -> server hello must return high-water, client rotates epoch if local next <= server hw"
+  },
+  "gap_semantics": {
+    "ack_without_skip": 102,
+    "ack_with_skip_103": 104,
+    "note": "client must send skip ranges for evicted rows or ACK stalls forever"
+  },
+  "suffix_loss": {
+    "server_sees_gap": true,
+    "detected": false,
+    "note": "lost tail 98..100 invisible without client-sent high-water"
+  },
+  "header_size_not_always_2B": {
+    "101": 3,
+    "20000": 5,
+    "3000000": 6,
+    "1099511627776": 8
+  },
+  "noncontiguous_after_eviction": {
+    "batch_seqs": [
+      101,
+      102,
+      107,
+      108,
+      150
+    ],
+    "delta_all_ones": false
+  },
+  "uuid_namespace": {
+    "adr_formula_collides_across_epochs_or_projects": true,
+    "full_key_distinguishes_project": true,
+    "full_key_distinguishes_epoch": true,
+    "note": "ADR formula uuid5(installID:seq) has no project/epoch input; two projects or epochs sharing an install_id string collide. UUID is a legacy alias only; primary key stays the tuple."
+  },
+  "durability": {
+    "journal_mode": "WAL",
+    "synchronous": "FULL",
+    "tested": "SIGKILL process crash only",
+    "not_tested": [
+      "power loss",
+      "fsync-lying storage",
+      "cloud backup restore on device"
+    ]
+  }
+}

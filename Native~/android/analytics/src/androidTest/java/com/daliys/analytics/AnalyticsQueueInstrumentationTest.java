@@ -48,6 +48,9 @@ public final class AnalyticsQueueInstrumentationTest extends Instrumentation {
             testInvalidRecordsRollBackTheWholeBatch(getTargetContext());
             testSessionStateAndExitInfo(getTargetContext());
             testLargeBatchesKeepOrderAndPayloadBytes(getTargetContext());
+            testStorageKeysSurviveReopenAndIdentityReset(getTargetContext());
+            testCountersAreStoredInTheTransactionOfTheirBatch(getTargetContext());
+            testAdoptedIdentityReplacesTheLocalOneAndKeepsTheQueue(getTargetContext());
             result.putString(REPORT_KEY_STREAMRESULT, "U1 device queue tests passed.\n");
             finish(Activity.RESULT_OK, result);
         } catch (Throwable failure) {
@@ -366,6 +369,63 @@ public final class AnalyticsQueueInstrumentationTest extends Instrumentation {
         assertEquals("{\"id\":\"abc\",\"active_ms\":5}", queue.loadSessionState());
         String exit = queue.getPreviousExitInfo(); // "" on Android < 11 or without history; otherwise parseable JSON
         if (!exit.isEmpty()) new JSONObject(exit).getInt("reason");
+        queue.close();
+    }
+
+    private static void testStorageKeysSurviveReopenAndIdentityReset(Context context) throws Exception {
+        AnalyticsQueue queue = freshQueue(context);
+        assertEquals("", queue.getMeta("v8.token"));
+        queue.setMeta("v8.token", "43.kABCDEFGHIJK");
+        queue.setMeta("v8.shapes", "{\"project_id\":\"p\",\"shapes\":[]}");
+        queue.close();
+        queue = new AnalyticsQueue(context);
+        assertEquals("43.kABCDEFGHIJK", queue.getMeta("v8.token"));
+        queue.resetIdentity();                                  // a credential reset must not lose the V8 state or the counters
+        assertEquals("43.kABCDEFGHIJK", queue.getMeta("v8.token"));
+        assertEquals("{\"project_id\":\"p\",\"shapes\":[]}", queue.getMeta("v8.shapes"));
+        for (String bad : new String[]{"install_id", "installation_credential", "stream_epoch", "v8." + new String(new char[40]).replace('\0', 'x')}) {
+            try { queue.getMeta(bad); throw new AssertionError("reading " + bad + " must be refused"); } catch (IllegalArgumentException expected) { /* ok */ }
+            try { queue.setMeta(bad, "x"); throw new AssertionError("writing " + bad + " must be refused"); } catch (IllegalArgumentException expected) { /* ok */ }
+        }
+        queue.close();
+    }
+
+    private static void testCountersAreStoredInTheTransactionOfTheirBatch(Context context) throws Exception {
+        AnalyticsQueue queue = freshQueue(context);
+        assertEquals("", queue.getMeta("counters"));
+        queue.enqueueRecords(frames(8, id(7000)), 1, EVENT_LIMIT, BYTE_LIMIT, MAX_AGE_MILLIS, "{\"attempt\":5}");
+        assertEquals("{\"attempt\":5}", queue.getMeta("counters"));
+        queue.enqueueRecords(frames(8, id(7001)), 1, EVENT_LIMIT, BYTE_LIMIT, MAX_AGE_MILLIS, null);        // null leaves the stored counters alone
+        assertEquals("{\"attempt\":5}", queue.getMeta("counters"));
+        try {                                                   // a rejected batch must not store its counters either
+            queue.enqueueRecords(new byte[]{0, 0, 0, 2, 9, 9}, 1, EVENT_LIMIT, BYTE_LIMIT, MAX_AGE_MILLIS, "{\"attempt\":99}");
+            throw new AssertionError("an invalid record must be refused");
+        } catch (IllegalArgumentException expected) { /* ok */ }
+        assertEquals("{\"attempt\":5}", queue.getMeta("counters"));
+        queue.close();
+        queue = new AnalyticsQueue(context);
+        assertEquals("{\"attempt\":5}", queue.getMeta("counters"));
+        queue.resetIdentity();
+        assertEquals("{\"attempt\":5}", queue.getMeta("counters"));
+        queue.close();
+    }
+
+    private static void testAdoptedIdentityReplacesTheLocalOneAndKeepsTheQueue(Context context) throws Exception {
+        AnalyticsQueue queue = freshQueue(context);
+        enqueue(queue, EVENT_LIMIT, BYTE_LIMIT, MAX_AGE_MILLIS, id(7100), id(7101));
+        String sequenceBefore = queue.getSequenceState();
+        String adopted = "6f1c9b0e-2d44-4f6a-9a31-0c5d7e8b9a10";
+        String credential = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQ";   // 43 characters
+        queue.adoptIdentity(adopted, credential);
+        assertEquals(adopted, queue.getState().getInstallationId());
+        assertEquals(credential, queue.getState().getInstallationCredential());
+        assertEquals(2, queue.getState().getPendingCount());
+        assertEquals(new JSONObject(sequenceBefore).getLong("next_sequence"), new JSONObject(queue.getSequenceState()).getLong("next_sequence"));
+        queue.close();
+        queue = new AnalyticsQueue(context);
+        assertEquals(adopted, queue.getState().getInstallationId());
+        try { queue.adoptIdentity("not-a-uuid", credential); throw new AssertionError("a bad id must be refused"); } catch (IllegalArgumentException expected) { /* ok */ }
+        try { queue.adoptIdentity(adopted, "short"); throw new AssertionError("a bad credential must be refused"); } catch (IllegalArgumentException expected) { /* ok */ }
         queue.close();
     }
 

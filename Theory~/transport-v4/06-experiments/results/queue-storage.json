@@ -1,0 +1,152 @@
+{
+  "base": {
+    "json": {
+      "payload_bytes": 1230674,
+      "db_bytes_checkpointed": 1466368,
+      "files_before_checkpoint": {
+        "q.db": 4096,
+        "q.db-wal": 1483232,
+        "q.db-shm": 32768
+      },
+      "rows": 1482,
+      "events": 1482,
+      "dictionary_bytes": 0
+    },
+    "msgpack64": {
+      "payload_bytes": 1085036,
+      "db_bytes_checkpointed": 1216512,
+      "files_before_checkpoint": {
+        "q.db": 4096,
+        "q.db-wal": 1231912,
+        "q.db-shm": 32768
+      },
+      "rows": 1482,
+      "events": 1482,
+      "dictionary_bytes": 0
+    },
+    "zstd3_dict16_rows": {
+      "payload_bytes": 269308,
+      "db_bytes_checkpointed": 303104,
+      "files_before_checkpoint": {
+        "q.db": 4096,
+        "q.db-wal": 313152,
+        "q.db-shm": 32768
+      },
+      "rows": 1482,
+      "events": 1482,
+      "dictionary_bytes": 16384
+    },
+    "chunks50_zstd3_dict16": {
+      "payload_bytes": 105365,
+      "db_bytes_checkpointed": 131072,
+      "files_before_checkpoint": {
+        "q.db": 4096,
+        "q.db-wal": 140112,
+        "q.db-shm": 32768
+      },
+      "rows": 30,
+      "events": 1482,
+      "dictionary_bytes": 16384
+    }
+  },
+  "rich": {
+    "json": {
+      "payload_bytes": 1263388,
+      "db_bytes_checkpointed": 1605632,
+      "files_before_checkpoint": {
+        "q.db": 4096,
+        "q.db-wal": 1623312,
+        "q.db-shm": 32768
+      },
+      "rows": 1237,
+      "events": 1237,
+      "dictionary_bytes": 0
+    },
+    "msgpack64": {
+      "payload_bytes": 1115050,
+      "db_bytes_checkpointed": 1249280,
+      "files_before_checkpoint": {
+        "q.db": 4096,
+        "q.db-wal": 1264872,
+        "q.db-shm": 32768
+      },
+      "rows": 1237,
+      "events": 1237,
+      "dictionary_bytes": 0
+    },
+    "zstd3_dict16_rows": {
+      "payload_bytes": 279573,
+      "db_bytes_checkpointed": 311296,
+      "files_before_checkpoint": {
+        "q.db": 4096,
+        "q.db-wal": 321392,
+        "q.db-shm": 32768
+      },
+      "rows": 1237,
+      "events": 1237,
+      "dictionary_bytes": 16384
+    },
+    "chunks50_zstd3_dict16": {
+      "payload_bytes": 139459,
+      "db_bytes_checkpointed": 159744,
+      "files_before_checkpoint": {
+        "q.db": 4096,
+        "q.db-wal": 168952,
+        "q.db-shm": 32768
+      },
+      "rows": 25,
+      "events": 1237,
+      "dictionary_bytes": 16384
+    }
+  },
+  "alt": {
+    "json": {
+      "payload_bytes": 805157,
+      "db_bytes_checkpointed": 933888,
+      "files_before_checkpoint": {
+        "q.db": 4096,
+        "q.db-wal": 947632,
+        "q.db-shm": 32768
+      },
+      "rows": 900,
+      "events": 900,
+      "dictionary_bytes": 0
+    },
+    "msgpack64": {
+      "payload_bytes": 736039,
+      "db_bytes_checkpointed": 839680,
+      "files_before_checkpoint": {
+        "q.db": 4096,
+        "q.db-wal": 852872,
+        "q.db-shm": 32768
+      },
+      "rows": 900,
+      "events": 900,
+      "dictionary_bytes": 0
+    },
+    "zstd3_dict16_rows": {
+      "payload_bytes": 276476,
+      "db_bytes_checkpointed": 307200,
+      "files_before_checkpoint": {
+        "q.db": 4096,
+        "q.db-wal": 317272,
+        "q.db-shm": 32768
+      },
+      "rows": 900,
+      "events": 900,
+      "dictionary_bytes": 16384
+    },
+    "chunks50_zstd3_dict16": {
+      "payload_bytes": 177482,
+      "db_bytes_checkpointed": 192512,
+      "files_before_checkpoint": {
+        "q.db": 4096,
+        "q.db-wal": 201912,
+        "q.db-shm": 32768
+      },
+      "rows": 18,
+      "events": 900,
+      "dictionary_bytes": 16384
+    }
+  }
+}

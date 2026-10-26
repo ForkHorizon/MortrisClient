@@ -1,0 +1,2 @@
+10-21 05:17:22.475  3971  3990 I BENCH   : replay_done sdk=firebase events=3000 track_mean_us=65 track_max_us=9333 wall_ms=32085
+10-21 05:18:52.484  3971  3990 I BENCH   : perf2 events=3000 cpu_total_ms=9813 cpu_replay_ms=8472 alloc_replay=157692776 alloc_total=158641360 gc_replay=62 lat_p50_us=33 lat_p95_us=136 lat_p99_us=369 lat_max_us=9333 pss_start_kb=30777 pss_peak_kb=37892 java_peak_kb=12815 native_peak_kb=17819 calib0=2.108 calib_best=1.832 calib_end=1.832 calibs=2000:4.193,

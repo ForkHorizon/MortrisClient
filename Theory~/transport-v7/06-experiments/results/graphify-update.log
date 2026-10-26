@@ -1,0 +1,11 @@
+Re-extracting code files in . (no LLM needed)...
+[graphify watch] 307 file(s) not classified (no supported extension or shebang), skipped: .gitignore, .graphifyignore, AndroidManifest.xml, CODEOWNERS, Daliys.Analytics.Tests.asmdef, Daliys.Analytics.asmdef (+301 more)
+  AST extraction: 8/8 uncached files (100%)
+  warning: 2 .sql file(s) contributed nothing to the graph because a dependency is missing: tree_sitter_sql not installed. Install it with: pip install "graphifyy[sql]" (#1745)
+  warning: 1 file(s) had syntax errors and may be partially extracted: Native~/android/analytics/build.gradle (first error at line 17, no symbols extracted)
+[graphify watch] community set changed since labeling (285 saved labels, 280 communities now; renamed 64 community(ies) by their hub). Run `graphify label` to refresh names with the LLM.
+[graphify] backed up curated graph (6 files) -> 2026-10-17/
+[graphify watch] Rebuilt: 2901 nodes, 5636 edges, 280 communities
+[graphify watch] graph.json, graph.html and GRAPH_REPORT.md updated in graphify-out
+Code graph updated. For doc/paper/image changes run /graphify --update in your AI assistant.
+Tip: set GEMINI_API_KEY or GOOGLE_API_KEY to use Gemini for semantic extraction.

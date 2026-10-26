@@ -1,0 +1,14 @@
+{
+  "events": 100,
+  "iterations": 1000,
+  "raw_bytes": 4195,
+  "compressed_bytes": 3393,
+  "gc_bytes": 0,
+  "mean_ms": 0.18403312500000002,
+  "runtime": ".NET 10.0.5",
+  "platform": "macOS 27.0.1",
+  "scope": "typed column packing + reused native zstd; excludes ingress, framing, Unity, JNI and HTTP",
+  "fixture": "real-raw",
+  "python_roundtrip": true,
+  "default_raw_unchanged": true
+}

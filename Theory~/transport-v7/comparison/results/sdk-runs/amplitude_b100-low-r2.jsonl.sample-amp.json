@@ -1,0 +1,121 @@
+[
+ {
+  "event_type": "level_end",
+  "timestamp": 1792260966525,
+  "user_id": "u-bench-1",
+  "device_id": "c3015f71-76eb-4c7b-b553-41fc32af4783R",
+  "session_id": 1792260966525,
+  "uuid": "b895a035-89e3-4c5b-b043-37ed9d7389b9",
+  "sequence_number": 1,
+  "version_name": "1",
+  "os_name": "android",
+  "os_version": "15",
+  "api_level": 35,
+  "device_brand": "google",
+  "device_manufacturer": "Google",
+  "device_model": "sdk_gphone64_arm64",
+  "carrier": "T-Mobile",
+  "country": "US",
+  "language": "en",
+  "platform": "Android",
+  "library": {
+   "name": "amplitude-android",
+   "version": "2.40.0"
+  },
+  "api_properties": {
+   "limit_ad_tracking": false,
+   "gps_enabled": false
+  },
+  "event_properties": {
+   "level": 33,
+   "mode": "hard",
+   "score": 250,
+   "coins": 3,
+   "lucky": false
+  },
+  "user_properties": {},
+  "groups": {},
+  "group_properties": {},
+  "event_id": 1
+ },
+ {
+  "event_type": "purchase_ui",
+  "timestamp": 1792260966629,
+  "user_id": "u-bench-1",
+  "device_id": "c3015f71-76eb-4c7b-b553-41fc32af4783R",
+  "session_id": 1792260966525,
+  "uuid": "712242df-7886-46ac-aa33-5407c1d5aaa3",
+  "sequence_number": 2,
+  "version_name": "1",
+  "os_name": "android",
+  "os_version": "15",
+  "api_level": 35,
+  "device_brand": "google",
+  "device_manufacturer": "Google",
+  "device_model": "sdk_gphone64_arm64",
+  "carrier": "T-Mobile",
+  "country": "US",
+  "language": "en",
+  "platform": "Android",
+  "library": {
+   "name": "amplitude-android",
+   "version": "2.40.0"
+  },
+  "api_properties": {
+   "limit_ad_tracking": false,
+   "gps_enabled": false
+  },
+  "event_properties": {
+   "level": 4,
+   "mode": "endless",
+   "score": 250,
+   "coins": 5,
+   "lucky": false,
+   "sku": "gems_500",
+   "price": 4.99
+  },
+  "user_properties": {},
+  "groups": {},
+  "group_properties": {},
+  "event_id": 2
+ },
+ {
+  "event_type": "sync",
+  "timestamp": 1792260966730,
+  "user_id": "u-bench-1",
+  "device_id": "c3015f71-76eb-4c7b-b553-41fc32af4783R",
+  "session_id": 1792260966525,
+  "uuid": "d3ff317d-37c0-4828-a2a0-1d9496dfc6ce",
+  "sequence_number": 3,
+  "version_name": "1",
+  "os_name": "android",
+  "os_version": "15",
+  "api_level": 35,
+  "device_brand": "google",
+  "device_manufacturer": "Google",
+  "device_model": "sdk_gphone64_arm64",
+  "carrier": "T-Mobile",
+  "country": "US",
+  "language": "en",
+  "platform": "Android",
+  "library": {
+   "name": "amplitude-android",
+   "version": "2.40.0"
+  },
+  "api_properties": {
+   "limit_ad_tracking": false,
+   "gps_enabled": false
+  },
+  "event_properties": {
+   "level": 4,
+   "mode": "hard",
+   "score": 50,
+   "coins": 1,
+   "lucky": false
+  },
+  "user_properties": {},
+  "groups": {},
+  "group_properties": {},
+  "event_id": 3
+ }
+]

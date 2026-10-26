@@ -1,0 +1,22 @@
+{
+ "alloc_bytes_per_event": 7840.826157156121,
+ "bytes_in": 13659793,
+ "bytes_per_event": 17.887247090004596,
+ "calib_best_ns": 1.0898154823893829,
+ "calib_mean_ns": 1.0898154823893829,
+ "decode_cpu_ns_per_event": 6954.219215070561,
+ "decode_cpu_ns_per_event_load_corrected": 6954.219215070561,
+ "events": 763661,
+ "failed_frames": 0,
+ "frames": 7732,
+ "gc_cycles": 1059,
+ "go": "go1.27.2",
+ "gomaxprocs": 1,
+ "heap_inuse_mb": 22.3203125,
+ "mallocs_per_event": 87.23305367172082,
+ "maxrss_mb": 40.578125,
+ "p50_ns": 5490,
+ "p95_ns": 11190,
+ "p99_ns": 12210,
+ "time": "2026-10-21T04:25:16+02:00"
+}

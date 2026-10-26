@@ -1,0 +1,10 @@
+# Unity GUID metadata and generated build state.
+**/*.meta
+**/bin/
+**/obj/
+Native~/android/.gradle/
+Native~/android/**/build/
+Native~/android/local.properties
+.DS_Store
+.mcp.json
+.mcp.json.bak-*

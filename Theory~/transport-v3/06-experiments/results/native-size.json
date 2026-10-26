@@ -1,0 +1,27 @@
+{
+  "url": "https://repo.maven.apache.org/maven2/com/github/luben/zstd-jni/1.5.7-6/zstd-jni-1.5.7-6.aar",
+  "aar_bytes": 1143376,
+  "sha256": "7ceecc8bfc2f49817afc34965962c50b1c47ba5f60584e8a96efd4f813e46393",
+  "native_entries": [
+    {
+      "name": "jni/arm64-v8a/libzstd-jni-1.5.7-6.so",
+      "raw_bytes": 603960,
+      "zip_bytes": 261876
+    },
+    {
+      "name": "jni/armeabi-v7a/libzstd-jni-1.5.7-6.so",
+      "raw_bytes": 478512,
+      "zip_bytes": 256332
+    },
+    {
+      "name": "jni/x86/libzstd-jni-1.5.7-6.so",
+      "raw_bytes": 691236,
+      "zip_bytes": 284827
+    },
+    {
+      "name": "jni/x86_64/libzstd-jni-1.5.7-6.so",
+      "raw_bytes": 726088,
+      "zip_bytes": 284572
+    }
+  ]
+}

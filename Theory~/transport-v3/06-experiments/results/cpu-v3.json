@@ -1,0 +1,38 @@
+{
+  "base": {
+    "encode_verify_select_frame": {
+      "p50_us": 3600.8330062031746,
+      "p95_us": 4361.249972134829,
+      "batches": 30
+    },
+    "outer_decode_only": {
+      "p50_us": 11.708500096574426,
+      "p95_us": 18.666032701730728,
+      "batches": 30
+    }
+  },
+  "rich": {
+    "encode_verify_select_frame": {
+      "p50_us": 4745.2294966205955,
+      "p95_us": 5781.665968243033,
+      "batches": 30
+    },
+    "outer_decode_only": {
+      "p50_us": 11.10398443415761,
+      "p95_us": 17.167010810226202,
+      "batches": 30
+    }
+  },
+  "alt": {
+    "encode_verify_select_frame": {
+      "p50_us": 5217.333498876542,
+      "p95_us": 10181.54202029109,
+      "batches": 28
+    },
+    "outer_decode_only": {
+      "p50_us": 18.728984287008643,
+      "p95_us": 31.79203486070037,
+      "batches": 28
+    }
+  }
+}

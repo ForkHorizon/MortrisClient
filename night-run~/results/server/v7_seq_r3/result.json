@@ -1,0 +1,17 @@
+{
+ "mode": "v7",
+ "events": 41400,
+ "requests": 414,
+ "wall_s": 16.57,
+ "errors": 0,
+ "first_error": "",
+ "db_events": 40772,
+ "server_cpu_s": 5.14,
+ "postgres_cpu_s": 3.7100000000000004,
+ "server_cpu_us_per_event": 126.0669086628078,
+ "postgres_cpu_us_per_event": 90.9938192877465,
+ "server_rss_peak_mb": 149.109,
+ "postgres_rss_peak_mb": 229.984,
+ "events_per_s": 2460.5914302957153,
+ "host_load_start": "2.96 3.71 3.66"
+}

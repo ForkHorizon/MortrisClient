@@ -50,9 +50,10 @@ namespace M7Transport.Tests
             if (evicted > 0) _droppedVersion++;
         }
 
-        public void EnqueueRecords(byte[] frames, int count, int eventLimit, long byteLimit, long maxAgeMilliseconds)
+        public void EnqueueRecords(byte[] frames, int count, int eventLimit, long byteLimit, long maxAgeMilliseconds, string counters = null)
         {
             Calls.Add("EnqueueRecords " + count);
+            if (counters != null) Meta["counters"] = counters;
             var position = 0;
             for (var i = 0; i < count; i++)
             {
@@ -68,6 +69,7 @@ namespace M7Transport.Tests
 
         public int PendingCount => _rows.Count;
         internal readonly Dictionary<string, string> Meta = new Dictionary<string, string>();
+        public void AdoptIdentity(string installationId, string credential) { Calls.Add("AdoptIdentity"); InstallId = installationId; Credential = credential; }
         public string GetMeta(string key) => Meta.TryGetValue(key, out var v) ? v : "";
         public void SetMeta(string key, string value) { Calls.Add("SetMeta " + key); Meta[key] = value ?? ""; }
         public string SessionState = "", ExitInfo = "";

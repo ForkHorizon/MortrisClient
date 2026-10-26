@@ -1,0 +1,238 @@
+{
+  "profile": "rich",
+  "training_seed": 202,
+  "training_samples": 255,
+  "training_raw_bytes": 1612901,
+  "catalog_bytes": 3980,
+  "catalog_sha256": "eb1d605c13aac591ba5a03a231ac135058d4043e3b672f2da1747e6578d69fc4",
+  "rows": [
+    {
+      "seed": 101,
+      "variant": "raw",
+      "events": 7899,
+      "batches": 82,
+      "sha256": "80d84d48c6b114d0e424c7842a8fb5196c21f82d1029e610c5e6e8622e47568c",
+      "bytes": {
+        "v1_json": 8055798,
+        "v1_gzip1": 1226835,
+        "v4_zstd19": 291998,
+        "v6_zstd1": 332086,
+        "v6_dict16": 305031,
+        "v7_nodict": 331832,
+        "v7_dict16": 305626,
+        "v7_dict32": 304853,
+        "v7_full_ids_dict16": 440576,
+        "v1_gzip1_legacy_ids": 990819
+      },
+      "B_event": {
+        "v1_json": 1019.8503608051652,
+        "v1_gzip1": 155.315229775921,
+        "v4_zstd19": 36.966451449550576,
+        "v6_zstd1": 42.04152424357514,
+        "v6_dict16": 38.616407140144325,
+        "v7_nodict": 42.009368274465125,
+        "v7_dict16": 38.69173313077605,
+        "v7_dict32": 38.5938726421066,
+        "v7_full_ids_dict16": 55.77617419926573,
+        "v1_gzip1_legacy_ids": 125.43600455753892
+      },
+      "alias_setup_bytes": 5156,
+      "fallback_events": 0,
+      "dict16_setup_inclusive_B_event": 41.922521838207366,
+      "python_host_encode100_ms": {
+        "p50": 2.4141455,
+        "p95": 2.775333
+      }
+    },
+    {
+      "seed": 101,
+      "variant": "safe_clean",
+      "events": 7899,
+      "batches": 82,
+      "sha256": "d7509cfd79128b5cd7af30a87a677e6f56e977d73d24e43b2c713547e284d392",
+      "bytes": {
+        "v1_json": 7612680,
+        "v1_gzip1": 1216052,
+        "v4_zstd19": 291852,
+        "v6_zstd1": 332086,
+        "v6_dict16": 305031,
+        "v7_nodict": 332386,
+        "v7_dict16": 305178,
+        "v7_dict32": 304735,
+        "v7_full_ids_dict16": 440310,
+        "v1_gzip1_legacy_ids": 983222
+      },
+      "B_event": {
+        "v1_json": 963.7523737181922,
+        "v1_gzip1": 153.95012026838842,
+        "v4_zstd19": 36.947968097227495,
+        "v6_zstd1": 42.04152424357514,
+        "v6_dict16": 38.616407140144325,
+        "v7_nodict": 42.079503734649954,
+        "v7_dict16": 38.63501709077099,
+        "v7_dict32": 38.578934042283834,
+        "v7_full_ids_dict16": 55.74249905051272,
+        "v1_gzip1_legacy_ids": 124.47423724522092
+      },
+      "alias_setup_bytes": 5156,
+      "fallback_events": 0,
+      "dict16_setup_inclusive_B_event": 41.837700974806936,
+      "python_host_encode100_ms": {
+        "p50": 2.2839165,
+        "p95": 2.417208
+      }
+    },
+    {
+      "seed": 1729,
+      "variant": "raw",
+      "events": 6652,
+      "batches": 69,
+      "sha256": "faf9ee5232f7a440dd8d1b06d80ffe0e332bb35a09271b6cba74dcb3594a737a",
+      "bytes": {
+        "v1_json": 6780275,
+        "v1_gzip1": 1030369,
+        "v4_zstd19": 246340,
+        "v6_zstd1": 278306,
+        "v6_dict16": 255976,
+        "v7_nodict": 278361,
+        "v7_dict16": 256318,
+        "v7_dict32": 255754,
+        "v7_full_ids_dict16": 370028,
+        "v1_gzip1_legacy_ids": 833457
+      },
+      "B_event": {
+        "v1_json": 1019.2836740829825,
+        "v1_gzip1": 154.8961214672279,
+        "v4_zstd19": 37.03247143716175,
+        "v6_zstd1": 41.83794347564642,
+        "v6_dict16": 38.48105832832231,
+        "v7_nodict": 41.84621166566446,
+        "v7_dict16": 38.53247143716175,
+        "v7_dict32": 38.44768490679495,
+        "v7_full_ids_dict16": 55.62657847263981,
+        "v1_gzip1_legacy_ids": 125.29419723391462
+      },
+      "alias_setup_bytes": 4570,
+      "fallback_events": 0,
+      "dict16_setup_inclusive_B_event": 42.28081779915815,
+      "python_host_encode100_ms": {
+        "p50": 2.404958,
+        "p95": 2.804333
+      }
+    },
+    {
+      "seed": 1729,
+      "variant": "safe_clean",
+      "events": 6652,
+      "batches": 69,
+      "sha256": "6402d00f199c424031fff9001581392e496ba5728ea67daada3e88325a16581d",
+      "bytes": {
+        "v1_json": 6407267,
+        "v1_gzip1": 1020854,
+        "v4_zstd19": 246049,
+        "v6_zstd1": 278306,
+        "v6_dict16": 255976,
+        "v7_nodict": 279089,
+        "v7_dict16": 255955,
+        "v7_dict32": 255421,
+        "v7_full_ids_dict16": 369772,
+        "v1_gzip1_legacy_ids": 826651
+      },
+      "B_event": {
+        "v1_json": 963.2091100420926,
+        "v1_gzip1": 153.46572459410703,
+        "v4_zstd19": 36.98872519542994,
+        "v6_zstd1": 41.83794347564642,
+        "v6_dict16": 38.48105832832231,
+        "v7_nodict": 41.955652435357784,
+        "v7_dict16": 38.47790138304269,
+        "v7_dict32": 38.39762477450391,
+        "v7_full_ids_dict16": 55.588093806374026,
+        "v1_gzip1_legacy_ids": 124.2710463018641
+      },
+      "alias_setup_bytes": 4570,
+      "fallback_events": 0,
+      "dict16_setup_inclusive_B_event": 42.192874323511724,
+      "python_host_encode100_ms": {
+        "p50": 2.381334,
+        "p95": 2.780792
+      }
+    },
+    {
+      "seed": 2601,
+      "variant": "raw",
+      "events": 6895,
+      "batches": 71,
+      "sha256": "4c1a050cdd7ed4de9a29159071f5c0716b9296d98e7644ec53b489f0e749a31e",
+      "bytes": {
+        "v1_json": 7034464,
+        "v1_gzip1": 1066635,
+        "v4_zstd19": 254570,
+        "v6_zstd1": 288034,
+        "v6_dict16": 265328,
+        "v7_nodict": 288842,
+        "v7_dict16": 265743,
+        "v7_dict32": 265077,
+        "v7_full_ids_dict16": 383815,
+        "v1_gzip1_legacy_ids": 863425
+      },
+      "B_event": {
+        "v1_json": 1020.2268310369833,
+        "v1_gzip1": 154.69688179840463,
+        "v4_zstd19": 36.920957215373456,
+        "v6_zstd1": 41.774329224075416,
+        "v6_dict16": 38.481218274111676,
+        "v7_nodict": 41.89151559100797,
+        "v7_dict16": 38.54140681653372,
+        "v7_dict32": 38.44481508339376,
+        "v7_full_ids_dict16": 55.66569978245105,
+        "v1_gzip1_legacy_ids": 125.22480058013053
+      },
+      "alias_setup_bytes": 4549,
+      "fallback_events": 0,
+      "dict16_setup_inclusive_B_event": 42.15460478607687,
+      "python_host_encode100_ms": {
+        "p50": 2.457,
+        "p95": 2.690209
+      }
+    },
+    {
+      "seed": 2601,
+      "variant": "safe_clean",
+      "events": 6895,
+      "batches": 71,
+      "sha256": "af3fedc8a105aa1da00fb093605db28a6d404cd348cdeebe4b274076f3a2c9e0",
+      "bytes": {
+        "v1_json": 6648004,
+        "v1_gzip1": 1058571,
+        "v4_zstd19": 254063,
+        "v6_zstd1": 288034,
+        "v6_dict16": 265328,
+        "v7_nodict": 289554,
+        "v7_dict16": 265349,
+        "v7_dict32": 265008,
+        "v7_full_ids_dict16": 383217,
+        "v1_gzip1_legacy_ids": 855388
+      },
+      "B_event": {
+        "v1_json": 964.1775199419869,
+        "v1_gzip1": 153.52733865119652,
+        "v4_zstd19": 36.84742567077593,
+        "v6_zstd1": 41.774329224075416,
+        "v6_dict16": 38.481218274111676,
+        "v7_nodict": 41.99477882523568,
+        "v7_dict16": 38.484263959390866,
+        "v7_dict32": 38.43480783176215,
+        "v7_full_ids_dict16": 55.57897026831037,
+        "v1_gzip1_legacy_ids": 124.05917331399564
+      },
+      "alias_setup_bytes": 4549,
+      "fallback_events": 0,
+      "dict16_setup_inclusive_B_event": 42.06526468455402,
+      "python_host_encode100_ms": {
+        "p50": 2.304,
+        "p95": 2.468084
+      }
+    }
+  ]
+}

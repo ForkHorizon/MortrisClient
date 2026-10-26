@@ -28,6 +28,7 @@ namespace Daliys.Analytics.Internal
         private readonly Action<ServerPolicy> _policyChanged;
         private readonly Timer _uploadTimer, _flushTimer, _heartbeatTimer;
         private readonly EventBuffer _buffer = new EventBuffer(BufferCapacity, BufferBytes);
+        private readonly AnalyticsCounters _counters = new AnalyticsCounters();
         private readonly List<TaskCompletionSource<FlushResult>> _flushWaiters = new List<TaskCompletionSource<FlushResult>>();
         private readonly object _writeSync = new object();
         private IAnalyticsQueueBridge _bridge;
@@ -89,6 +90,28 @@ namespace Daliys.Analytics.Internal
             Interlocked.Exchange(ref _lastBackgroundUploadTicks, now == 0 ? 1 : now);
             Interlocked.Exchange(ref _backgroundUploadRequested, 1);
             Schedule();
+        }
+
+        /// <summary>
+        /// The next number of a named counter (see <see cref="AnalyticsCounters"/>). The first call loads the stored values from the durable queue, which creates the
+        /// queue on the calling thread; after that it is a lock and an increment.
+        /// </summary>
+        internal long NextId(string counter)
+        {
+            if (!_counters.IsLoaded)
+            {
+                lock (_writeSync)
+                {
+                    if (!_counters.IsLoaded)
+                    {
+                        var stored = "";
+                        try { if (AndroidQueueBridge.IsSupported && EnsureBridge() != null) stored = _bridge.GetMeta("counters"); }
+                        catch (Exception exception) { if (_options.DebugLogging) Debug.LogException(exception); }
+                        _counters.Load(stored);
+                    }
+                }
+            }
+            return _counters.Next(counter);
         }
 
         internal void ClearPending()
@@ -243,13 +266,16 @@ namespace Daliys.Analytics.Internal
             if (count == 0)
                 return;
 
+            // counters are read after the drain: every number the drained events use was handed out before they were tracked
+            var counters = _counters.Snapshot();
             try
             {
-                _bridge.EnqueueRecords(frames, count, _options.DurableEventLimit, _options.DurableByteLimit, (long)_options.MaxEventAge.TotalMilliseconds);
+                _bridge.EnqueueRecords(frames, count, _options.DurableEventLimit, _options.DurableByteLimit, (long)_options.MaxEventAge.TotalMilliseconds, counters);
             }
             catch
             {
                 _buffer.Restore(frames, count); // the records stay in memory for the next attempt
+                if (counters != null) _counters.MarkDirty();
                 throw;
             }
         }

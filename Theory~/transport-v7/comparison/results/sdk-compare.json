@@ -1,0 +1,424 @@
+{
+ "sdk": {
+  "amplitude_b100/high": {
+   "runs": 5,
+   "observed_target_events": {
+    "min": 600,
+    "median": 600,
+    "max": 600
+   },
+   "all_events_observed": {
+    "min": 600,
+    "median": 600,
+    "max": 600
+   },
+   "requests": {
+    "min": 7,
+    "median": 7,
+    "max": 7
+   },
+   "body_bytes": {
+    "min": 787640,
+    "median": 787640,
+    "max": 787640
+   },
+   "header_bytes": {
+    "min": 1329,
+    "median": 1329,
+    "max": 1329
+   },
+   "wire_bytes_both_directions": {
+    "min": 789466,
+    "median": 789466,
+    "max": 789466
+   },
+   "body_B_per_observed_event_median": 1312.7333333333333,
+   "wire_B_per_observed_event_median": 1315.7766666666666,
+   "gzip": false,
+   "track_mean_us": {
+    "min": 51,
+    "median": 65,
+    "max": 103
+   },
+   "example_events_per_request": [
+    100,
+    100,
+    96,
+    100,
+    100,
+    96,
+    8
+   ],
+   "example_request_gaps_s": [
+    9.86,
+    9.77,
+    10.15,
+    10.15,
+    9.79,
+    30.07
+   ]
+  },
+  "amplitude_b100/low": {
+   "runs": 5,
+   "observed_target_events": {
+    "min": 600,
+    "median": 600,
+    "max": 600
+   },
+   "all_events_observed": {
+    "min": 600,
+    "median": 600,
+    "max": 600
+   },
+   "requests": {
+    "min": 7,
+    "median": 7,
+    "max": 7
+   },
+   "body_bytes": {
+    "min": 660831,
+    "median": 660831,
+    "max": 660831
+   },
+   "header_bytes": {
+    "min": 1328,
+    "median": 1328,
+    "max": 1329
+   },
+   "wire_bytes_both_directions": {
+    "min": 662656,
+    "median": 662656,
+    "max": 662657
+   },
+   "body_B_per_observed_event_median": 1101.385,
+   "wire_B_per_observed_event_median": 1104.4266666666667,
+   "gzip": false,
+   "track_mean_us": {
+    "min": 54,
+    "median": 56,
+    "max": 71
+   },
+   "example_events_per_request": [
+    100,
+    100,
+    97,
+    100,
+    100,
+    97,
+    6
+   ],
+   "example_request_gaps_s": [
+    9.89,
+    9.9,
+    10.08,
+    10.11,
+    9.86,
+    30.17
+   ]
+  },
+  "amplitude_default/high": {
+   "runs": 5,
+   "observed_target_events": {
+    "min": 600,
+    "median": 600,
+    "max": 600
+   },
+   "all_events_observed": {
+    "min": 600,
+    "median": 600,
+    "max": 600
+   },
+   "requests": {
+    "min": 21,
+    "median": 21,
+    "max": 21
+   },
+   "body_bytes": {
+    "min": 788648,
+    "median": 788648,
+    "max": 788648
+   },
+   "header_bytes": {
+    "min": 3968,
+    "median": 3968,
+    "max": 3969
+   },
+   "wire_bytes_both_directions": {
+    "min": 794107,
+    "median": 794107,
+    "max": 794108
+   },
+   "body_B_per_observed_event_median": 1314.4133333333334,
+   "wire_B_per_observed_event_median": 1323.5116666666668,
+   "gzip": false,
+   "track_mean_us": {
+    "min": 50,
+    "median": 74,
+    "max": 93
+   },
+   "example_events_per_request": [
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    25,
+    30,
+    30
+   ],
+   "example_request_gaps_s": [
+    2.8,
+    3.05,
+    3.08,
+    3.05,
+    3.05,
+    3.06,
+    3.06,
+    3.07,
+    2.58,
+    3.04,
+    3.09,
+    3.08
+   ]
+  },
+  "amplitude_default/low": {
+   "runs": 5,
+   "observed_target_events": {
+    "min": 600,
+    "median": 600,
+    "max": 600
+   },
+   "all_events_observed": {
+    "min": 600,
+    "median": 600,
+    "max": 600
+   },
+   "requests": {
+    "min": 21,
+    "median": 21,
+    "max": 21
+   },
+   "body_bytes": {
+    "min": 661839,
+    "median": 661839,
+    "max": 661839
+   },
+   "header_bytes": {
+    "min": 3968,
+    "median": 3968,
+    "max": 3969
+   },
+   "wire_bytes_both_directions": {
+    "min": 667298,
+    "median": 667298,
+    "max": 667299
+   },
+   "body_B_per_observed_event_median": 1103.065,
+   "wire_B_per_observed_event_median": 1112.1633333333334,
+   "gzip": false,
+   "track_mean_us": {
+    "min": 50,
+    "median": 54,
+    "max": 58
+   },
+   "example_events_per_request": [
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    26,
+    30,
+    30
+   ],
+   "example_request_gaps_s": [
+    2.77,
+    3.02,
+    3.03,
+    3.05,
+    3.05,
+    3.05,
+    3.04,
+    3.04,
+    2.7,
+    3.0,
+    3.13,
+    3.01
+   ]
+  },
+  "ga_default/high": {
+   "runs": 5,
+   "observed_target_events": {
+    "min": 600,
+    "median": 600,
+    "max": 600
+   },
+   "all_events_observed": {
+    "min": 601,
+    "median": 601,
+    "max": 601
+   },
+   "requests": {
+    "min": 10,
+    "median": 10,
+    "max": 10
+   },
+   "body_bytes": {
+    "min": 81517,
+    "median": 81547,
+    "max": 81631
+   },
+   "header_bytes": {
+    "min": 3712,
+    "median": 3712,
+    "max": 3712
+   },
+   "wire_bytes_both_directions": {
+    "min": 86005,
+    "median": 86035,
+    "max": 86119
+   },
+   "body_B_per_observed_event_median": 135.91166666666666,
+   "wire_B_per_observed_event_median": 143.39166666666668,
+   "gzip": true,
+   "track_mean_us": {
+    "min": 23,
+    "median": 26,
+    "max": 41
+   },
+   "example_events_per_request": [
+    1,
+    40,
+    78,
+    88,
+    79,
+    88,
+    78,
+    79,
+    70
+   ],
+   "example_request_gaps_s": [
+    8.0,
+    8.96,
+    8.05,
+    8.95,
+    8.03,
+    8.02,
+    8.96,
+    9.0
+   ]
+  },
+  "ga_default/low": {
+   "runs": 5,
+   "observed_target_events": {
+    "min": 600,
+    "median": 600,
+    "max": 600
+   },
+   "all_events_observed": {
+    "min": 611,
+    "median": 611,
+    "max": 619
+   },
+   "requests": {
+    "min": 10,
+    "median": 10,
+    "max": 10
+   },
+   "body_bytes": {
+    "min": 26074,
+    "median": 26115,
+    "max": 26336
+   },
+   "header_bytes": {
+    "min": 3706,
+    "median": 3706,
+    "max": 3706
+   },
+   "wire_bytes_both_directions": {
+    "min": 30556,
+    "median": 30597,
+    "max": 30818
+   },
+   "body_B_per_observed_event_median": 43.525,
+   "wire_B_per_observed_event_median": 50.995,
+   "gzip": true,
+   "track_mean_us": {
+    "min": 24,
+    "median": 26,
+    "max": 27
+   },
+   "example_events_per_request": [
+    1,
+    54,
+    82,
+    78,
+    88,
+    80,
+    87,
+    79,
+    70
+   ],
+   "example_request_gaps_s": [
+    8.27,
+    8.02,
+    8.96,
+    8.05,
+    8.96,
+    8.03,
+    8.02,
+    8.95
+   ]
+  }
+ },
+ "mortris": {
+  "low/batch10": {
+   "events": 600,
+   "v1_gzip1_body": 58815,
+   "v7_seq_body": 8072,
+   "v7_full_uuid_body": 18411,
+   "v1_B_event": 98.025,
+   "v7_B_event": 13.453333333333333,
+   "setup_bytes_not_included": 35840,
+   "batches": 60
+  },
+  "low/batch100": {
+   "events": 600,
+   "v1_gzip1_body": 35943,
+   "v7_seq_body": 2584,
+   "v7_full_uuid_body": 12430,
+   "v1_B_event": 59.905,
+   "v7_B_event": 4.306666666666667,
+   "setup_bytes_not_included": 34654,
+   "batches": 6
+  },
+  "high/batch10": {
+   "events": 600,
+   "v1_gzip1_body": 120480,
+   "v7_seq_body": 50579,
+   "v7_full_uuid_body": 60283,
+   "v1_B_event": 200.8,
+   "v7_B_event": 84.29833333333333,
+   "setup_bytes_not_included": 36366,
+   "batches": 60
+  },
+  "high/batch100": {
+   "events": 600,
+   "v1_gzip1_body": 97384,
+   "v7_seq_body": 43134,
+   "v7_full_uuid_body": 52818,
+   "v1_B_event": 162.30666666666667,
+   "v7_B_event": 71.89,
+   "setup_bytes_not_included": 35617,
+   "batches": 6
+  }
+ }
+}

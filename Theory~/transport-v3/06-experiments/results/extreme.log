@@ -1,0 +1,3 @@
+base {"events": 8944, "batches": 20, "frame_bytes": 74540, "B_event": 8.334078711985688}
+rich {"events": 7899, "batches": 20, "frame_bytes": 229770, "B_event": 29.08849221420433}
+alt {"events": 5400, "batches": 12, "frame_bytes": 664442, "B_event": 123.04481481481481}

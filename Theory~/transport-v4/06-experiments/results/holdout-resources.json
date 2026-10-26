@@ -1,0 +1,465 @@
+{
+  "selection": {
+    "source": "validation seed303 only, equal-weight log relative bytes across three profiles",
+    "scores": {
+      "clean": 0.0,
+      "packed": -0.008943396690738676,
+      "noef": -0.007416478251875969,
+      "trailer": -0.018680953268242945
+    },
+    "chosen": "trailer"
+  },
+  "profiles": {
+    "base": {
+      "events": 6519,
+      "batches": 68,
+      "model": "trailer",
+      "levels": {
+        "1": {
+          "B_per_event": 18.312011044638748,
+          "compression_p50_us": 8.7915,
+          "compression_p95_us": 13.208,
+          "CCtx_size_max": 155461
+        },
+        "3": {
+          "B_per_event": 17.800276115968707,
+          "compression_p50_us": 10.8955,
+          "compression_p95_us": 21.334,
+          "CCtx_size_max": 892741
+        },
+        "6": {
+          "B_per_event": 17.352661451142815,
+          "compression_p50_us": 24.124499999999998,
+          "compression_p95_us": 32.625,
+          "CCtx_size_max": 1408837
+        },
+        "9": {
+          "B_per_event": 17.293756711152017,
+          "compression_p50_us": 26.3545,
+          "compression_p95_us": 33.75,
+          "CCtx_size_max": 1408837
+        },
+        "15": {
+          "B_per_event": 17.24006749501457,
+          "compression_p50_us": 43.521,
+          "compression_p95_us": 50.584,
+          "CCtx_size_max": 2219845
+        },
+        "19": {
+          "B_per_event": 16.680779260622796,
+          "compression_p50_us": 190.4375,
+          "compression_p95_us": 249.375,
+          "CCtx_size_max": 2387689
+        }
+      },
+      "seed": 909,
+      "V3_levels": {
+        "1": {
+          "B_per_event": 19.278110139591963,
+          "CCtx_size_max": 164602
+        },
+        "3": {
+          "B_per_event": 18.72603159993864,
+          "CCtx_size_max": 901882
+        },
+        "6": {
+          "B_per_event": 17.93649332719742,
+          "CCtx_size_max": 1417978
+        },
+        "9": {
+          "B_per_event": 17.88909341923608,
+          "CCtx_size_max": 1417978
+        },
+        "15": {
+          "B_per_event": 17.85427212762694,
+          "CCtx_size_max": 2228986
+        },
+        "19": {
+          "B_per_event": 17.146955054456203,
+          "CCtx_size_max": 2398129
+        }
+      },
+      "V3_l19_B_per_event": 17.146955054456203,
+      "small_tables": {
+        "12": {
+          "B_per_event": 18.419236079153244,
+          "CCtx_size_max": 122693
+        },
+        "14": {
+          "B_per_event": 17.94201564657156,
+          "CCtx_size_max": 237381
+        },
+        "16": {
+          "B_per_event": 17.812547936800122,
+          "CCtx_size_max": 630597
+        }
+      },
+      "V3_small_tables": {
+        "12": {
+          "B_per_event": 19.384414787544102,
+          "CCtx_size_max": 131834
+        },
+        "14": {
+          "B_per_event": 18.891547783402363,
+          "CCtx_size_max": 246522
+        },
+        "16": {
+          "B_per_event": 18.735388863322594,
+          "CCtx_size_max": 639738
+        }
+      },
+      "python_pipeline": {
+        "uninstrumented_p50_ms": 9.600792,
+        "uninstrumented_p95_ms": 10.664583,
+        "batches": 30,
+        "p50_ms_with_tracemalloc": 45.793042,
+        "p95_ms_with_tracemalloc": 46.612083,
+        "peak_tracemalloc_bytes": 486646,
+        "native_allocations_included": false
+      },
+      "gzip6_B_per_event": 23.833103236692743,
+      "session_deadline30s": {
+        "batches": 256,
+        "B_per_event": 24.945390397300198,
+        "dictionary_training": "cap100 backlog dictionary, unchanged to isolate boundaries"
+      }
+    },
+    "rich": {
+      "events": 7027,
+      "batches": 74,
+      "model": "trailer",
+      "levels": {
+        "1": {
+          "B_per_event": 41.34438593994592,
+          "compression_p50_us": 17.542,
+          "compression_p95_us": 20.667,
+          "CCtx_size_max": 224407
+        },
+        "3": {
+          "B_per_event": 40.313505051942506,
+          "compression_p50_us": 30.1455,
+          "compression_p95_us": 56.958,
+          "CCtx_size_max": 978071
+        },
+        "6": {
+          "B_per_event": 39.08396186139178,
+          "compression_p50_us": 59.9995,
+          "compression_p95_us": 70.541,
+          "CCtx_size_max": 1485975
+        },
+        "9": {
+          "B_per_event": 39.06332716664295,
+          "compression_p50_us": 88.4165,
+          "compression_p95_us": 106.25,
+          "CCtx_size_max": 1485975
+        },
+        "15": {
+          "B_per_event": 38.61121388928419,
+          "compression_p50_us": 188.937,
+          "compression_p95_us": 219.542,
+          "CCtx_size_max": 2321559
+        },
+        "19": {
+          "B_per_event": 37.197381528390494,
+          "compression_p50_us": 772.5,
+          "compression_p95_us": 962.0,
+          "CCtx_size_max": 2510776
+        }
+      },
+      "seed": 909,
+      "V3_levels": {
+        "1": {
+          "B_per_event": 43.47573644514017,
+          "CCtx_size_max": 237916
+        },
+        "3": {
+          "B_per_event": 42.04810018500071,
+          "CCtx_size_max": 1089884
+        },
+        "6": {
+          "B_per_event": 40.73431051657891,
+          "CCtx_size_max": 1581404
+        },
+        "9": {
+          "B_per_event": 40.78127223566244,
+          "CCtx_size_max": 1581404
+        },
+        "15": {
+          "B_per_event": 40.03628860111,
+          "CCtx_size_max": 2466140
+        },
+        "19": {
+          "B_per_event": 38.2433470897965,
+          "CCtx_size_max": 4983663
+        }
+      },
+      "V3_l19_B_per_event": 38.2433470897965,
+      "small_tables": {
+        "12": {
+          "B_per_event": 41.13818130069731,
+          "CCtx_size_max": 158871
+        },
+        "14": {
+          "B_per_event": 40.460509463497935,
+          "CCtx_size_max": 322711
+        },
+        "16": {
+          "B_per_event": 40.32389355343675,
+          "CCtx_size_max": 715927
+        }
+      },
+      "V3_small_tables": {
+        "12": {
+          "B_per_event": 43.326597409990036,
+          "CCtx_size_max": 172380
+        },
+        "14": {
+          "B_per_event": 42.291162658317916,
+          "CCtx_size_max": 368988
+        },
+        "16": {
+          "B_per_event": 42.082396470755654,
+          "CCtx_size_max": 827740
+        }
+      },
+      "python_pipeline": {
+        "uninstrumented_p50_ms": 16.408125499999997,
+        "uninstrumented_p95_ms": 17.267708,
+        "batches": 30,
+        "p50_ms_with_tracemalloc": 85.17477099999999,
+        "p95_ms_with_tracemalloc": 96.677709,
+        "peak_tracemalloc_bytes": 648545,
+        "native_allocations_included": false
+      },
+      "gzip6_B_per_event": 47.42237085527252,
+      "session_deadline30s": {
+        "batches": 274,
+        "B_per_event": 49.8222570086808,
+        "dictionary_training": "cap100 backlog dictionary, unchanged to isolate boundaries"
+      }
+    },
+    "alt": {
+      "events": 5400,
+      "batches": 54,
+      "model": "trailer",
+      "levels": {
+        "1": {
+          "B_per_event": 143.42018518518518,
+          "compression_p50_us": 40.9585,
+          "compression_p95_us": 46.0,
+          "CCtx_size_max": 375660
+        },
+        "3": {
+          "B_per_event": 135.54666666666665,
+          "compression_p50_us": 89.521,
+          "compression_p95_us": 114.542,
+          "CCtx_size_max": 1817452
+        },
+        "6": {
+          "B_per_event": 132.865,
+          "compression_p50_us": 184.6875,
+          "compression_p95_us": 204.959,
+          "CCtx_size_max": 1882988
+        },
+        "9": {
+          "B_per_event": 132.72962962962964,
+          "compression_p50_us": 263.3965,
+          "compression_p95_us": 323.0,
+          "CCtx_size_max": 1882988
+        },
+        "15": {
+          "B_per_event": 132.26055555555556,
+          "compression_p50_us": 525.3745,
+          "compression_p95_us": 803.541,
+          "CCtx_size_max": 2866028
+        },
+        "19": {
+          "B_per_event": 127.2174074074074,
+          "compression_p50_us": 2852.583,
+          "compression_p95_us": 3602.125,
+          "CCtx_size_max": 5140139
+        }
+      },
+      "seed": 909,
+      "V3_levels": {
+        "1": {
+          "B_per_event": 152.03185185185185,
+          "CCtx_size_max": 413695
+        },
+        "3": {
+          "B_per_event": 141.2724074074074,
+          "CCtx_size_max": 1855487
+        },
+        "6": {
+          "B_per_event": 138.35222222222222,
+          "CCtx_size_max": 2904063
+        },
+        "9": {
+          "B_per_event": 138.30796296296296,
+          "CCtx_size_max": 2904063
+        },
+        "15": {
+          "B_per_event": 136.77851851851852,
+          "CCtx_size_max": 4476927
+        },
+        "19": {
+          "B_per_event": 128.69425925925927,
+          "CCtx_size_max": 5183357
+        }
+      },
+      "V3_l19_B_per_event": 128.69425925925927,
+      "small_tables": {
+        "12": {
+          "B_per_event": 139.95111111111112,
+          "CCtx_size_max": 310124
+        },
+        "14": {
+          "B_per_event": 137.01592592592593,
+          "CCtx_size_max": 506732
+        },
+        "16": {
+          "B_per_event": 135.7935185185185,
+          "CCtx_size_max": 1293164
+        }
+      },
+      "V3_small_tables": {
+        "12": {
+          "B_per_event": 146.5901851851852,
+          "CCtx_size_max": 348159
+        },
+        "14": {
+          "B_per_event": 142.82888888888888,
+          "CCtx_size_max": 544767
+        },
+        "16": {
+          "B_per_event": 141.46592592592592,
+          "CCtx_size_max": 1331199
+        }
+      },
+      "python_pipeline": {
+        "uninstrumented_p50_ms": 5.7869589999999995,
+        "uninstrumented_p95_ms": 6.277333,
+        "batches": 30,
+        "p50_ms_with_tracemalloc": 27.034958500000002,
+        "p95_ms_with_tracemalloc": 29.166125,
+        "peak_tracemalloc_bytes": 1350359,
+        "native_allocations_included": false
+      },
+      "gzip6_B_per_event": 141.165,
+      "session_deadline30s": {
+        "batches": 3811,
+        "B_per_event": 295.54148148148147,
+        "dictionary_training": "cap100 backlog dictionary, unchanged to isolate boundaries"
+      }
+    },
+    "drift": {
+      "events": 2400,
+      "batches": 560,
+      "model": "trailer",
+      "levels": {
+        "1": {
+          "B_per_event": 36.45125,
+          "compression_p50_us": 1.375,
+          "compression_p95_us": 2.125,
+          "CCtx_size_max": 119192
+        },
+        "3": {
+          "B_per_event": 35.09458333333333,
+          "compression_p50_us": 1.792,
+          "compression_p95_us": 2.833,
+          "CCtx_size_max": 844184
+        },
+        "6": {
+          "B_per_event": 33.15416666666667,
+          "compression_p50_us": 6.417,
+          "compression_p95_us": 9.625,
+          "CCtx_size_max": 1366424
+        },
+        "9": {
+          "B_per_event": 32.344166666666666,
+          "compression_p50_us": 7.791,
+          "compression_p95_us": 12.125,
+          "CCtx_size_max": 1366424
+        },
+        "15": {
+          "B_per_event": 31.135833333333334,
+          "compression_p50_us": 9.5625,
+          "compression_p95_us": 18.375,
+          "CCtx_size_max": 2159000
+        },
+        "19": {
+          "B_per_event": 30.320833333333333,
+          "compression_p50_us": 58.6665,
+          "compression_p95_us": 93.25,
+          "CCtx_size_max": 2312972
+        }
+      },
+      "seed": 808,
+      "V3_levels": {
+        "1": {
+          "B_per_event": 36.180416666666666,
+          "CCtx_size_max": 120716
+        },
+        "3": {
+          "B_per_event": 34.6875,
+          "CCtx_size_max": 845708
+        },
+        "6": {
+          "B_per_event": 32.76291666666667,
+          "CCtx_size_max": 1367948
+        },
+        "9": {
+          "B_per_event": 31.925833333333333,
+          "CCtx_size_max": 1367948
+        },
+        "15": {
+          "B_per_event": 30.414583333333333,
+          "CCtx_size_max": 2160524
+        },
+        "19": {
+          "B_per_event": 29.6275,
+          "CCtx_size_max": 2314742
+        }
+      },
+      "V3_l19_B_per_event": 29.6275,
+      "small_tables": {
+        "12": {
+          "B_per_event": 36.919583333333335,
+          "CCtx_size_max": 90520
+        },
+        "14": {
+          "B_per_event": 35.567083333333336,
+          "CCtx_size_max": 188824
+        },
+        "16": {
+          "B_per_event": 35.15208333333333,
+          "CCtx_size_max": 582040
+        }
+      },
+      "V3_small_tables": {
+        "12": {
+          "B_per_event": 36.9075,
+          "CCtx_size_max": 92044
+        },
+        "14": {
+          "B_per_event": 35.071666666666665,
+          "CCtx_size_max": 190348
+        },
+        "16": {
+          "B_per_event": 34.70666666666666,
+          "CCtx_size_max": 583564
+        }
+      },
+      "python_pipeline": {
+        "uninstrumented_p50_ms": 0.320646,
+        "uninstrumented_p95_ms": 0.608583,
+        "batches": 30,
+        "p50_ms_with_tracemalloc": 1.8608535000000002,
+        "p95_ms_with_tracemalloc": 3.089375,
+        "peak_tracemalloc_bytes": 77022,
+        "native_allocations_included": false
+      },
+      "gzip6_B_per_event": 87.14166666666667
+    }
+  }
+}

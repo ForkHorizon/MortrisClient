@@ -1,0 +1,14 @@
+events 63539 batches 2199 mean batch 28.9
+  detail_taken          14414  22.7%
+  detail_released       14414  22.7%
+  placement_resolved    14414  22.7%
+  state_checkpoint      14414  22.7%
+  wave_started           1701   2.7%
+  wave_completed         1701   2.7%
+  ui_click                715   1.1%
+  hint_used               562   0.9%
+  attempt_started         425   0.7%
+  attempt_finished        425   0.7%
+  session_start           223   0.4%
+  ad_impression           131   0.2%
+batch size histogram (bucket of 10): {0: 72, 10: 348, 20: 992, 30: 634, 40: 45, 50: 6, 60: 6, 70: 2, 80: 4, 90: 5, 100: 85}

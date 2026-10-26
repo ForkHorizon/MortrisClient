@@ -1,0 +1,438 @@
+{
+  "base": {
+    "events": 6646,
+    "raw_bytes": 132149,
+    "raw_B_event": 19.88399037014746,
+    "columns": {
+      "properties.active_elapsed_ms": {
+        "bytes": 9567,
+        "B_event": 1.4395124887150166
+      },
+      "properties.ad_format": {
+        "bytes": 224,
+        "B_event": 0.03370448390009028
+      },
+      "properties.attempt_id": {
+        "bytes": 2360,
+        "B_event": 0.3551008125188083
+      },
+      "properties.attempt_number": {
+        "bytes": 643,
+        "B_event": 0.096749924766777
+      },
+      "properties.block_id": {
+        "bytes": 3579,
+        "B_event": 0.5385194101715317
+      },
+      "properties.block_type": {
+        "bytes": 6750,
+        "B_event": 1.0156485103821848
+      },
+      "properties.blocks_in_wave": {
+        "bytes": 242,
+        "B_event": 0.03641287992777611
+      },
+      "properties.cell_x": {
+        "bytes": 801,
+        "B_event": 0.12052362323201926
+      },
+      "properties.cell_y": {
+        "bytes": 977,
+        "B_event": 0.14700571772494733
+      },
+      "properties.city_id": {
+        "bytes": 207,
+        "B_event": 0.031146554318387
+      },
+      "properties.difficulty": {
+        "bytes": 367,
+        "B_event": 0.05522118567559434
+      },
+      "properties.drag_ms": {
+        "bytes": 2398,
+        "B_event": 0.36081853746614506
+      },
+      "properties.element": {
+        "bytes": 641,
+        "B_event": 0.09644899187481192
+      },
+      "properties.first_session": {
+        "bytes": 24,
+        "B_event": 0.0036111947035811012
+      },
+      "properties.hint_type": {
+        "bytes": 636,
+        "B_event": 0.09569665964489919
+      },
+      "properties.hints_left": {
+        "bytes": 117,
+        "B_event": 0.01760457417995787
+      },
+      "properties.house_id": {
+        "bytes": 477,
+        "B_event": 0.07177249473367439
+      },
+      "properties.launch_type": {
+        "bytes": 198,
+        "B_event": 0.029792356304544087
+      },
+      "properties.moves_count": {
+        "bytes": 1113,
+        "B_event": 0.16746915437857357
+      },
+      "properties.network": {
+        "bytes": 126,
+        "B_event": 0.018958772193800783
+      },
+      "properties.outcome": {
+        "bytes": 1841,
+        "B_event": 0.277008727053867
+      },
+      "properties.placed_block_count": {
+        "bytes": 2663,
+        "B_event": 0.4006921456515197
+      },
+      "properties.placed_state_hash": {
+        "bytes": 42519,
+        "B_event": 6.3976828167318684
+      },
+      "properties.placement": {
+        "bytes": 280,
+        "B_event": 0.04213060487511285
+      },
+      "properties.release_x": {
+        "bytes": 6093,
+        "B_event": 0.9167920553716521
+      },
+      "properties.release_y": {
+        "bytes": 6093,
+        "B_event": 0.9167920553716521
+      },
+      "properties.remaining_block_count": {
+        "bytes": 1198,
+        "B_event": 0.18025880228709
+      },
+      "properties.rotation": {
+        "bytes": 1907,
+        "B_event": 0.286939512488715
+      },
+      "properties.score": {
+        "bytes": 126,
+        "B_event": 0.018958772193800783
+      },
+      "properties.screen": {
+        "bytes": 539,
+        "B_event": 0.08110141438459223
+      },
+      "properties.slot_index": {
+        "bytes": 801,
+        "B_event": 0.12052362323201926
+      },
+      "properties.snap_distance": {
+        "bytes": 6093,
+        "B_event": 0.9167920553716521
+      },
+      "properties.target_cell_x": {
+        "bytes": 802,
+        "B_event": 0.1206740896780018
+      },
+      "properties.target_cell_y": {
+        "bytes": 972,
+        "B_event": 0.1462533854950346
+      },
+      "properties.total_block_count": {
+        "bytes": 82,
+        "B_event": 0.012338248570568764
+      },
+      "properties.wave_index": {
+        "bytes": 1806,
+        "B_event": 0.27174240144447787
+      },
+      "shared_shapes_context_time_sequence_and_extensions": {
+        "bytes": 26887,
+        "B_event": 4.045591333132712
+      }
+    },
+    "scope": "raw value payload plus shared metadata; final compression is nonadditive; no frame header/handshake"
+  },
+  "rich": {
+    "events": 6652,
+    "raw_bytes": 425286,
+    "raw_B_event": 63.93355381840048,
+    "columns": {
+      "properties.active_elapsed_ms": {
+        "bytes": 9619,
+        "B_event": 1.446031268791341
+      },
+      "properties.ad_format": {
+        "bytes": 272,
+        "B_event": 0.040889957907396274
+      },
+      "properties.attempt_id": {
+        "bytes": 2534,
+        "B_event": 0.3809380637402285
+      },
+      "properties.attempt_number": {
+        "bytes": 721,
+        "B_event": 0.10838845460012027
+      },
+      "properties.block_id": {
+        "bytes": 3604,
+        "B_event": 0.5417919422730006
+      },
+      "properties.block_type": {
+        "bytes": 6916,
+        "B_event": 1.0396873120865906
+      },
+      "properties.blocks_in_wave": {
+        "bytes": 247,
+        "B_event": 0.03713168971737823
+      },
+      "properties.board_rows": {
+        "bytes": 136198,
+        "B_event": 20.47474443776308
+      },
+      "properties.camera_zoom": {
+        "bytes": 3475,
+        "B_event": 0.5223992784125076
+      },
+      "properties.cell_x": {
+        "bytes": 803,
+        "B_event": 0.12071557426337944
+      },
+      "properties.cell_y": {
+        "bytes": 975,
+        "B_event": 0.14657245941070354
+      },
+      "properties.city_id": {
+        "bytes": 233,
+        "B_event": 0.03502705953096813
+      },
+      "properties.difficulty": {
+        "bytes": 398,
+        "B_event": 0.05983162958508719
+      },
+      "properties.drag_ms": {
+        "bytes": 2439,
+        "B_event": 0.36665664461815994
+      },
+      "properties.element": {
+        "bytes": 554,
+        "B_event": 0.08328322309079976
+      },
+      "properties.first_session": {
+        "bytes": 22,
+        "B_event": 0.003307276007215875
+      },
+      "properties.fps": {
+        "bytes": 4759,
+        "B_event": 0.715423932651834
+      },
+      "properties.frame_ms": {
+        "bytes": 24197,
+        "B_event": 3.63755261575466
+      },
+      "properties.free_memory_mb": {
+        "bytes": 5232,
+        "B_event": 0.7865303668069753
+      },
+      "properties.hint_type": {
+        "bytes": 543,
+        "B_event": 0.08162958508719183
+      },
+      "properties.hints_left": {
+        "bytes": 102,
+        "B_event": 0.015333734215273603
+      },
+      "properties.house_id": {
+        "bytes": 628,
+        "B_event": 0.09440769693325315
+      },
+      "properties.house_progress": {
+        "bytes": 6101,
+        "B_event": 0.9171677690920024
+      },
+      "properties.launch_type": {
+        "bytes": 182,
+        "B_event": 0.02736019242333133
+      },
+      "properties.moves_count": {
+        "bytes": 1067,
+        "B_event": 0.16040288634996994
+      },
+      "properties.network": {
+        "bytes": 153,
+        "B_event": 0.023000601322910402
+      },
+      "properties.outcome": {
+        "bytes": 1875,
+        "B_event": 0.281870114251353
+      },
+      "properties.placed_block_count": {
+        "bytes": 2735,
+        "B_event": 0.4111545399879735
+      },
+      "properties.placed_block_ids": {
+        "bytes": 49945,
+        "B_event": 7.50826819001804
+      },
+      "properties.placed_state_hash": {
+        "bytes": 42124,
+        "B_event": 6.332531569452796
+      },
+      "properties.placement": {
+        "bytes": 340,
+        "B_event": 0.05111244738424534
+      },
+      "properties.release_x": {
+        "bytes": 6101,
+        "B_event": 0.9171677690920024
+      },
+      "properties.release_y": {
+        "bytes": 6101,
+        "B_event": 0.9171677690920024
+      },
+      "properties.remaining_block_count": {
+        "bytes": 1173,
+        "B_event": 0.17633794347564644
+      },
+      "properties.rotation": {
+        "bytes": 1917,
+        "B_event": 0.28818400481058326
+      },
+      "properties.score": {
+        "bytes": 138,
+        "B_event": 0.02074564040889958
+      },
+      "properties.screen": {
+        "bytes": 529,
+        "B_event": 0.07952495490078172
+      },
+      "properties.since_last_action_ms": {
+        "bytes": 11603,
+        "B_event": 1.7442874323511726
+      },
+      "properties.slot_index": {
+        "bytes": 799,
+        "B_event": 0.12011425135297654
+      },
+      "properties.snap_distance": {
+        "bytes": 6101,
+        "B_event": 0.9171677690920024
+      },
+      "properties.target_cell_x": {
+        "bytes": 802,
+        "B_event": 0.12056524353577872
+      },
+      "properties.target_cell_y": {
+        "bytes": 976,
+        "B_event": 0.14672279013830428
+      },
+      "properties.total_block_count": {
+        "bytes": 90,
+        "B_event": 0.013529765484064944
+      },
+      "properties.touch_x": {
+        "bytes": 24197,
+        "B_event": 3.63755261575466
+      },
+      "properties.touch_y": {
+        "bytes": 24197,
+        "B_event": 3.63755261575466
+      },
+      "properties.ui_layer": {
+        "bytes": 2846,
+        "B_event": 0.42784125075165363
+      },
+      "properties.wave_index": {
+        "bytes": 1742,
+        "B_event": 0.261876127480457
+      },
+      "shared_shapes_context_time_sequence_and_extensions": {
+        "bytes": 26981,
+        "B_event": 4.056073361395069
+      }
+    },
+    "scope": "raw value payload plus shared metadata; final compression is nonadditive; no frame header/handshake"
+  },
+  "alt": {
+    "events": 5400,
+    "raw_bytes": 1687614,
+    "raw_B_event": 312.5211111111111,
+    "columns": {
+      "properties.board": {
+        "bytes": 734258,
+        "B_event": 135.9737037037037
+      },
+      "properties.counter": {
+        "bytes": 4506,
+        "B_event": 0.8344444444444444
+      },
+      "properties.description": {
+        "bytes": 489657,
+        "B_event": 90.67722222222223
+      },
+      "properties.measurement": {
+        "bytes": 43254,
+        "B_event": 8.01
+      },
+      "properties.opaque": {
+        "bytes": 374260,
+        "B_event": 69.30740740740741
+      },
+      "properties.phase": {
+        "bytes": 240,
+        "B_event": 0.044444444444444446
+      },
+      "properties.release_label": {
+        "bytes": 630,
+        "B_event": 0.11666666666666667
+      },
+      "shared_shapes_context_time_sequence_and_extensions": {
+        "bytes": 40809,
+        "B_event": 7.557222222222222
+      }
+    },
+    "scope": "raw value payload plus shared metadata; final compression is nonadditive; no frame header/handshake"
+  },
+  "drift": {
+    "events": 2400,
+    "raw_bytes": 73473,
+    "raw_B_event": 30.61375,
+    "columns": {
+      "properties.counter": {
+        "bytes": 6000,
+        "B_event": 2.5
+      },
+      "properties.flag": {
+        "bytes": 639,
+        "B_event": 0.26625
+      },
+      "properties.label": {
+        "bytes": 9919,
+        "B_event": 4.132916666666667
+      },
+      "properties.note": {
+        "bytes": 3548,
+        "B_event": 1.4783333333333333
+      },
+      "properties.numeric": {
+        "bytes": 16140,
+        "B_event": 6.725
+      },
+      "properties.opaque": {
+        "bytes": 10752,
+        "B_event": 4.48
+      },
+      "properties.release_label": {
+        "bytes": 5150,
+        "B_event": 2.1458333333333335
+      },
+      "shared_shapes_context_time_sequence_and_extensions": {
+        "bytes": 21325,
+        "B_event": 8.885416666666666
+      }
+    },
+    "scope": "raw value payload plus shared metadata; final compression is nonadditive; no frame header/handshake"
+  }
+}

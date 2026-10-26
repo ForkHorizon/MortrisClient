@@ -1,0 +1,277 @@
+{
+ "__baseline__": {
+  "bytes_per_event": 18.825967278013174,
+  "events": 64666,
+  "fallback": 0
+ },
+ "__no_uuid_strings__": {
+  "bytes_per_event": 14.299245353044876,
+  "saving_vs_baseline": 4.526721924968298,
+  "events": 64666,
+  "fallback": 0
+ },
+ "__no_strings__": {
+  "bytes_per_event": 7.167042959205765,
+  "saving_vs_baseline": 11.658924318807408,
+  "events": 64666,
+  "fallback": 0
+ },
+ "__no_ints__": {
+  "bytes_per_event": 13.900550521139394,
+  "saving_vs_baseline": 4.92541675687378,
+  "events": 64666,
+  "fallback": 0
+ },
+ "__no_bools__": {
+  "bytes_per_event": 18.79632264250147,
+  "saving_vs_baseline": 0.02964463551170482,
+  "events": 64666,
+  "fallback": 0
+ },
+ "active_elapsed_ms": {
+  "bytes_per_event": 17.903163950143817,
+  "saving_vs_baseline": 0.9228033278693566,
+  "events": 64666,
+  "fallback": 0
+ },
+ "app_allocated_memory_mb": {
+  "bytes_per_event": 18.804997989669996,
+  "saving_vs_baseline": 0.020969288343177794,
+  "events": 64666,
+  "fallback": 0
+ },
+ "app_reserved_memory_mb": {
+  "bytes_per_event": 18.811152692295796,
+  "saving_vs_baseline": 0.014814585717378037,
+  "events": 64666,
+  "fallback": 0
+ },
+ "app_version": {
+  "bytes_per_event": 18.758621222899205,
+  "saving_vs_baseline": 0.06734605511396907,
+  "events": 64666,
+  "fallback": 0
+ },
+ "attempt_event_index": {
+  "bytes_per_event": 18.695543253023228,
+  "saving_vs_baseline": 0.13042402498994576,
+  "events": 64666,
+  "fallback": 0
+ },
+ "attempt_id": {
+  "bytes_per_event": 18.787755543871587,
+  "saving_vs_baseline": 0.03821173414158707,
+  "events": 64666,
+  "fallback": 0
+ },
+ "block_id": {
+  "bytes_per_event": 18.241146815946557,
+  "saving_vs_baseline": 0.5848204620666166,
+  "events": 64666,
+  "fallback": 0
+ },
+ "candidate_target_id": {
+  "bytes_per_event": 18.527479664738813,
+  "saving_vs_baseline": 0.2984876132743608,
+  "events": 64666,
+  "fallback": 0
+ },
+ "checkpoint_trigger": {
+  "bytes_per_event": 18.75422942504562,
+  "saving_vs_baseline": 0.07173785296755497,
+  "events": 64666,
+  "fallback": 0
+ },
+ "city_id": {
+  "bytes_per_event": 18.817152754152104,
+  "saving_vs_baseline": 0.00881452386106929,
+  "events": 64666,
+  "fallback": 0
+ },
+ "close_reason": {
+  "bytes_per_event": 18.79507005226858,
+  "saving_vs_baseline": 0.030897225744592305,
+  "events": 64666,
+  "fallback": 0
+ },
+ "completed_wave_index": {
+  "bytes_per_event": 18.818173383230754,
+  "saving_vs_baseline": 0.007793894782420097,
+  "events": 64666,
+  "fallback": 0
+ },
+ "coordinate_space": {
+  "bytes_per_event": 18.73429622985804,
+  "saving_vs_baseline": 0.09167104815513483,
+  "events": 64666,
+  "fallback": 0
+ },
+ "details_remaining": {
+  "bytes_per_event": 18.679800822688893,
+  "saving_vs_baseline": 0.14616645532428052,
+  "events": 64666,
+  "fallback": 0
+ },
+ "details_total": {
+  "bytes_per_event": 18.805291807132033,
+  "saving_vs_baseline": 0.020675470881140967,
+  "events": 64666,
+  "fallback": 0
+ },
+ "device_total_memory_mb": {
+  "bytes_per_event": 18.815003247456158,
+  "saving_vs_baseline": 0.010964030557016002,
+  "events": 64666,
+  "fallback": 0
+ },
+ "graphics_memory_mb": {
+  "bytes_per_event": 18.815065103763956,
+  "saving_vs_baseline": 0.010902174249217467,
+  "events": 64666,
+  "fallback": 0
+ },
+ "house_event_index": {
+  "bytes_per_event": 18.7227600284539,
+  "saving_vs_baseline": 0.10320724955927219,
+  "events": 64666,
+  "fallback": 0
+ },
+ "house_id": {
+  "bytes_per_event": 18.788822565181086,
+  "saving_vs_baseline": 0.03714471283208809,
+  "events": 64666,
+  "fallback": 0
+ },
+ "house_run_id": {
+  "bytes_per_event": 18.618176476046145,
+  "saving_vs_baseline": 0.20779080196702893,
+  "events": 64666,
+  "fallback": 0
+ },
+ "interaction_id": {
+  "bytes_per_event": 14.880029691027742,
+  "saving_vs_baseline": 3.9459375869854316,
+  "events": 64666,
+  "fallback": 0
+ },
+ "interaction_index": {
+  "bytes_per_event": 18.47864410973309,
+  "saving_vs_baseline": 0.34732316828008436,
+  "events": 64666,
+  "fallback": 0
+ },
+ "inventory_group_id": {
+  "bytes_per_event": 17.876442025175518,
+  "saving_vs_baseline": 0.9495252528376561,
+  "events": 64666,
+  "fallback": 0
+ },
+ "mono_used_memory_mb": {
+  "bytes_per_event": 18.825302322704356,
+  "saving_vs_baseline": 0.0006649553088173832,
+  "events": 64666,
+  "fallback": 0
+ },
+ "nearest_compatible_target_id": {
+  "bytes_per_event": 18.492252497448426,
+  "saving_vs_baseline": 0.33371478056474757,
+  "events": 64666,
+  "fallback": 0
+ },
+ "nearest_target_distance_milli": {
+  "bytes_per_event": 18.464927473479108,
+  "saving_vs_baseline": 0.3610398045340659,
+  "events": 64666,
+  "fallback": 0
+ },
+ "origin": {
+  "bytes_per_event": 18.779605975319335,
+  "saving_vs_baseline": 0.04636130269383898,
+  "events": 64666,
+  "fallback": 0
+ },
+ "outcome": {
+  "bytes_per_event": 18.700491757646986,
+  "saving_vs_baseline": 0.12547552036618725,
+  "events": 64666,
+  "fallback": 0
+ },
+ "placed_block_count": {
+  "bytes_per_event": 18.531917854823245,
+  "saving_vs_baseline": 0.29404942318992866,
+  "events": 64666,
+  "fallback": 0
+ },
+ "placed_block_ids": {
+  "bytes_per_event": 17.535397272136827,
+  "saving_vs_baseline": 1.2905700058763472,
+  "events": 64666,
+  "fallback": 0
+ },
+ "placed_state_hash": {
+  "bytes_per_event": 14.59484118392973,
+  "saving_vs_baseline": 4.231126094083443,
+  "events": 64666,
+  "fallback": 0
+ },
+ "progress_origin": {
+  "bytes_per_event": 18.748507716574398,
+  "saving_vs_baseline": 0.07745956143877564,
+  "events": 64666,
+  "fallback": 0
+ },
+ "release_x_milli": {
+  "bytes_per_event": 18.272971886308106,
+  "saving_vs_baseline": 0.5529953917050676,
+  "events": 64666,
+  "fallback": 0
+ },
+ "release_y_milli": {
+  "bytes_per_event": 18.276343055083043,
+  "saving_vs_baseline": 0.5496242229301309,
+  "events": 64666,
+  "fallback": 0
+ },
+ "restored_to_inventory": {
+  "bytes_per_event": 18.79632264250147,
+  "saving_vs_baseline": 0.02964463551170482,
+  "events": 64666,
+  "fallback": 0
+ },
+ "rule_state": {
+  "bytes_per_event": 18.709368137815854,
+  "saving_vs_baseline": 0.11659914019731943,
+  "events": 64666,
+  "fallback": 0
+ },
+ "schema_version": {
+  "bytes_per_event": 18.794204063959423,
+  "saving_vs_baseline": 0.03176321405375049,
+  "events": 64666,
+  "fallback": 0
+ },
+ "screen_height_px": {
+  "bytes_per_event": 18.81146197383478,
+  "saving_vs_baseline": 0.014505304178392464,
+  "events": 64666,
+  "fallback": 0
+ },
+ "screen_width_px": {
+  "bytes_per_event": 18.817214610459903,
+  "saving_vs_baseline": 0.008752667553270754,
+  "events": 64666,
+  "fallback": 0
+ },
+ "wave_attempt_id": {
+  "bytes_per_event": 18.772105897998948,
+  "saving_vs_baseline": 0.0538613800142258,
+  "events": 64666,
+  "fallback": 0
+ },
+ "wave_index": {
+  "bytes_per_event": 18.763152197445333,
+  "saving_vs_baseline": 0.06281508056784091,
+  "events": 64666,
+  "fallback": 0
+ }
+}

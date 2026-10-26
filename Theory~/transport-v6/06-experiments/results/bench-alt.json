@@ -1,0 +1,621 @@
+{
+  "profile": "alt",
+  "schema_bytes": 27964,
+  "schema_negotiation_bytes": 1023,
+  "schema_id": "76909c91e71e8fb6",
+  "shapes": 336,
+  "rows": {
+    "test101": {
+      "seed": 101,
+      "events": 5400,
+      "batches": 54,
+      "corpus_sha256": "402b293362b65265285d350ef7e25eb57f7837ab57132fd1df9a601613badaf5",
+      "V1_full_json_B_event": 900.3324074074075,
+      "V1_full_gzip1_B_event": 238.07814814814816,
+      "legacy_source_json_B_event": 850.3324074074075,
+      "V4_zstd19_B_event": 126.60462962962963,
+      "V5_stateless_B_event": 121.85481481481482,
+      "V4_V5_evidence": "full independent encode/decode rerun; exact source SHA and historical byte totals matched",
+      "V6": {
+        "columnar_raw": {
+          "body_bytes": 1688704,
+          "body_B_event": 312.722962962963,
+          "alias_request_bytes": 4432,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 313.5837037037037,
+          "with_dynamic_schema_and_alias_B_event": 314.72037037037035,
+          "with_session_schema_and_alias_B_event": 316.9937037037037
+        },
+        "zstd1": {
+          "body_bytes": 847778,
+          "body_B_event": 156.99592592592592,
+          "alias_request_bytes": 4432,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 157.85666666666665,
+          "with_dynamic_schema_and_alias_B_event": 158.99333333333334,
+          "with_session_schema_and_alias_B_event": 161.26666666666668
+        },
+        "zstd3": {
+          "body_bytes": 811539,
+          "body_B_event": 150.285,
+          "alias_request_bytes": 4432,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 151.14574074074073,
+          "with_dynamic_schema_and_alias_B_event": 152.28240740740742,
+          "with_session_schema_and_alias_B_event": 154.55574074074073
+        },
+        "replay_zstd1": {
+          "body_bytes": 847778,
+          "body_B_event": 156.99592592592592,
+          "alias_request_bytes": 4432,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 157.85666666666665,
+          "with_dynamic_schema_and_alias_B_event": 158.99333333333334,
+          "with_session_schema_and_alias_B_event": 161.26666666666668
+        },
+        "strict_V1_ids_zstd1": {
+          "body_bytes": 939951,
+          "body_B_event": 174.065,
+          "alias_request_bytes": 4432,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 174.92574074074074,
+          "with_dynamic_schema_and_alias_B_event": 176.06240740740742,
+          "with_session_schema_and_alias_B_event": 178.33574074074073
+        },
+        "replay_strict_ids": {
+          "body_bytes": 939951,
+          "body_B_event": 174.065,
+          "alias_request_bytes": 4432,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 174.92574074074074,
+          "with_dynamic_schema_and_alias_B_event": 176.06240740740742,
+          "with_session_schema_and_alias_B_event": 178.33574074074073
+        },
+        "explicit_masks": {
+          "body_bytes": 852946,
+          "body_B_event": 157.95296296296297,
+          "alias_request_bytes": 4432,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 158.8137037037037,
+          "with_dynamic_schema_and_alias_B_event": 159.95037037037036,
+          "with_session_schema_and_alias_B_event": 162.2237037037037
+        },
+        "dynamic_schema": {
+          "body_bytes": 855807,
+          "body_B_event": 158.48277777777778,
+          "alias_request_bytes": 4432,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 159.34351851851852,
+          "with_dynamic_schema_and_alias_B_event": 159.34351851851852,
+          "with_session_schema_and_alias_B_event": 162.75351851851852
+        },
+        "batch_local_aliases": {
+          "body_bytes": 847760,
+          "body_B_event": 156.9925925925926,
+          "alias_request_bytes": 10004,
+          "alias_response_bytes": 486,
+          "with_alias_setup_B_event": 158.9351851851852,
+          "with_dynamic_schema_and_alias_B_event": 160.07185185185185,
+          "with_session_schema_and_alias_B_event": 162.3451851851852
+        },
+        "lz4": {
+          "body_bytes": 954441,
+          "body_B_event": 176.74833333333333,
+          "alias_request_bytes": 4432,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 177.60907407407407,
+          "with_dynamic_schema_and_alias_B_event": 178.74574074074073,
+          "with_session_schema_and_alias_B_event": 181.01907407407407
+        },
+        "replay_lz4": {
+          "body_bytes": 954441,
+          "body_B_event": 176.74833333333333,
+          "alias_request_bytes": 4432,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 177.60907407407407,
+          "with_dynamic_schema_and_alias_B_event": 178.74574074074073,
+          "with_session_schema_and_alias_B_event": 181.01907407407407
+        }
+      },
+      "new_shape_events": 3,
+      "hash_occurrences": 0,
+      "hash_binary_naive_B_event": 0.0,
+      "floats": 5400,
+      "exact_two_decimals": 0,
+      "python_timings": [
+        {
+          "n": 100,
+          "encode_ms": 2.45075,
+          "decode_ms": 3.068541
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.455041,
+          "decode_ms": 3.027
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.418709,
+          "decode_ms": 3.114834
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.407625,
+          "decode_ms": 3.090708
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.611875,
+          "decode_ms": 3.281
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.687542,
+          "decode_ms": 3.5
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.659084,
+          "decode_ms": 3.38875
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.695167,
+          "decode_ms": 3.443208
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.651458,
+          "decode_ms": 3.497542
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.358333,
+          "decode_ms": 3.315458
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.487208,
+          "decode_ms": 3.13625
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.413709,
+          "decode_ms": 3.065917
+        }
+      ],
+      "V5_rerun": [
+        {
+          "events": 100,
+          "frame_bytes": 11520,
+          "encode_ms": 97.693166,
+          "decode_ms": 108.512125
+        },
+        {
+          "events": 100,
+          "frame_bytes": 13064,
+          "encode_ms": 96.363417,
+          "decode_ms": 119.846709
+        },
+        {
+          "events": 100,
+          "frame_bytes": 12288,
+          "encode_ms": 98.103292,
+          "decode_ms": 126.436417
+        }
+      ],
+      "field_json_bytes": {
+        "app_version": {
+          "bytes": 102600,
+          "occurrences": 5400,
+          "B_event": 19.0
+        },
+        "build_number": {
+          "bytes": 140400,
+          "occurrences": 5400,
+          "B_event": 26.0
+        },
+        "device_class": {
+          "bytes": 180000,
+          "occurrences": 5400,
+          "B_event": 33.333333333333336
+        },
+        "event_id": {
+          "bytes": 264600,
+          "occurrences": 5400,
+          "B_event": 49.0
+        },
+        "locale": {
+          "bytes": 86400,
+          "occurrences": 5400,
+          "B_event": 16.0
+        },
+        "name": {
+          "bytes": 87046,
+          "occurrences": 5400,
+          "B_event": 16.119629629629628
+        },
+        "os_version": {
+          "bytes": 382500,
+          "occurrences": 5400,
+          "B_event": 70.83333333333333
+        },
+        "platform": {
+          "bytes": 108000,
+          "occurrences": 5400,
+          "B_event": 20.0
+        },
+        "properties.board": {
+          "bytes": 744810,
+          "occurrences": 1221,
+          "B_event": 137.92777777777778
+        },
+        "properties.counter": {
+          "bytes": 69540,
+          "occurrences": 5400,
+          "B_event": 12.877777777777778
+        },
+        "properties.description": {
+          "bytes": 511485,
+          "occurrences": 1855,
+          "B_event": 94.71944444444445
+        },
+        "properties.measurement": {
+          "bytes": 171076,
+          "occurrences": 5400,
+          "B_event": 31.68074074074074
+        },
+        "properties.opaque": {
+          "bytes": 769244,
+          "occurrences": 2324,
+          "B_event": 142.4525925925926
+        },
+        "properties.phase": {
+          "bytes": 48600,
+          "occurrences": 5400,
+          "B_event": 9.0
+        },
+        "properties.release_label": {
+          "bytes": 91596,
+          "occurrences": 2694,
+          "B_event": 16.962222222222223
+        },
+        "sequence": {
+          "bytes": 74952,
+          "occurrences": 5400,
+          "B_event": 13.88
+        },
+        "session_elapsed_ms": {
+          "bytes": 147258,
+          "occurrences": 5400,
+          "B_event": 27.27
+        },
+        "session_id": {
+          "bytes": 275400,
+          "occurrences": 5400,
+          "B_event": 51.0
+        },
+        "timezone_offset_minutes": {
+          "bytes": 154800,
+          "occurrences": 5400,
+          "B_event": 28.666666666666668
+        },
+        "ts": {
+          "bytes": 97200,
+          "occurrences": 5400,
+          "B_event": 18.0
+        }
+      },
+      "V4_measured_bytes": 683665,
+      "V5_measured_bytes": 658016,
+      "sessions": 18,
+      "hash_omission_nonlossless_B_event": 156.99592592592592
+    },
+    "holdout1729": {
+      "seed": 1729,
+      "events": 5400,
+      "batches": 54,
+      "corpus_sha256": "794895d8a097c361a9d3d1f2644c325720afc5afcaf1a78fa06c6c72ecd7614a",
+      "V1_full_json_B_event": 900.8888888888889,
+      "V1_full_gzip1_B_event": 237.96333333333334,
+      "legacy_source_json_B_event": 850.8888888888889,
+      "V4_zstd19_B_event": 127.12203703703703,
+      "V5_stateless_B_event": 122.37907407407407,
+      "V4_V5_evidence": "full independent encode/decode rerun; exact source SHA and historical byte totals matched",
+      "V6": {
+        "columnar_raw": {
+          "body_bytes": 1689126,
+          "body_B_event": 312.8011111111111,
+          "alias_request_bytes": 4429,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 313.6612962962963,
+          "with_dynamic_schema_and_alias_B_event": 314.79796296296297,
+          "with_session_schema_and_alias_B_event": 317.0712962962963
+        },
+        "zstd1": {
+          "body_bytes": 843156,
+          "body_B_event": 156.14,
+          "alias_request_bytes": 4429,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 157.0001851851852,
+          "with_dynamic_schema_and_alias_B_event": 158.13685185185184,
+          "with_session_schema_and_alias_B_event": 160.41018518518518
+        },
+        "zstd3": {
+          "body_bytes": 807496,
+          "body_B_event": 149.53629629629629,
+          "alias_request_bytes": 4429,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 150.3964814814815,
+          "with_dynamic_schema_and_alias_B_event": 151.53314814814814,
+          "with_session_schema_and_alias_B_event": 153.80648148148148
+        },
+        "replay_zstd1": {
+          "body_bytes": 843156,
+          "body_B_event": 156.14,
+          "alias_request_bytes": 4429,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 157.0001851851852,
+          "with_dynamic_schema_and_alias_B_event": 158.13685185185184,
+          "with_session_schema_and_alias_B_event": 160.41018518518518
+        },
+        "strict_V1_ids_zstd1": {
+          "body_bytes": 935690,
+          "body_B_event": 173.27592592592592,
+          "alias_request_bytes": 4429,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 174.13611111111112,
+          "with_dynamic_schema_and_alias_B_event": 175.27277777777778,
+          "with_session_schema_and_alias_B_event": 177.54611111111112
+        },
+        "replay_strict_ids": {
+          "body_bytes": 935690,
+          "body_B_event": 173.27592592592592,
+          "alias_request_bytes": 4429,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 174.13611111111112,
+          "with_dynamic_schema_and_alias_B_event": 175.27277777777778,
+          "with_session_schema_and_alias_B_event": 177.54611111111112
+        },
+        "explicit_masks": {
+          "body_bytes": 847489,
+          "body_B_event": 156.94240740740742,
+          "alias_request_bytes": 4429,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 157.8025925925926,
+          "with_dynamic_schema_and_alias_B_event": 158.93925925925927,
+          "with_session_schema_and_alias_B_event": 161.21259259259259
+        },
+        "dynamic_schema": {
+          "body_bytes": 851870,
+          "body_B_event": 157.7537037037037,
+          "alias_request_bytes": 4429,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 158.61388888888888,
+          "with_dynamic_schema_and_alias_B_event": 158.61388888888888,
+          "with_session_schema_and_alias_B_event": 162.02388888888888
+        },
+        "batch_local_aliases": {
+          "body_bytes": 843151,
+          "body_B_event": 156.13907407407407,
+          "alias_request_bytes": 10004,
+          "alias_response_bytes": 486,
+          "with_alias_setup_B_event": 158.08166666666668,
+          "with_dynamic_schema_and_alias_B_event": 159.21833333333333,
+          "with_session_schema_and_alias_B_event": 161.49166666666667
+        },
+        "lz4": {
+          "body_bytes": 955171,
+          "body_B_event": 176.8835185185185,
+          "alias_request_bytes": 4429,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 177.74370370370372,
+          "with_dynamic_schema_and_alias_B_event": 178.88037037037037,
+          "with_session_schema_and_alias_B_event": 181.1537037037037
+        },
+        "replay_lz4": {
+          "body_bytes": 955171,
+          "body_B_event": 176.8835185185185,
+          "alias_request_bytes": 4429,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 177.74370370370372,
+          "with_dynamic_schema_and_alias_B_event": 178.88037037037037,
+          "with_session_schema_and_alias_B_event": 181.1537037037037
+        }
+      },
+      "new_shape_events": 4,
+      "hash_occurrences": 0,
+      "hash_binary_naive_B_event": 0.0,
+      "floats": 5400,
+      "exact_two_decimals": 0,
+      "python_timings": [
+        {
+          "n": 100,
+          "encode_ms": 2.342334,
+          "decode_ms": 3.165417
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.36925,
+          "decode_ms": 3.073208
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.393,
+          "decode_ms": 3.06475
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.5135,
+          "decode_ms": 3.51625
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.744458,
+          "decode_ms": 3.48875
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.586208,
+          "decode_ms": 3.490667
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.618583,
+          "decode_ms": 3.45875
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.166042,
+          "decode_ms": 3.576583
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.92575,
+          "decode_ms": 3.948584
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.640833,
+          "decode_ms": 3.784666
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.461167,
+          "decode_ms": 4.056
+        },
+        {
+          "n": 100,
+          "encode_ms": 2.409416,
+          "decode_ms": 3.059625
+        }
+      ],
+      "V5_rerun": [
+        {
+          "events": 100,
+          "frame_bytes": 11082,
+          "encode_ms": 86.715042,
+          "decode_ms": 117.045125
+        },
+        {
+          "events": 100,
+          "frame_bytes": 12455,
+          "encode_ms": 91.274166,
+          "decode_ms": 123.932666
+        },
+        {
+          "events": 100,
+          "frame_bytes": 12210,
+          "encode_ms": 94.402166,
+          "decode_ms": 136.267875
+        }
+      ],
+      "field_json_bytes": {
+        "app_version": {
+          "bytes": 102600,
+          "occurrences": 5400,
+          "B_event": 19.0
+        },
+        "build_number": {
+          "bytes": 140400,
+          "occurrences": 5400,
+          "B_event": 26.0
+        },
+        "device_class": {
+          "bytes": 180000,
+          "occurrences": 5400,
+          "B_event": 33.333333333333336
+        },
+        "event_id": {
+          "bytes": 264600,
+          "occurrences": 5400,
+          "B_event": 49.0
+        },
+        "locale": {
+          "bytes": 86400,
+          "occurrences": 5400,
+          "B_event": 16.0
+        },
+        "name": {
+          "bytes": 87093,
+          "occurrences": 5400,
+          "B_event": 16.128333333333334
+        },
+        "os_version": {
+          "bytes": 382500,
+          "occurrences": 5400,
+          "B_event": 70.83333333333333
+        },
+        "platform": {
+          "bytes": 108000,
+          "occurrences": 5400,
+          "B_event": 20.0
+        },
+        "properties.board": {
+          "bytes": 749690,
+          "occurrences": 1229,
+          "B_event": 138.8314814814815
+        },
+        "properties.counter": {
+          "bytes": 69540,
+          "occurrences": 5400,
+          "B_event": 12.877777777777778
+        },
+        "properties.description": {
+          "bytes": 515281,
+          "occurrences": 1864,
+          "B_event": 95.4224074074074
+        },
+        "properties.measurement": {
+          "bytes": 170985,
+          "occurrences": 5400,
+          "B_event": 31.663888888888888
+        },
+        "properties.opaque": {
+          "bytes": 763617,
+          "occurrences": 2307,
+          "B_event": 141.41055555555556
+        },
+        "properties.phase": {
+          "bytes": 48600,
+          "occurrences": 5400,
+          "B_event": 9.0
+        },
+        "properties.release_label": {
+          "bytes": 91596,
+          "occurrences": 2694,
+          "B_event": 16.962222222222223
+        },
+        "sequence": {
+          "bytes": 74952,
+          "occurrences": 5400,
+          "B_event": 13.88
+        },
+        "session_elapsed_ms": {
+          "bytes": 147258,
+          "occurrences": 5400,
+          "B_event": 27.27
+        },
+        "session_id": {
+          "bytes": 275400,
+          "occurrences": 5400,
+          "B_event": 51.0
+        },
+        "timezone_offset_minutes": {
+          "bytes": 154800,
+          "occurrences": 5400,
+          "B_event": 28.666666666666668
+        },
+        "ts": {
+          "bytes": 97200,
+          "occurrences": 5400,
+          "B_event": 18.0
+        }
+      },
+      "V4_measured_bytes": 686459,
+      "V5_measured_bytes": 660847,
+      "sessions": 18,
+      "hash_omission_nonlossless_B_event": 156.14
+    }
+  }
+}

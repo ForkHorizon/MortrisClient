@@ -128,8 +128,10 @@ namespace M7Transport.Tests
             s.High = Math.Max(s.High, Num(stream["high"]));
             foreach (List<object> d in (List<object>)stream["dropped"]) for (var n = Num(d[0]); n <= Num(d[1]); n++) s.Dropped.Add(n);
             return Json(200, "{\"token\":\"" + Token(id) + "\",\"epoch\":" + epoch + ",\"ack\":" + Ack(s) + ",\"missing\":[],\"shapes\":" + ShapeSignatures.Count + ",\"aliases\":" + s.Aliases.Count +
-                             ",\"catalog\":\"" + CatalogId() + "\",\"dict\":\"" + DictionaryId + "\",\"p\":" + PolicyVersion + "}");
+                             ",\"catalog\":\"" + CatalogId() + "\",\"dict\":\"" + DictionaryId + "\",\"p\":" + PolicyVersion + ",\"install\":\"" + InstallUuid(id) + "\",\"credential\":\"" + new string('c', 43) + "\"}");
         }
+
+        internal static string InstallUuid(long id) => "6f1c9b0e-2d44-4f6a-9a31-" + id.ToString("D12", CultureInfo.InvariantCulture);
 
         internal static long Num(object o) => long.Parse(((JsonNumber)o).Lexeme, CultureInfo.InvariantCulture);
 

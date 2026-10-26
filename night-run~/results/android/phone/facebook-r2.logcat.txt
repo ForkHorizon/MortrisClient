@@ -1,0 +1,8 @@
+host_load_at_start=8.34
+host_load_at_end=7.15
+gms_cpu_ticks_delta={'com.google.android.gms': 71, 'com.google.android.gms.unstable': 0}
+--------- beginning of main
+10-21 16:23:58.704 32378 32401 I BENCH   : replay_done sdk=facebook events=3000 track_mean_us=141 track_max_us=5128 wall_ms=539
+10-21 16:25:28.705 32378 32401 I BENCH   : perf init_cpu_ms=17 init_alloc=294912 replay_cpu_ms=2335 replay_alloc=220110848 replay_gc=8 total_cpu_ms=11584 total_alloc=316481536 total_gc=12 events=3000
+10-21 16:25:28.749 32378 32401 I BENCH   : perf2 events=3000 cpu_total_ms=11601 cpu_replay_ms=2335 alloc_replay=220110848 alloc_total=316481536 gc_replay=8 lat_p50_us=111 lat_p95_us=233 lat_p99_us=681 lat_max_us=5128 pss_start_kb=154460 pss_peak_kb=165931 java_peak_kb=52643 native_peak_kb=29177 calib0=39.944 calib_best=23.423 calib_end=23.423 calibs=2000:27.028,
+10-21 16:25:28.749 32378 32401 I BENCH   : tail_done

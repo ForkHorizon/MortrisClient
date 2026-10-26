@@ -1,0 +1,17 @@
+{
+ "zstd_l19_dict64": {
+  "us_per_event_min_of_5": 2.9123099285635474,
+  "B_per_event_payload": 10.208743291592128,
+  "cctx_bytes": 2387978
+ },
+ "zstd_l3_tables12_dict64": {
+  "us_per_event_min_of_5": 0.15188327373532287,
+  "B_per_event_payload": 12.033206618962433,
+  "cctx_bytes": 122909
+ },
+ "zstd_l1_dict64": {
+  "us_per_event_min_of_5": 0.09556205268723415,
+  "B_per_event_payload": 11.819096601073346,
+  "cctx_bytes": 155677
+ }
+}

@@ -1,0 +1,23 @@
+{
+  "Pixel_8": {
+    "android": "17",
+    "abi": "arm64-v8a",
+    "package": "com.mishmashroom.VanityLane",
+    "installed_version": "1.1.11",
+    "current_source_version": "1.1.14",
+    "V7_available": false
+  },
+  "Unity_Android_module": "Available at version-root/PlaybackEngines/AndroidPlayer with SDK/NDK/JDK; Unity API Android support=true. Earlier Contents-only absence inference corrected.",
+  "physical_device": false,
+  "Mortris_API_35": {
+    "android": "15",
+    "abi": "arm64-v8a",
+    "package": "com.mishmashroom.VanityLane",
+    "installed_version": "1.1.14",
+    "version_code": 31,
+    "V7_available": false,
+    "pending_events_in_cloned_queue": 29,
+    "app_running_during_copy": false
+  },
+  "cleanup": "Research APK uninstalled from both AVDs after verified output copy; both AVDs started for research stopped; Puzzle package/data unchanged. APK/project retained locally in private research assets."
+}

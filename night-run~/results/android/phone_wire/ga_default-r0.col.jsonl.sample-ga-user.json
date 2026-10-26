@@ -1,0 +1,26 @@
+[
+ {
+  "v": 2,
+  "user_id": "u-bench-1",
+  "event_uuid": "e50f3d7e-ee24-4e0f-8957-230da8df467d",
+  "google_aid": "8b52a322-ac8b-4197-a267-b8d88a28947e",
+  "google_aid_src": "service",
+  "client_ts": 1792594976,
+  "sdk_version": "android 7.2.0",
+  "os_version": "android 16",
+  "manufacturer": "Nothing",
+  "device": "A142",
+  "platform": "android",
+  "session_id": "864b317f-8c62-45cd-842d-0f72369e1a11",
+  "session_num": 1,
+  "current_session_length": 0,
+  "lifetime_session_length": 0,
+  "connection_type": "wwan",
+  "android_bundle_id": "bench.sdk",
+  "android_app_version": "1",
+  "android_app_build": "1",
+  "android_app_signature": "3ad249eb021719d884a50153c5ad51b2f700592e",
+  "category": "user",
+  "install": true
+ }
+]

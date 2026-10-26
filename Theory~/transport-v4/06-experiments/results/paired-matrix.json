@@ -1,0 +1,1060 @@
+{
+  "environment": {
+    "python": "3.14.8 (main, Sep 30 2026, 17:55:09) [Clang 21.0.0 (clang-2100.3.34.2)]",
+    "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+    "zstd": [
+      1,
+      5,
+      7
+    ]
+  },
+  "frozen_seeds": {
+    "train": 202,
+    "validation": 303,
+    "holdout": 909,
+    "independent_drift": 808
+  },
+  "profiles": {
+    "base": {
+      "original/16384/V2": {
+        "B_per_event": 22.83877459749553,
+        "bytes": 204270,
+        "raw_B_per_event": 58.678220035778175,
+        "events": 8944,
+        "batches": 321,
+        "elapsed_s": 0.08956579200457782,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "original/16384/V3": {
+        "B_per_event": 22.946444543828264,
+        "bytes": 205233,
+        "raw_B_per_event": 58.678220035778175,
+        "events": 8944,
+        "batches": 321,
+        "elapsed_s": 0.13222570903599262,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "original/16384/clean": {
+        "B_per_event": 22.670393559928442,
+        "bytes": 202764,
+        "raw_B_per_event": 58.20818425760286,
+        "events": 8944,
+        "batches": 321,
+        "elapsed_s": 0.5350941669894382,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "original/16384/packed": {
+        "B_per_event": 22.610241502683362,
+        "bytes": 202226,
+        "raw_B_per_event": 50.93313953488372,
+        "events": 8944,
+        "batches": 321,
+        "elapsed_s": 0.5118427499546669,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "original/65536/V2": {
+        "B_per_event": 21.648032200357783,
+        "bytes": 193620,
+        "raw_B_per_event": 58.678220035778175,
+        "events": 8944,
+        "batches": 321,
+        "elapsed_s": 0.3846242500003427,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "original/65536/V3": {
+        "B_per_event": 21.75570214669052,
+        "bytes": 194583,
+        "raw_B_per_event": 58.678220035778175,
+        "events": 8944,
+        "batches": 321,
+        "elapsed_s": 0.4366913339472376,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "original/65536/clean": {
+        "B_per_event": 21.74183810375671,
+        "bytes": 194459,
+        "raw_B_per_event": 58.20818425760286,
+        "events": 8944,
+        "batches": 321,
+        "elapsed_s": 0.9341640829807147,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "original/65536/packed": {
+        "B_per_event": 21.638640429338103,
+        "bytes": 193536,
+        "raw_B_per_event": 50.93313953488372,
+        "events": 8944,
+        "batches": 321,
+        "elapsed_s": 0.8035387499839999,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/16384/V2": {
+        "B_per_event": 17.590787119856888,
+        "bytes": 157332,
+        "raw_B_per_event": 36.09380590339892,
+        "events": 8944,
+        "batches": 93,
+        "elapsed_s": 0.03421937505481765,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "100/16384/V3": {
+        "B_per_event": 17.62198121645796,
+        "bytes": 157611,
+        "raw_B_per_event": 36.09380590339892,
+        "events": 8944,
+        "batches": 93,
+        "elapsed_s": 0.060621957993134856,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "100/16384/clean": {
+        "B_per_event": 17.418381037567084,
+        "bytes": 155790,
+        "raw_B_per_event": 36.58966905187835,
+        "events": 8944,
+        "batches": 93,
+        "elapsed_s": 0.4532640840043314,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "100/16384/packed": {
+        "B_per_event": 17.644566189624328,
+        "bytes": 157813,
+        "raw_B_per_event": 28.796176207513415,
+        "events": 8944,
+        "batches": 93,
+        "elapsed_s": 0.4203251670114696,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "100/65536/V2": {
+        "B_per_event": 17.01990161001789,
+        "bytes": 152226,
+        "raw_B_per_event": 36.09380590339892,
+        "events": 8944,
+        "batches": 93,
+        "elapsed_s": 0.09175954200327396,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/V3": {
+        "B_per_event": 17.051095706618963,
+        "bytes": 152505,
+        "raw_B_per_event": 36.09380590339892,
+        "events": 8944,
+        "batches": 93,
+        "elapsed_s": 0.12075404200004414,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/clean": {
+        "B_per_event": 16.871086762075134,
+        "bytes": 150895,
+        "raw_B_per_event": 36.58966905187835,
+        "events": 8944,
+        "batches": 93,
+        "elapsed_s": 0.5357907909783535,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/packed": {
+        "B_per_event": 17.00134168157424,
+        "bytes": 152060,
+        "raw_B_per_event": 28.796176207513415,
+        "events": 8944,
+        "batches": 93,
+        "elapsed_s": 0.4734678749809973,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/noef": {
+        "B_per_event": 17.05567978533095,
+        "bytes": 152546,
+        "raw_B_per_event": 28.881708407871198,
+        "events": 8944,
+        "batches": 93,
+        "elapsed_s": 0.4752577919862233,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/trailer": {
+        "B_per_event": 16.62097495527728,
+        "bytes": 148658,
+        "raw_B_per_event": 28.796176207513415,
+        "events": 8944,
+        "batches": 93,
+        "elapsed_s": 0.5012140409671701,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/V3replay": {
+        "B_per_event": 11.023367620751342,
+        "bytes": 98593,
+        "raw_B_per_event": 30.69118962432916,
+        "events": 8944,
+        "batches": 93,
+        "elapsed_s": 0.13764766696840525,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/replay": {
+        "B_per_event": 11.007267441860465,
+        "bytes": 98449,
+        "raw_B_per_event": 22.897584973166367,
+        "events": 8944,
+        "batches": 93,
+        "elapsed_s": 0.4883970419759862,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/16384/V2": {
+        "B_per_event": 14.745863148479428,
+        "bytes": 131887,
+        "raw_B_per_event": 27.204271019677996,
+        "events": 8944,
+        "batches": 20,
+        "elapsed_s": 0.01702704100171104,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "500/16384/V3": {
+        "B_per_event": 14.752571556350626,
+        "bytes": 131947,
+        "raw_B_per_event": 27.204271019677996,
+        "events": 8944,
+        "batches": 20,
+        "elapsed_s": 0.038334709010086954,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "500/16384/clean": {
+        "B_per_event": 14.511739713774597,
+        "bytes": 129793,
+        "raw_B_per_event": 28.070102862254025,
+        "events": 8944,
+        "batches": 20,
+        "elapsed_s": 0.4166381669929251,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "500/16384/packed": {
+        "B_per_event": 14.744074239713775,
+        "bytes": 131871,
+        "raw_B_per_event": 20.200245974955276,
+        "events": 8944,
+        "batches": 20,
+        "elapsed_s": 0.3916677500237711,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "500/65536/V2": {
+        "B_per_event": 14.581507155635062,
+        "bytes": 130417,
+        "raw_B_per_event": 27.204271019677996,
+        "events": 8944,
+        "batches": 20,
+        "elapsed_s": 0.028594916977453977,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/65536/V3": {
+        "B_per_event": 14.588215563506262,
+        "bytes": 130477,
+        "raw_B_per_event": 27.204271019677996,
+        "events": 8944,
+        "batches": 20,
+        "elapsed_s": 0.05040116695454344,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/65536/clean": {
+        "B_per_event": 14.374105545617173,
+        "bytes": 128562,
+        "raw_B_per_event": 28.070102862254025,
+        "events": 8944,
+        "batches": 20,
+        "elapsed_s": 0.42982054204912856,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/65536/packed": {
+        "B_per_event": 14.61717352415027,
+        "bytes": 130736,
+        "raw_B_per_event": 20.200245974955276,
+        "events": 8944,
+        "batches": 20,
+        "elapsed_s": 0.4042269159690477,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/65536/V3replay": {
+        "B_per_event": 8.331283542039357,
+        "bytes": 74515,
+        "raw_B_per_event": 21.270460644007155,
+        "events": 8944,
+        "batches": 20,
+        "elapsed_s": 0.051340167003218085,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/65536/replay": {
+        "B_per_event": 8.541368515205724,
+        "bytes": 76394,
+        "raw_B_per_event": 14.161449016100178,
+        "events": 8944,
+        "batches": 20,
+        "elapsed_s": 0.39850629202555865,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "validation": {
+        "rows": {
+          "clean": {
+            "B_per_event": 17.038449214995193,
+            "bytes": 53177,
+            "raw_B_per_event": 36.67254085229093,
+            "events": 3121,
+            "batches": 32,
+            "elapsed_s": 0.18647012498695403,
+            "dict_bytes": 65536,
+            "level": 19
+          },
+          "packed": {
+            "B_per_event": 17.13937840435758,
+            "bytes": 53492,
+            "raw_B_per_event": 28.906119833386736,
+            "events": 3121,
+            "batches": 32,
+            "elapsed_s": 0.16564033401664346,
+            "dict_bytes": 65536,
+            "level": 19
+          },
+          "noef": {
+            "B_per_event": 17.19032361422621,
+            "bytes": 53651,
+            "raw_B_per_event": 28.987504005126564,
+            "events": 3121,
+            "batches": 32,
+            "elapsed_s": 0.1723117920337245,
+            "dict_bytes": 65536,
+            "level": 19
+          },
+          "trailer": {
+            "B_per_event": 16.777635373277796,
+            "bytes": 52363,
+            "raw_B_per_event": 28.906119833386736,
+            "events": 3121,
+            "batches": 32,
+            "elapsed_s": 0.18003762501757592,
+            "dict_bytes": 65536,
+            "level": 19
+          }
+        },
+        "best": "trailer"
+      }
+    },
+    "rich": {
+      "original/16384/V2": {
+        "B_per_event": 47.813140903911886,
+        "bytes": 377676,
+        "raw_B_per_event": 117.20508925180403,
+        "events": 7899,
+        "batches": 288,
+        "elapsed_s": 0.144224125018809,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "original/16384/V3": {
+        "B_per_event": 47.922521838207366,
+        "bytes": 378540,
+        "raw_B_per_event": 117.20508925180403,
+        "events": 7899,
+        "batches": 288,
+        "elapsed_s": 0.23338816699106246,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "original/16384/clean": {
+        "B_per_event": 47.10824154956324,
+        "bytes": 372108,
+        "raw_B_per_event": 116.3020635523484,
+        "events": 7899,
+        "batches": 288,
+        "elapsed_s": 0.7669939579791389,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "original/16384/packed": {
+        "B_per_event": 45.511963539688566,
+        "bytes": 359499,
+        "raw_B_per_event": 103.10887454108115,
+        "events": 7899,
+        "batches": 288,
+        "elapsed_s": 0.7177513749920763,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "original/65536/V2": {
+        "B_per_event": 44.74655019622737,
+        "bytes": 353453,
+        "raw_B_per_event": 117.20508925180403,
+        "events": 7899,
+        "batches": 288,
+        "elapsed_s": 0.5209317920380272,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "original/65536/V3": {
+        "B_per_event": 44.85593113052285,
+        "bytes": 354317,
+        "raw_B_per_event": 117.20508925180403,
+        "events": 7899,
+        "batches": 288,
+        "elapsed_s": 0.5980522920144722,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "original/65536/clean": {
+        "B_per_event": 44.66869223952399,
+        "bytes": 352838,
+        "raw_B_per_event": 116.3020635523484,
+        "events": 7899,
+        "batches": 288,
+        "elapsed_s": 1.1230167080066167,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "original/65536/packed": {
+        "B_per_event": 43.484365109507536,
+        "bytes": 343483,
+        "raw_B_per_event": 103.10887454108115,
+        "events": 7899,
+        "batches": 288,
+        "elapsed_s": 1.024193125020247,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/16384/V2": {
+        "B_per_event": 39.616027345233576,
+        "bytes": 312927,
+        "raw_B_per_event": 87.93416888213697,
+        "events": 7899,
+        "batches": 82,
+        "elapsed_s": 0.09142316703218967,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "100/16384/V3": {
+        "B_per_event": 39.64717052791492,
+        "bytes": 313173,
+        "raw_B_per_event": 87.93416888213697,
+        "events": 7899,
+        "batches": 82,
+        "elapsed_s": 0.17691608396125957,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "100/16384/clean": {
+        "B_per_event": 39.13495379161919,
+        "bytes": 309127,
+        "raw_B_per_event": 88.31130522850994,
+        "events": 7899,
+        "batches": 82,
+        "elapsed_s": 0.6733154999674298,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "100/16384/packed": {
+        "B_per_event": 38.00126598303583,
+        "bytes": 300172,
+        "raw_B_per_event": 74.089505000633,
+        "events": 7899,
+        "batches": 82,
+        "elapsed_s": 0.6511678340029903,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "100/65536/V2": {
+        "B_per_event": 38.052411697683254,
+        "bytes": 300576,
+        "raw_B_per_event": 87.93416888213697,
+        "events": 7899,
+        "batches": 82,
+        "elapsed_s": 0.2430948750115931,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/V3": {
+        "B_per_event": 38.0835548803646,
+        "bytes": 300822,
+        "raw_B_per_event": 87.93416888213697,
+        "events": 7899,
+        "batches": 82,
+        "elapsed_s": 0.3278930410160683,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/clean": {
+        "B_per_event": 37.97607292062286,
+        "bytes": 299973,
+        "raw_B_per_event": 88.31130522850994,
+        "events": 7899,
+        "batches": 82,
+        "elapsed_s": 0.8528265840141103,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/packed": {
+        "B_per_event": 37.18951766046335,
+        "bytes": 293760,
+        "raw_B_per_event": 74.089505000633,
+        "events": 7899,
+        "batches": 82,
+        "elapsed_s": 0.7105959589825943,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/noef": {
+        "B_per_event": 37.160653247246486,
+        "bytes": 293532,
+        "raw_B_per_event": 74.27813647297127,
+        "events": 7899,
+        "batches": 82,
+        "elapsed_s": 0.770547959022224,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/trailer": {
+        "B_per_event": 36.966451449550576,
+        "bytes": 291998,
+        "raw_B_per_event": 74.089505000633,
+        "events": 7899,
+        "batches": 82,
+        "elapsed_s": 0.7652080829720944,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/V3replay": {
+        "B_per_event": 32.24787947841499,
+        "bytes": 254726,
+        "raw_B_per_event": 82.63565008228889,
+        "events": 7899,
+        "batches": 82,
+        "elapsed_s": 0.3400974170072004,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/replay": {
+        "B_per_event": 31.25243701734397,
+        "bytes": 246863,
+        "raw_B_per_event": 68.13242182554754,
+        "events": 7899,
+        "batches": 82,
+        "elapsed_s": 0.7619297500350513,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/16384/V2": {
+        "B_per_event": 35.66742625648816,
+        "bytes": 281737,
+        "raw_B_per_event": 78.17280668439042,
+        "events": 7899,
+        "batches": 20,
+        "elapsed_s": 0.060371915984433144,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "500/16384/V3": {
+        "B_per_event": 35.67704772756045,
+        "bytes": 281813,
+        "raw_B_per_event": 78.17280668439042,
+        "events": 7899,
+        "batches": 20,
+        "elapsed_s": 0.15891508298227564,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "500/16384/clean": {
+        "B_per_event": 35.41410305101912,
+        "bytes": 279736,
+        "raw_B_per_event": 78.54310672236993,
+        "events": 7899,
+        "batches": 20,
+        "elapsed_s": 0.6336441669845954,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "500/16384/packed": {
+        "B_per_event": 34.45853905557666,
+        "bytes": 272188,
+        "raw_B_per_event": 64.66628687175591,
+        "events": 7899,
+        "batches": 20,
+        "elapsed_s": 0.637855708017014,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "500/65536/V2": {
+        "B_per_event": 34.93518166856564,
+        "bytes": 275953,
+        "raw_B_per_event": 78.17280668439042,
+        "events": 7899,
+        "batches": 20,
+        "elapsed_s": 0.09404295805143192,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/65536/V3": {
+        "B_per_event": 34.944803139637926,
+        "bytes": 276029,
+        "raw_B_per_event": 78.17280668439042,
+        "events": 7899,
+        "batches": 20,
+        "elapsed_s": 0.1964981670025736,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/65536/clean": {
+        "B_per_event": 34.67628813773896,
+        "bytes": 273908,
+        "raw_B_per_event": 78.54310672236993,
+        "events": 7899,
+        "batches": 20,
+        "elapsed_s": 0.7304664999828674,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/65536/packed": {
+        "B_per_event": 35.18673249778453,
+        "bytes": 277940,
+        "raw_B_per_event": 64.66628687175591,
+        "events": 7899,
+        "batches": 20,
+        "elapsed_s": 0.6266321669681929,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/65536/V3replay": {
+        "B_per_event": 29.091150778579568,
+        "bytes": 229791,
+        "raw_B_per_event": 72.43992910495,
+        "events": 7899,
+        "batches": 20,
+        "elapsed_s": 0.19352274999255314,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/65536/replay": {
+        "B_per_event": 29.2177490821623,
+        "bytes": 230791,
+        "raw_B_per_event": 58.601848335232305,
+        "events": 7899,
+        "batches": 20,
+        "elapsed_s": 0.6374315840075724,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "validation": {
+        "rows": {
+          "clean": {
+            "B_per_event": 37.81094527363184,
+            "bytes": 91200,
+            "raw_B_per_event": 87.20646766169155,
+            "events": 2412,
+            "batches": 25,
+            "elapsed_s": 0.2752699159900658,
+            "dict_bytes": 65536,
+            "level": 19
+          },
+          "packed": {
+            "B_per_event": 37.02777777777778,
+            "bytes": 89311,
+            "raw_B_per_event": 73.27819237147595,
+            "events": 2412,
+            "batches": 25,
+            "elapsed_s": 0.25913237500935793,
+            "dict_bytes": 65536,
+            "level": 19
+          },
+          "noef": {
+            "B_per_event": 37.084162520729684,
+            "bytes": 89447,
+            "raw_B_per_event": 73.44900497512438,
+            "events": 2412,
+            "batches": 25,
+            "elapsed_s": 0.2590081670205109,
+            "dict_bytes": 65536,
+            "level": 19
+          },
+          "trailer": {
+            "B_per_event": 36.88515754560531,
+            "bytes": 88967,
+            "raw_B_per_event": 73.27819237147595,
+            "events": 2412,
+            "batches": 25,
+            "elapsed_s": 0.23809662502026185,
+            "dict_bytes": 65536,
+            "level": 19
+          }
+        },
+        "best": "trailer"
+      }
+    },
+    "alt": {
+      "original/16384/V2": {
+        "B_per_event": 143.46277777777777,
+        "bytes": 774699,
+        "raw_B_per_event": 327.4533333333333,
+        "events": 5400,
+        "batches": 176,
+        "elapsed_s": 0.17086591699626297,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "original/16384/V3": {
+        "B_per_event": 143.56814814814814,
+        "bytes": 775268,
+        "raw_B_per_event": 327.4533333333333,
+        "events": 5400,
+        "batches": 176,
+        "elapsed_s": 0.3937057079747319,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "original/16384/clean": {
+        "B_per_event": 142.54685185185184,
+        "bytes": 769753,
+        "raw_B_per_event": 327.91703703703706,
+        "events": 5400,
+        "batches": 176,
+        "elapsed_s": 0.3909202080103569,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "original/16384/packed": {
+        "B_per_event": 141.23537037037036,
+        "bytes": 762671,
+        "raw_B_per_event": 322.98925925925926,
+        "events": 5400,
+        "batches": 176,
+        "elapsed_s": 0.3825976669904776,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "original/65536/V2": {
+        "B_per_event": 138.31240740740742,
+        "bytes": 746887,
+        "raw_B_per_event": 327.4533333333333,
+        "events": 5400,
+        "batches": 176,
+        "elapsed_s": 0.4848631670465693,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "original/65536/V3": {
+        "B_per_event": 138.4177777777778,
+        "bytes": 747456,
+        "raw_B_per_event": 327.4533333333333,
+        "events": 5400,
+        "batches": 176,
+        "elapsed_s": 0.7224089999799617,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "original/65536/clean": {
+        "B_per_event": 137.3535185185185,
+        "bytes": 741709,
+        "raw_B_per_event": 327.91703703703706,
+        "events": 5400,
+        "batches": 176,
+        "elapsed_s": 0.6796177920186892,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "original/65536/packed": {
+        "B_per_event": 136.1925925925926,
+        "bytes": 735440,
+        "raw_B_per_event": 322.98925925925926,
+        "events": 5400,
+        "batches": 176,
+        "elapsed_s": 0.7056582079967484,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/16384/V2": {
+        "B_per_event": 134.82092592592593,
+        "bytes": 728033,
+        "raw_B_per_event": 319.47907407407405,
+        "events": 5400,
+        "batches": 54,
+        "elapsed_s": 0.14055083302082494,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "100/16384/V3": {
+        "B_per_event": 134.86092592592593,
+        "bytes": 728249,
+        "raw_B_per_event": 319.47907407407405,
+        "events": 5400,
+        "batches": 54,
+        "elapsed_s": 0.36520574998576194,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "100/16384/clean": {
+        "B_per_event": 133.90537037037038,
+        "bytes": 723089,
+        "raw_B_per_event": 320.1364814814815,
+        "events": 5400,
+        "batches": 54,
+        "elapsed_s": 0.34087908297078684,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "100/16384/packed": {
+        "B_per_event": 131.96648148148148,
+        "bytes": 712619,
+        "raw_B_per_event": 314.78444444444443,
+        "events": 5400,
+        "batches": 54,
+        "elapsed_s": 0.32735445798607543,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "100/65536/V2": {
+        "B_per_event": 129.46555555555557,
+        "bytes": 699114,
+        "raw_B_per_event": 319.47907407407405,
+        "events": 5400,
+        "batches": 54,
+        "elapsed_s": 0.26269225002033636,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/V3": {
+        "B_per_event": 129.50555555555556,
+        "bytes": 699330,
+        "raw_B_per_event": 319.47907407407405,
+        "events": 5400,
+        "batches": 54,
+        "elapsed_s": 0.48554987501120195,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/clean": {
+        "B_per_event": 128.4324074074074,
+        "bytes": 693535,
+        "raw_B_per_event": 320.1364814814815,
+        "events": 5400,
+        "batches": 54,
+        "elapsed_s": 0.457727667002473,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/packed": {
+        "B_per_event": 126.96259259259259,
+        "bytes": 685598,
+        "raw_B_per_event": 314.78444444444443,
+        "events": 5400,
+        "batches": 54,
+        "elapsed_s": 0.4359087499906309,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/noef": {
+        "B_per_event": 126.95351851851852,
+        "bytes": 685549,
+        "raw_B_per_event": 315.4157407407407,
+        "events": 5400,
+        "batches": 54,
+        "elapsed_s": 0.4452878750162199,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/trailer": {
+        "B_per_event": 126.60462962962963,
+        "bytes": 683665,
+        "raw_B_per_event": 314.78444444444443,
+        "events": 5400,
+        "batches": 54,
+        "elapsed_s": 0.4496027919813059,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/V3replay": {
+        "B_per_event": 129.50555555555556,
+        "bytes": 699330,
+        "raw_B_per_event": 319.47907407407405,
+        "events": 5400,
+        "batches": 54,
+        "elapsed_s": 0.48724533297354355,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "100/65536/replay": {
+        "B_per_event": 126.96259259259259,
+        "bytes": 685598,
+        "raw_B_per_event": 314.78444444444443,
+        "events": 5400,
+        "batches": 54,
+        "elapsed_s": 0.4505574170034379,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/16384/V2": {
+        "B_per_event": 123.82685185185186,
+        "bytes": 668665,
+        "raw_B_per_event": 317.5148148148148,
+        "events": 5400,
+        "batches": 12,
+        "elapsed_s": 0.1399271670379676,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "500/16384/V3": {
+        "B_per_event": 123.83574074074075,
+        "bytes": 668713,
+        "raw_B_per_event": 317.5148148148148,
+        "events": 5400,
+        "batches": 12,
+        "elapsed_s": 0.4221736660110764,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "500/16384/clean": {
+        "B_per_event": 122.48148148148148,
+        "bytes": 661400,
+        "raw_B_per_event": 317.6011111111111,
+        "events": 5400,
+        "batches": 12,
+        "elapsed_s": 0.33805454202229157,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "500/16384/packed": {
+        "B_per_event": 121.32407407407408,
+        "bytes": 655150,
+        "raw_B_per_event": 312.4216666666667,
+        "events": 5400,
+        "batches": 12,
+        "elapsed_s": 0.32561829197220504,
+        "dict_bytes": 16384,
+        "level": 19
+      },
+      "500/65536/V2": {
+        "B_per_event": 123.03722222222223,
+        "bytes": 664401,
+        "raw_B_per_event": 317.5148148148148,
+        "events": 5400,
+        "batches": 12,
+        "elapsed_s": 0.16657470795325935,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/65536/V3": {
+        "B_per_event": 123.04611111111112,
+        "bytes": 664449,
+        "raw_B_per_event": 317.5148148148148,
+        "events": 5400,
+        "batches": 12,
+        "elapsed_s": 0.4244811670505442,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/65536/clean": {
+        "B_per_event": 121.93462962962963,
+        "bytes": 658447,
+        "raw_B_per_event": 317.6011111111111,
+        "events": 5400,
+        "batches": 12,
+        "elapsed_s": 0.36909699998795986,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/65536/packed": {
+        "B_per_event": 120.74148148148149,
+        "bytes": 652004,
+        "raw_B_per_event": 312.4216666666667,
+        "events": 5400,
+        "batches": 12,
+        "elapsed_s": 0.3513319579651579,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/65536/V3replay": {
+        "B_per_event": 123.04611111111112,
+        "bytes": 664449,
+        "raw_B_per_event": 317.5148148148148,
+        "events": 5400,
+        "batches": 12,
+        "elapsed_s": 0.42669979197671637,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "500/65536/replay": {
+        "B_per_event": 120.74148148148149,
+        "bytes": 652004,
+        "raw_B_per_event": 312.4216666666667,
+        "events": 5400,
+        "batches": 12,
+        "elapsed_s": 0.36874908400932327,
+        "dict_bytes": 65536,
+        "level": 19
+      },
+      "validation": {
+        "rows": {
+          "clean": {
+            "B_per_event": 127.4574074074074,
+            "bytes": 344135,
+            "raw_B_per_event": 321.1477777777778,
+            "events": 2700,
+            "batches": 27,
+            "elapsed_s": 0.24121162499068305,
+            "dict_bytes": 65536,
+            "level": 19
+          },
+          "packed": {
+            "B_per_event": 125.96148148148148,
+            "bytes": 340096,
+            "raw_B_per_event": 315.8377777777778,
+            "events": 2700,
+            "batches": 27,
+            "elapsed_s": 0.21746987500227988,
+            "dict_bytes": 65536,
+            "level": 19
+          },
+          "noef": {
+            "B_per_event": 125.97296296296297,
+            "bytes": 340127,
+            "raw_B_per_event": 316.4692592592593,
+            "events": 2700,
+            "batches": 27,
+            "elapsed_s": 0.22183824999956414,
+            "dict_bytes": 65536,
+            "level": 19
+          },
+          "trailer": {
+            "B_per_event": 125.45592592592592,
+            "bytes": 338731,
+            "raw_B_per_event": 315.8377777777778,
+            "events": 2700,
+            "batches": 27,
+            "elapsed_s": 0.22240862500621006,
+            "dict_bytes": 65536,
+            "level": 19
+          }
+        },
+        "best": "trailer"
+      }
+    }
+  }
+}

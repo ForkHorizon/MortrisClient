@@ -1,0 +1,7 @@
+{"time":"2026-10-21T07:05:10.432938+02:00","level":"INFO","msg":"retention mode","require_verified_export":false}
+{"time":"2026-10-21T07:05:10.433001+02:00","level":"INFO","msg":"gameplay results mode","imported_results_only":false}
+{"time":"2026-10-21T07:05:10.433098+02:00","level":"INFO","msg":"listening","addr":"0.0.0.0:18082"}
+{"time":"2026-10-21T07:05:10.433142+02:00","level":"WARN","msg":"disk state changed","from":"normal","to":"critical","percent_used":86.14639994783069,"free_bytes":137789313024}
+{"time":"2026-10-21T07:05:10.434791+02:00","level":"INFO","msg":"precompute: project idle in window, writing empty cache","project_id":"puzzle_gravity_test"}
+{"time":"2026-10-21T07:05:10.435041+02:00","level":"INFO","msg":"maintenance run","kind":"unactivated_cleanup","rows_affected":0,"duration_ms":2}
+{"time":"2026-10-21T07:05:10.436009+02:00","level":"INFO","msg":"maintenance run","kind":"retention_delete","rows_affected":0,"duration_ms":0}

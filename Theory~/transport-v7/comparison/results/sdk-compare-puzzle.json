@@ -1,0 +1,194 @@
+{
+ "sdk": {
+  "amplitude_b100/puzzle_clean": {
+   "runs": 5,
+   "observed_target_events": {
+    "min": 600,
+    "median": 600,
+    "max": 600
+   },
+   "all_events_observed": {
+    "min": 600,
+    "median": 600,
+    "max": 600
+   },
+   "requests": {
+    "min": 7,
+    "median": 7,
+    "max": 7
+   },
+   "body_bytes": {
+    "min": 1041999,
+    "median": 1041999,
+    "max": 1041999
+   },
+   "header_bytes": {
+    "min": 1329,
+    "median": 1329,
+    "max": 1329
+   },
+   "wire_bytes_both_directions": {
+    "min": 1043825,
+    "median": 1043825,
+    "max": 1043825
+   },
+   "body_B_per_observed_event_median": 1736.665,
+   "wire_B_per_observed_event_median": 1739.7083333333333,
+   "gzip": false,
+   "track_mean_us": {
+    "min": 51,
+    "median": 53,
+    "max": 54
+   },
+   "example_events_per_request": [
+    100,
+    100,
+    96,
+    100,
+    100,
+    96,
+    8
+   ],
+   "example_request_gaps_s": [
+    9.76,
+    9.81,
+    10.08,
+    10.16,
+    9.8,
+    30.12
+   ]
+  },
+  "amplitude_default/puzzle_clean": {
+   "runs": 5,
+   "observed_target_events": {
+    "min": 600,
+    "median": 600,
+    "max": 600
+   },
+   "all_events_observed": {
+    "min": 600,
+    "median": 600,
+    "max": 600
+   },
+   "requests": {
+    "min": 21,
+    "median": 21,
+    "max": 21
+   },
+   "body_bytes": {
+    "min": 1043007,
+    "median": 1043007,
+    "max": 1043007
+   },
+   "header_bytes": {
+    "min": 3968,
+    "median": 3969,
+    "max": 3969
+   },
+   "wire_bytes_both_directions": {
+    "min": 1048466,
+    "median": 1048467,
+    "max": 1048467
+   },
+   "body_B_per_observed_event_median": 1738.345,
+   "wire_B_per_observed_event_median": 1747.445,
+   "gzip": false,
+   "track_mean_us": {
+    "min": 50,
+    "median": 53,
+    "max": 55
+   },
+   "example_events_per_request": [
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    28,
+    30,
+    30
+   ],
+   "example_request_gaps_s": [
+    3.02,
+    3.05,
+    3.02,
+    3.02,
+    3.04,
+    3.03,
+    3.02,
+    3.04,
+    2.85,
+    3.03,
+    3.05,
+    3.02
+   ]
+  },
+  "ga_default/puzzle_clean": {
+   "runs": 5,
+   "observed_target_events": {
+    "min": 600,
+    "median": 600,
+    "max": 600
+   },
+   "all_events_observed": {
+    "min": 621,
+    "median": 621,
+    "max": 621
+   },
+   "requests": {
+    "min": 10,
+    "median": 10,
+    "max": 10
+   },
+   "body_bytes": {
+    "min": 44242,
+    "median": 44310,
+    "max": 44436
+   },
+   "header_bytes": {
+    "min": 3706,
+    "median": 3706,
+    "max": 3706
+   },
+   "wire_bytes_both_directions": {
+    "min": 48724,
+    "median": 48792,
+    "max": 48918
+   },
+   "body_B_per_observed_event_median": 73.85,
+   "wire_B_per_observed_event_median": 81.32,
+   "gzip": true,
+   "track_mean_us": {
+    "min": 24,
+    "median": 24,
+    "max": 25
+   },
+   "example_events_per_request": [
+    1,
+    36,
+    89,
+    89,
+    83,
+    88,
+    80,
+    89,
+    66
+   ],
+   "example_request_gaps_s": [
+    8.0,
+    8.97,
+    8.04,
+    8.96,
+    8.03,
+    8.96,
+    8.04,
+    8.97
+   ]
+  }
+ },
+ "mortris": {}
+}

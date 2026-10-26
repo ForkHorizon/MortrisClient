@@ -1,0 +1,168 @@
+{
+  "success": true,
+  "command": "install-modules",
+  "data": [
+    {
+      "id": "visualstudiocode",
+      "name": "Visual Studio Code",
+      "category": "Dev tools",
+      "status": "Installed",
+      "download": "225 MB",
+      "installed": "573 MB"
+    },
+    {
+      "id": "documentation",
+      "name": "Documentation",
+      "category": "Documentation",
+      "status": "Available",
+      "download": "468.16 MB",
+      "installed": "955.06 MB"
+    },
+    {
+      "id": "language-ja",
+      "name": "日本語",
+      "category": "Language packs (Preview)",
+      "status": "Available",
+      "download": "2.94 MB",
+      "installed": "2.94 MB"
+    },
+    {
+      "id": "language-zh-hans",
+      "name": "简体中文",
+      "category": "Language packs (Preview)",
+      "status": "Available",
+      "download": "2.56 MB",
+      "installed": "2.56 MB"
+    },
+    {
+      "id": "language-zh-hant",
+      "name": "繁體中文",
+      "category": "Language packs (Preview)",
+      "status": "Available",
+      "download": "2.56 MB",
+      "installed": "2.56 MB"
+    },
+    {
+      "id": "language-ko",
+      "name": "한국어",
+      "category": "Language packs (Preview)",
+      "status": "Available",
+      "download": "2.78 MB",
+      "installed": "2.78 MB"
+    },
+    {
+      "id": "android",
+      "name": "Android Build Support",
+      "category": "Platforms",
+      "status": "Installed",
+      "download": "2.1 GB",
+      "installed": "6.73 GB"
+    },
+    {
+      "id": "android-sdk-ndk-tools",
+      "name": "Android SDK & NDK Tools",
+      "category": "Platforms",
+      "status": "Installed",
+      "download": "1.54 GB",
+      "installed": "3.54 GB"
+    },
+    {
+      "id": "ios",
+      "name": "iOS Build Support",
+      "category": "Platforms",
+      "status": "Available",
+      "download": "469.81 MB",
+      "installed": "1.37 GB"
+    },
+    {
+      "id": "linux-il2cpp",
+      "name": "Linux Build Support (IL2CPP)",
+      "category": "Platforms",
+      "status": "Available",
+      "download": "81.41 MB",
+      "installed": "216.1 MB"
+    },
+    {
+      "id": "linux-mono",
+      "name": "Linux Build Support (Mono)",
+      "category": "Platforms",
+      "status": "Available",
+      "download": "82.03 MB",
+      "installed": "216.78 MB"
+    },
+    {
+      "id": "linux-server",
+      "name": "Linux Dedicated Server Build Support",
+      "category": "Platforms",
+      "status": "Available",
+      "download": "224.94 MB",
+      "installed": "604.43 MB"
+    },
+    {
+      "id": "mac-il2cpp",
+      "name": "Mac Build Support (IL2CPP)",
+      "category": "Platforms",
+      "status": "Available",
+      "download": "711.53 MB",
+      "installed": "2.17 GB"
+    },
+    {
+      "id": "mac-server",
+      "name": "Mac Dedicated Server Build Support",
+      "category": "Platforms",
+      "status": "Available",
+      "download": "1.42 GB",
+      "installed": "4.34 GB"
+    },
+    {
+      "id": "android-open-jdk-17.0.18+8",
+      "name": "OpenJDK",
+      "category": "Platforms",
+      "status": "Installed",
+      "download": "118.56 MB",
+      "installed": "245.57 MB"
+    },
+    {
+      "id": "appletv",
+      "name": "tvOS Build Support",
+      "category": "Platforms",
+      "status": "Available",
+      "download": "461.75 MB",
+      "installed": "1.35 GB"
+    },
+    {
+      "id": "visionos",
+      "name": "visionOS Build Support",
+      "category": "Platforms",
+      "status": "Available",
+      "download": "297.58 MB",
+      "installed": "872.68 MB"
+    },
+    {
+      "id": "webgl",
+      "name": "Web Build Support",
+      "category": "Platforms",
+      "status": "Available",
+      "download": "1.61 GB",
+      "installed": "5.05 GB"
+    },
+    {
+      "id": "windows-mono",
+      "name": "Windows Build Support (Mono)",
+      "category": "Platforms",
+      "status": "Available",
+      "download": "382.6 MB",
+      "installed": "991.31 MB"
+    },
+    {
+      "id": "windows-server",
+      "name": "Windows Dedicated Server Build Support",
+      "category": "Platforms",
+      "status": "Available",
+      "download": "382.3 MB",
+      "installed": "990.72 MB"
+    }
+  ],
+  "errors": [],
+  "warnings": []
+}

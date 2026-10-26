@@ -1,0 +1,238 @@
+{
+  "profile": "alt",
+  "training_seed": 202,
+  "training_samples": 162,
+  "training_raw_bytes": 5104390,
+  "catalog_bytes": 30375,
+  "catalog_sha256": "4e26032d9e1afa4189dbfe1912dc030f2c7695069736af6c129796672d73f2cd",
+  "rows": [
+    {
+      "seed": 101,
+      "variant": "raw",
+      "events": 5400,
+      "batches": 54,
+      "sha256": "ad8d55679f7b424c58955a5e37c19a5511572a3c3fb4918dc8c948c5ec965105",
+      "bytes": {
+        "v1_json": 4861795,
+        "v1_gzip1": 1285622,
+        "v4_zstd19": 683665,
+        "v6_zstd1": 847776,
+        "v6_dict16": 803559,
+        "v7_nodict": 871326,
+        "v7_dict16": 828558,
+        "v7_dict32": 827798,
+        "v7_full_ids_dict16": 915440,
+        "v1_gzip1_legacy_ids": 1140390
+      },
+      "B_event": {
+        "v1_json": 900.3324074074075,
+        "v1_gzip1": 238.07814814814816,
+        "v4_zstd19": 126.60462962962963,
+        "v6_zstd1": 156.99555555555557,
+        "v6_dict16": 148.8072222222222,
+        "v7_nodict": 161.35666666666665,
+        "v7_dict16": 153.43666666666667,
+        "v7_dict32": 153.29592592592593,
+        "v7_full_ids_dict16": 169.52592592592592,
+        "v1_gzip1_legacy_ids": 211.18333333333334
+      },
+      "alias_setup_bytes": 4644,
+      "fallback_events": 300,
+      "dict16_setup_inclusive_B_event": 162.95574074074074,
+      "python_host_encode100_ms": {
+        "p50": 1.128042,
+        "p95": 1.317334
+      }
+    },
+    {
+      "seed": 101,
+      "variant": "safe_clean",
+      "events": 5400,
+      "batches": 54,
+      "sha256": "ad8d55679f7b424c58955a5e37c19a5511572a3c3fb4918dc8c948c5ec965105",
+      "bytes": {
+        "v1_json": 4861795,
+        "v1_gzip1": 1285622,
+        "v4_zstd19": 683665,
+        "v6_zstd1": 847776,
+        "v6_dict16": 803559,
+        "v7_nodict": 871326,
+        "v7_dict16": 828558,
+        "v7_dict32": 827798,
+        "v7_full_ids_dict16": 915440,
+        "v1_gzip1_legacy_ids": 1140390
+      },
+      "B_event": {
+        "v1_json": 900.3324074074075,
+        "v1_gzip1": 238.07814814814816,
+        "v4_zstd19": 126.60462962962963,
+        "v6_zstd1": 156.99555555555557,
+        "v6_dict16": 148.8072222222222,
+        "v7_nodict": 161.35666666666665,
+        "v7_dict16": 153.43666666666667,
+        "v7_dict32": 153.29592592592593,
+        "v7_full_ids_dict16": 169.52592592592592,
+        "v1_gzip1_legacy_ids": 211.18333333333334
+      },
+      "alias_setup_bytes": 4644,
+      "fallback_events": 300,
+      "dict16_setup_inclusive_B_event": 162.95574074074074,
+      "python_host_encode100_ms": {
+        "p50": 1.14375,
+        "p95": 1.343834
+      }
+    },
+    {
+      "seed": 1729,
+      "variant": "raw",
+      "events": 5400,
+      "batches": 54,
+      "sha256": "cdd48bf1f7198eeb7d900ee3d79b46aee225240b062158a860109d280c509fae",
+      "bytes": {
+        "v1_json": 4864800,
+        "v1_gzip1": 1285002,
+        "v4_zstd19": 686459,
+        "v6_zstd1": 843155,
+        "v6_dict16": 799946,
+        "v7_nodict": 874880,
+        "v7_dict16": 833816,
+        "v7_dict32": 833829,
+        "v7_full_ids_dict16": 919273,
+        "v1_gzip1_legacy_ids": 1137922
+      },
+      "B_event": {
+        "v1_json": 900.8888888888889,
+        "v1_gzip1": 237.96333333333334,
+        "v4_zstd19": 127.12203703703703,
+        "v6_zstd1": 156.13981481481483,
+        "v6_dict16": 148.13814814814816,
+        "v7_nodict": 162.01481481481483,
+        "v7_dict16": 154.41037037037037,
+        "v7_dict32": 154.4127777777778,
+        "v7_full_ids_dict16": 170.23574074074074,
+        "v1_gzip1_legacy_ids": 210.72629629629628
+      },
+      "alias_setup_bytes": 4643,
+      "fallback_events": 400,
+      "dict16_setup_inclusive_B_event": 163.92925925925925,
+      "python_host_encode100_ms": {
+        "p50": 1.1946255,
+        "p95": 1.377542
+      }
+    },
+    {
+      "seed": 1729,
+      "variant": "safe_clean",
+      "events": 5400,
+      "batches": 54,
+      "sha256": "cdd48bf1f7198eeb7d900ee3d79b46aee225240b062158a860109d280c509fae",
+      "bytes": {
+        "v1_json": 4864800,
+        "v1_gzip1": 1285002,
+        "v4_zstd19": 686459,
+        "v6_zstd1": 843155,
+        "v6_dict16": 799946,
+        "v7_nodict": 874880,
+        "v7_dict16": 833816,
+        "v7_dict32": 833829,
+        "v7_full_ids_dict16": 919273,
+        "v1_gzip1_legacy_ids": 1137922
+      },
+      "B_event": {
+        "v1_json": 900.8888888888889,
+        "v1_gzip1": 237.96333333333334,
+        "v4_zstd19": 127.12203703703703,
+        "v6_zstd1": 156.13981481481483,
+        "v6_dict16": 148.13814814814816,
+        "v7_nodict": 162.01481481481483,
+        "v7_dict16": 154.41037037037037,
+        "v7_dict32": 154.4127777777778,
+        "v7_full_ids_dict16": 170.23574074074074,
+        "v1_gzip1_legacy_ids": 210.72629629629628
+      },
+      "alias_setup_bytes": 4643,
+      "fallback_events": 400,
+      "dict16_setup_inclusive_B_event": 163.92925925925925,
+      "python_host_encode100_ms": {
+        "p50": 1.1876250000000002,
+        "p95": 1.442542
+      }
+    },
+    {
+      "seed": 2601,
+      "variant": "raw",
+      "events": 5400,
+      "batches": 54,
+      "sha256": "7f8829960d5894d9cfa398ff2246687c12b3645892801a4a4399630d7620c5da",
+      "bytes": {
+        "v1_json": 4864096,
+        "v1_gzip1": 1289241,
+        "v4_zstd19": 691346,
+        "v6_zstd1": 855034,
+        "v6_dict16": 803161,
+        "v7_nodict": 858773,
+        "v7_dict16": 812536,
+        "v7_dict32": 809283,
+        "v7_full_ids_dict16": 902899,
+        "v1_gzip1_legacy_ids": 1141744
+      },
+      "B_event": {
+        "v1_json": 900.7585185185185,
+        "v1_gzip1": 238.74833333333333,
+        "v4_zstd19": 128.02703703703705,
+        "v6_zstd1": 158.33962962962963,
+        "v6_dict16": 148.7335185185185,
+        "v7_nodict": 159.03203703703704,
+        "v7_dict16": 150.46962962962962,
+        "v7_dict32": 149.8672222222222,
+        "v7_full_ids_dict16": 167.2035185185185,
+        "v1_gzip1_legacy_ids": 211.43407407407406
+      },
+      "alias_setup_bytes": 4652,
+      "fallback_events": 100,
+      "dict16_setup_inclusive_B_event": 159.9901851851852,
+      "python_host_encode100_ms": {
+        "p50": 1.231542,
+        "p95": 1.461208
+      }
+    },
+    {
+      "seed": 2601,
+      "variant": "safe_clean",
+      "events": 5400,
+      "batches": 54,
+      "sha256": "7f8829960d5894d9cfa398ff2246687c12b3645892801a4a4399630d7620c5da",
+      "bytes": {
+        "v1_json": 4864096,
+        "v1_gzip1": 1289241,
+        "v4_zstd19": 691346,
+        "v6_zstd1": 855034,
+        "v6_dict16": 803161,
+        "v7_nodict": 858773,
+        "v7_dict16": 812536,
+        "v7_dict32": 809283,
+        "v7_full_ids_dict16": 902899,
+        "v1_gzip1_legacy_ids": 1141744
+      },
+      "B_event": {
+        "v1_json": 900.7585185185185,
+        "v1_gzip1": 238.74833333333333,
+        "v4_zstd19": 128.02703703703705,
+        "v6_zstd1": 158.33962962962963,
+        "v6_dict16": 148.7335185185185,
+        "v7_nodict": 159.03203703703704,
+        "v7_dict16": 150.46962962962962,
+        "v7_dict32": 149.8672222222222,
+        "v7_full_ids_dict16": 167.2035185185185,
+        "v1_gzip1_legacy_ids": 211.43407407407406
+      },
+      "alias_setup_bytes": 4652,
+      "fallback_events": 100,
+      "dict16_setup_inclusive_B_event": 159.9901851851852,
+      "python_host_encode100_ms": {
+        "p50": 1.169791,
+        "p95": 1.301416
+      }
+    }
+  ]
+}

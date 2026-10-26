@@ -1,0 +1,931 @@
+{
+  "profile": "base",
+  "schema_bytes": 2272,
+  "schema_negotiation_bytes": 533,
+  "schema_id": "e4f0f8f5f929fcfe",
+  "shapes": 12,
+  "rows": {
+    "test101": {
+      "seed": 101,
+      "events": 8944,
+      "batches": 93,
+      "corpus_sha256": "aa82e762d499f6479de1ae91355030e03b53724220ebf589e454fc1766bcd1ba",
+      "V1_full_json_B_event": 834.7764982110913,
+      "V1_full_gzip1_B_event": 98.5742397137746,
+      "legacy_source_json_B_event": 784.7764982110913,
+      "V4_zstd19_B_event": 16.62097495527728,
+      "V5_stateless_B_event": 13.165809481216458,
+      "V4_V5_evidence": "full independent encode/decode rerun; exact source SHA and historical byte totals matched",
+      "V6": {
+        "columnar_raw": {
+          "body_bytes": 181241,
+          "body_B_event": 20.263975849731665,
+          "alias_request_bytes": 5556,
+          "alias_response_bytes": 252,
+          "with_alias_setup_B_event": 20.913349731663686,
+          "with_dynamic_schema_and_alias_B_event": 21.27090787119857,
+          "with_session_schema_and_alias_B_event": 22.581954382826474
+        },
+        "zstd1": {
+          "body_bytes": 168024,
+          "body_B_event": 18.78622540250447,
+          "alias_request_bytes": 5556,
+          "alias_response_bytes": 252,
+          "with_alias_setup_B_event": 19.435599284436492,
+          "with_dynamic_schema_and_alias_B_event": 19.793157423971376,
+          "with_session_schema_and_alias_B_event": 21.104203935599283
+        },
+        "zstd3": {
+          "body_bytes": 167216,
+          "body_B_event": 18.695885509838998,
+          "alias_request_bytes": 5556,
+          "alias_response_bytes": 252,
+          "with_alias_setup_B_event": 19.34525939177102,
+          "with_dynamic_schema_and_alias_B_event": 19.702817531305904,
+          "with_session_schema_and_alias_B_event": 21.01386404293381
+        },
+        "replay_zstd1": {
+          "body_bytes": 114644,
+          "body_B_event": 12.817978533094813,
+          "alias_request_bytes": 5556,
+          "alias_response_bytes": 252,
+          "with_alias_setup_B_event": 13.467352415026834,
+          "with_dynamic_schema_and_alias_B_event": 13.824910554561717,
+          "with_session_schema_and_alias_B_event": 15.135957066189624
+        },
+        "strict_V1_ids_zstd1": {
+          "body_bytes": 312753,
+          "body_B_event": 34.9679114490161,
+          "alias_request_bytes": 5556,
+          "alias_response_bytes": 252,
+          "with_alias_setup_B_event": 35.61728533094812,
+          "with_dynamic_schema_and_alias_B_event": 35.97484347048301,
+          "with_session_schema_and_alias_B_event": 37.28588998211091
+        },
+        "replay_strict_ids": {
+          "body_bytes": 259816,
+          "body_B_event": 29.049194991055455,
+          "alias_request_bytes": 5556,
+          "alias_response_bytes": 252,
+          "with_alias_setup_B_event": 29.698568872987476,
+          "with_dynamic_schema_and_alias_B_event": 30.05612701252236,
+          "with_session_schema_and_alias_B_event": 31.367173524150267
+        },
+        "explicit_masks": {
+          "body_bytes": 174024,
+          "body_B_event": 19.457066189624328,
+          "alias_request_bytes": 5556,
+          "alias_response_bytes": 252,
+          "with_alias_setup_B_event": 20.10644007155635,
+          "with_dynamic_schema_and_alias_B_event": 20.463998211091234,
+          "with_session_schema_and_alias_B_event": 21.77504472271914
+        },
+        "dynamic_schema": {
+          "body_bytes": 214177,
+          "body_B_event": 23.946444543828264,
+          "alias_request_bytes": 5556,
+          "alias_response_bytes": 252,
+          "with_alias_setup_B_event": 24.595818425760285,
+          "with_dynamic_schema_and_alias_B_event": 24.595818425760285,
+          "with_session_schema_and_alias_B_event": 26.264423076923077
+        },
+        "batch_local_aliases": {
+          "body_bytes": 167950,
+          "body_B_event": 18.777951699463326,
+          "alias_request_bytes": 19093,
+          "alias_response_bytes": 837,
+          "with_alias_setup_B_event": 21.006261180679786,
+          "with_dynamic_schema_and_alias_B_event": 21.36381932021467,
+          "with_session_schema_and_alias_B_event": 22.674865831842578
+        },
+        "lz4": {
+          "body_bytes": 169279,
+          "body_B_event": 18.926542933810374,
+          "alias_request_bytes": 5556,
+          "alias_response_bytes": 252,
+          "with_alias_setup_B_event": 19.575916815742396,
+          "with_dynamic_schema_and_alias_B_event": 19.93347495527728,
+          "with_session_schema_and_alias_B_event": 21.244521466905187
+        },
+        "replay_lz4": {
+          "body_bytes": 116141,
+          "body_B_event": 12.985353309481216,
+          "alias_request_bytes": 5556,
+          "alias_response_bytes": 252,
+          "with_alias_setup_B_event": 13.634727191413237,
+          "with_dynamic_schema_and_alias_B_event": 13.992285330948121,
+          "with_session_schema_and_alias_B_event": 15.303331842576029
+        }
+      },
+      "new_shape_events": 0,
+      "hash_occurrences": 4070,
+      "hash_binary_naive_B_event": 14.561717352415027,
+      "floats": 6105,
+      "exact_two_decimals": 0,
+      "python_timings": [
+        {
+          "n": 100,
+          "encode_ms": 3.548208,
+          "decode_ms": 4.714417
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.568375,
+          "decode_ms": 4.5135
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.558917,
+          "decode_ms": 4.667584
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.619875,
+          "decode_ms": 4.713625
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.71775,
+          "decode_ms": 4.82875
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.550583,
+          "decode_ms": 4.691
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.576583,
+          "decode_ms": 4.730084
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.568583,
+          "decode_ms": 4.652459
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.684542,
+          "decode_ms": 4.602666
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.5055,
+          "decode_ms": 4.689625
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.606042,
+          "decode_ms": 4.655291
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.647333,
+          "decode_ms": 4.653583
+        }
+      ],
+      "V5_rerun": [
+        {
+          "events": 100,
+          "frame_bytes": 1257,
+          "encode_ms": 35.27575,
+          "decode_ms": 28.996459
+        },
+        {
+          "events": 100,
+          "frame_bytes": 1193,
+          "encode_ms": 27.408292,
+          "decode_ms": 28.686792
+        },
+        {
+          "events": 100,
+          "frame_bytes": 1354,
+          "encode_ms": 26.644792,
+          "decode_ms": 29.3995
+        }
+      ],
+      "field_json_bytes": {
+        "app_version": {
+          "bytes": 196768,
+          "occurrences": 8944,
+          "B_event": 22.0
+        },
+        "build_number": {
+          "bytes": 438256,
+          "occurrences": 8944,
+          "B_event": 49.0
+        },
+        "device_class": {
+          "bytes": 300164,
+          "occurrences": 8944,
+          "B_event": 33.560375670840784
+        },
+        "event_id": {
+          "bytes": 438256,
+          "occurrences": 8944,
+          "B_event": 49.0
+        },
+        "locale": {
+          "bytes": 143104,
+          "occurrences": 8944,
+          "B_event": 16.0
+        },
+        "name": {
+          "bytes": 214544,
+          "occurrences": 8944,
+          "B_event": 23.987477638640428
+        },
+        "os_version": {
+          "bytes": 636058,
+          "occurrences": 8944,
+          "B_event": 71.11560822898032
+        },
+        "platform": {
+          "bytes": 178880,
+          "occurrences": 8944,
+          "B_event": 20.0
+        },
+        "properties.active_elapsed_ms": {
+          "bytes": 216589,
+          "occurrences": 8430,
+          "B_event": 24.216122540250446
+        },
+        "properties.ad_format": {
+          "bytes": 442,
+          "occurrences": 17,
+          "B_event": 0.04941860465116279
+        },
+        "properties.app_version": {
+          "bytes": 196768,
+          "occurrences": 8944,
+          "B_event": 22.0
+        },
+        "properties.attempt_id": {
+          "bytes": 448596,
+          "occurrences": 8796,
+          "B_event": 50.15608228980322
+        },
+        "properties.attempt_number": {
+          "bytes": 159318,
+          "occurrences": 8796,
+          "B_event": 17.81283542039356
+        },
+        "properties.block_id": {
+          "bytes": 77967,
+          "occurrences": 6105,
+          "B_event": 8.71724060822898
+        },
+        "properties.block_type": {
+          "bytes": 129375,
+          "occurrences": 6105,
+          "B_event": 14.465004472271914
+        },
+        "properties.blocks_in_wave": {
+          "bytes": 4301,
+          "occurrences": 234,
+          "B_event": 0.48088103756708406
+        },
+        "properties.cell_x": {
+          "bytes": 20350,
+          "occurrences": 2035,
+          "B_event": 2.275268336314848
+        },
+        "properties.cell_y": {
+          "bytes": 20350,
+          "occurrences": 2035,
+          "B_event": 2.275268336314848
+        },
+        "properties.city_id": {
+          "bytes": 96756,
+          "occurrences": 8796,
+          "B_event": 10.817978533094813
+        },
+        "properties.difficulty": {
+          "bytes": 1110,
+          "occurrences": 56,
+          "B_event": 0.12410554561717352
+        },
+        "properties.drag_ms": {
+          "bytes": 27002,
+          "occurrences": 2035,
+          "B_event": 3.019007155635063
+        },
+        "properties.element": {
+          "bytes": 1860,
+          "occurrences": 103,
+          "B_event": 0.20796064400715564
+        },
+        "properties.first_session": {
+          "bytes": 582,
+          "occurrences": 28,
+          "B_event": 0.06507155635062611
+        },
+        "properties.hint_type": {
+          "bytes": 1538,
+          "occurrences": 76,
+          "B_event": 0.17195885509838998
+        },
+        "properties.hints_left": {
+          "bytes": 1064,
+          "occurrences": 76,
+          "B_event": 0.11896243291592129
+        },
+        "properties.house_id": {
+          "bytes": 105552,
+          "occurrences": 8796,
+          "B_event": 11.801431127012522
+        },
+        "properties.launch_type": {
+          "bytes": 560,
+          "occurrences": 28,
+          "B_event": 0.0626118067978533
+        },
+        "properties.moves_count": {
+          "bytes": 32047,
+          "occurrences": 2035,
+          "B_event": 3.583072450805009
+        },
+        "properties.network": {
+          "bytes": 289,
+          "occurrences": 17,
+          "B_event": 0.03231216457960644
+        },
+        "properties.outcome": {
+          "bytes": 38224,
+          "occurrences": 2091,
+          "B_event": 4.273703041144902
+        },
+        "properties.placed_block_count": {
+          "bytes": 145113,
+          "occurrences": 6395,
+          "B_event": 16.224619856887298
+        },
+        "properties.placed_state_hash": {
+          "bytes": 350020,
+          "occurrences": 4070,
+          "B_event": 39.13461538461539
+        },
+        "properties.placement": {
+          "bytes": 510,
+          "occurrences": 17,
+          "B_event": 0.057021466905187834
+        },
+        "properties.release_x": {
+          "bytes": 43961,
+          "occurrences": 2035,
+          "B_event": 4.915138640429338
+        },
+        "properties.release_y": {
+          "bytes": 42980,
+          "occurrences": 2035,
+          "B_event": 4.8054561717352415
+        },
+        "properties.remaining_block_count": {
+          "bytes": 52712,
+          "occurrences": 2035,
+          "B_event": 5.89355992844365
+        },
+        "properties.rotation": {
+          "bytes": 26996,
+          "occurrences": 2035,
+          "B_event": 3.018336314847943
+        },
+        "properties.score": {
+          "bytes": 655,
+          "occurrences": 56,
+          "B_event": 0.07323345259391771
+        },
+        "properties.screen": {
+          "bytes": 1957,
+          "occurrences": 103,
+          "B_event": 0.21880590339892667
+        },
+        "properties.slot_index": {
+          "bytes": 28490,
+          "occurrences": 2035,
+          "B_event": 3.185375670840787
+        },
+        "properties.snap_distance": {
+          "bytes": 52774,
+          "occurrences": 2035,
+          "B_event": 5.900491949910554
+        },
+        "properties.target_cell_x": {
+          "bytes": 34595,
+          "occurrences": 2035,
+          "B_event": 3.8679561717352415
+        },
+        "properties.target_cell_y": {
+          "bytes": 34595,
+          "occurrences": 2035,
+          "B_event": 3.8679561717352415
+        },
+        "properties.total_block_count": {
+          "bytes": 1232,
+          "occurrences": 56,
+          "B_event": 0.13774597495527727
+        },
+        "properties.wave_attempt_id": {
+          "bytes": 492576,
+          "occurrences": 8796,
+          "B_event": 55.07334525939177
+        },
+        "properties.wave_index": {
+          "bytes": 121576,
+          "occurrences": 8684,
+          "B_event": 13.593023255813954
+        },
+        "sequence": {
+          "bytes": 127566,
+          "occurrences": 8944,
+          "B_event": 14.262745974955278
+        },
+        "session_elapsed_ms": {
+          "bytes": 238838,
+          "occurrences": 8944,
+          "B_event": 26.70371198568873
+        },
+        "session_id": {
+          "bytes": 456144,
+          "occurrences": 8944,
+          "B_event": 51.0
+        },
+        "timezone_offset_minutes": {
+          "bytes": 257879,
+          "occurrences": 8944,
+          "B_event": 28.832625223613597
+        },
+        "ts": {
+          "bytes": 160992,
+          "occurrences": 8944,
+          "B_event": 18.0
+        }
+      },
+      "V4_measured_bytes": 148658,
+      "V5_measured_bytes": 117755,
+      "sessions": 28,
+      "hash_omission_nonlossless_B_event": 14.741055456171734
+    },
+    "holdout1729": {
+      "seed": 1729,
+      "events": 6646,
+      "batches": 69,
+      "corpus_sha256": "64f70cf19d1c8707b027bb28417a351d7204e18fabdd01ce0bbdcaf747486769",
+      "V1_full_json_B_event": 833.7437556424917,
+      "V1_full_gzip1_B_event": 98.42597050857658,
+      "legacy_source_json_B_event": 783.7437556424917,
+      "V4_zstd19_B_event": 16.622630153475775,
+      "V5_stateless_B_event": 13.192446584411677,
+      "V4_V5_evidence": "full independent encode/decode rerun; exact source SHA and historical byte totals matched",
+      "V6": {
+        "columnar_raw": {
+          "body_bytes": 134012,
+          "body_B_event": 20.16430935901294,
+          "alias_request_bytes": 4780,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 20.91603972314174,
+          "with_dynamic_schema_and_alias_B_event": 21.39723141739392,
+          "with_session_schema_and_alias_B_event": 22.921005115859163
+        },
+        "zstd1": {
+          "body_bytes": 124219,
+          "body_B_event": 18.690791453505867,
+          "alias_request_bytes": 4780,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 19.442521817634667,
+          "with_dynamic_schema_and_alias_B_event": 19.92371351188685,
+          "with_session_schema_and_alias_B_event": 21.44748721035209
+        },
+        "zstd3": {
+          "body_bytes": 123612,
+          "body_B_event": 18.59945832079446,
+          "alias_request_bytes": 4780,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 19.35118868492326,
+          "with_dynamic_schema_and_alias_B_event": 19.832380379175444,
+          "with_session_schema_and_alias_B_event": 21.356154077640685
+        },
+        "replay_zstd1": {
+          "body_bytes": 84396,
+          "body_B_event": 12.698766175142943,
+          "alias_request_bytes": 4780,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 13.450496539271743,
+          "with_dynamic_schema_and_alias_B_event": 13.931688233523925,
+          "with_session_schema_and_alias_B_event": 15.455461931989166
+        },
+        "strict_V1_ids_zstd1": {
+          "body_bytes": 231636,
+          "body_B_event": 34.853445681613,
+          "alias_request_bytes": 4780,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 35.6051760457418,
+          "with_dynamic_schema_and_alias_B_event": 36.08636773999398,
+          "with_session_schema_and_alias_B_event": 37.61014143845922
+        },
+        "replay_strict_ids": {
+          "body_bytes": 192152,
+          "body_B_event": 28.91242852843816,
+          "alias_request_bytes": 4780,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 29.664158892566956,
+          "with_dynamic_schema_and_alias_B_event": 30.145350586819138,
+          "with_session_schema_and_alias_B_event": 31.669124285284383
+        },
+        "explicit_masks": {
+          "body_bytes": 128728,
+          "body_B_event": 19.36924465844117,
+          "alias_request_bytes": 4780,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 20.12097502256997,
+          "with_dynamic_schema_and_alias_B_event": 20.602166716822147,
+          "with_session_schema_and_alias_B_event": 22.125940415287392
+        },
+        "dynamic_schema": {
+          "body_bytes": 158533,
+          "body_B_event": 23.853897080950947,
+          "alias_request_bytes": 4780,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 24.605627445079747,
+          "with_dynamic_schema_and_alias_B_event": 24.605627445079747,
+          "with_session_schema_and_alias_B_event": 26.61059283779717
+        },
+        "batch_local_aliases": {
+          "body_bytes": 124166,
+          "body_B_event": 18.682816731868794,
+          "alias_request_bytes": 14263,
+          "alias_response_bytes": 621,
+          "with_alias_setup_B_event": 20.922359313873006,
+          "with_dynamic_schema_and_alias_B_event": 21.403551008125188,
+          "with_session_schema_and_alias_B_event": 22.92732470659043
+        },
+        "lz4": {
+          "body_bytes": 125238,
+          "body_B_event": 18.844116761962084,
+          "alias_request_bytes": 4780,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 19.59584712609088,
+          "with_dynamic_schema_and_alias_B_event": 20.077038820343063,
+          "with_session_schema_and_alias_B_event": 21.600812518808304
+        },
+        "replay_lz4": {
+          "body_bytes": 85664,
+          "body_B_event": 12.889557628648811,
+          "alias_request_bytes": 4780,
+          "alias_response_bytes": 216,
+          "with_alias_setup_B_event": 13.641287992777611,
+          "with_dynamic_schema_and_alias_B_event": 14.122479687029792,
+          "with_session_schema_and_alias_B_event": 15.646253385495035
+        }
+      },
+      "new_shape_events": 0,
+      "hash_occurrences": 3012,
+      "hash_binary_naive_B_event": 14.502557929581704,
+      "floats": 4518,
+      "exact_two_decimals": 0,
+      "python_timings": [
+        {
+          "n": 100,
+          "encode_ms": 3.476333,
+          "decode_ms": 4.573084
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.626084,
+          "decode_ms": 4.7065
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.576042,
+          "decode_ms": 4.80575
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.64825,
+          "decode_ms": 4.815084
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.535625,
+          "decode_ms": 4.810625
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.500459,
+          "decode_ms": 4.697584
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.608708,
+          "decode_ms": 4.73725
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.59125,
+          "decode_ms": 4.810541
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.544,
+          "decode_ms": 4.791708
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.524791,
+          "decode_ms": 4.717084
+        },
+        {
+          "n": 88,
+          "encode_ms": 3.202291,
+          "decode_ms": 4.253542
+        },
+        {
+          "n": 100,
+          "encode_ms": 3.693042,
+          "decode_ms": 4.785167
+        }
+      ],
+      "V5_rerun": [
+        {
+          "events": 100,
+          "frame_bytes": 1227,
+          "encode_ms": 25.595166,
+          "decode_ms": 29.042
+        },
+        {
+          "events": 100,
+          "frame_bytes": 1259,
+          "encode_ms": 25.997583,
+          "decode_ms": 29.701875
+        },
+        {
+          "events": 100,
+          "frame_bytes": 1269,
+          "encode_ms": 25.848458,
+          "decode_ms": 29.244708
+        }
+      ],
+      "field_json_bytes": {
+        "app_version": {
+          "bytes": 146212,
+          "occurrences": 6646,
+          "B_event": 22.0
+        },
+        "build_number": {
+          "bytes": 325654,
+          "occurrences": 6646,
+          "B_event": 49.0
+        },
+        "device_class": {
+          "bytes": 222782,
+          "occurrences": 6646,
+          "B_event": 33.521215768883536
+        },
+        "event_id": {
+          "bytes": 325654,
+          "occurrences": 6646,
+          "B_event": 49.0
+        },
+        "locale": {
+          "bytes": 106336,
+          "occurrences": 6646,
+          "B_event": 16.0
+        },
+        "name": {
+          "bytes": 159303,
+          "occurrences": 6646,
+          "B_event": 23.96975624435751
+        },
+        "os_version": {
+          "bytes": 473614,
+          "occurrences": 6646,
+          "B_event": 71.2630153475775
+        },
+        "platform": {
+          "bytes": 132920,
+          "occurrences": 6646,
+          "B_event": 20.0
+        },
+        "properties.active_elapsed_ms": {
+          "bytes": 159994,
+          "occurrences": 6241,
+          "B_event": 24.073728558531446
+        },
+        "properties.ad_format": {
+          "bytes": 364,
+          "occurrences": 14,
+          "B_event": 0.0547697863376467
+        },
+        "properties.app_version": {
+          "bytes": 146212,
+          "occurrences": 6646,
+          "B_event": 22.0
+        },
+        "properties.attempt_id": {
+          "bytes": 333030,
+          "occurrences": 6530,
+          "B_event": 50.109840505567256
+        },
+        "properties.attempt_number": {
+          "bytes": 117703,
+          "occurrences": 6530,
+          "B_event": 17.7103520914836
+        },
+        "properties.block_id": {
+          "bytes": 57681,
+          "occurrences": 4518,
+          "B_event": 8.67905507071923
+        },
+        "properties.block_type": {
+          "bytes": 95670,
+          "occurrences": 4518,
+          "B_event": 14.395124887150166
+        },
+        "properties.blocks_in_wave": {
+          "bytes": 3228,
+          "occurrences": 175,
+          "B_event": 0.48570568763165817
+        },
+        "properties.cell_x": {
+          "bytes": 15060,
+          "occurrences": 1506,
+          "B_event": 2.2660246764971412
+        },
+        "properties.cell_y": {
+          "bytes": 15060,
+          "occurrences": 1506,
+          "B_event": 2.2660246764971412
+        },
+        "properties.city_id": {
+          "bytes": 71830,
+          "occurrences": 6530,
+          "B_event": 10.80800481492627
+        },
+        "properties.difficulty": {
+          "bytes": 840,
+          "occurrences": 42,
+          "B_event": 0.12639181462533855
+        },
+        "properties.drag_ms": {
+          "bytes": 19936,
+          "occurrences": 1506,
+          "B_event": 2.999699067108035
+        },
+        "properties.element": {
+          "bytes": 1383,
+          "occurrences": 77,
+          "B_event": 0.20809509479386096
+        },
+        "properties.first_session": {
+          "bytes": 519,
+          "occurrences": 25,
+          "B_event": 0.07809208546494131
+        },
+        "properties.hint_type": {
+          "bytes": 1486,
+          "occurrences": 72,
+          "B_event": 0.2235931387300632
+        },
+        "properties.hints_left": {
+          "bytes": 1008,
+          "occurrences": 72,
+          "B_event": 0.15167017755040627
+        },
+        "properties.house_id": {
+          "bytes": 78360,
+          "occurrences": 6530,
+          "B_event": 11.790550707192295
+        },
+        "properties.launch_type": {
+          "bytes": 500,
+          "occurrences": 25,
+          "B_event": 0.07523322299127294
+        },
+        "properties.moves_count": {
+          "bytes": 23708,
+          "occurrences": 1506,
+          "B_event": 3.567258501354198
+        },
+        "properties.network": {
+          "bytes": 238,
+          "occurrences": 14,
+          "B_event": 0.03581101414384592
+        },
+        "properties.outcome": {
+          "bytes": 28276,
+          "occurrences": 1548,
+          "B_event": 4.254589226602468
+        },
+        "properties.placed_block_count": {
+          "bytes": 107417,
+          "occurrences": 4735,
+          "B_event": 16.162654228107133
+        },
+        "properties.placed_state_hash": {
+          "bytes": 259032,
+          "occurrences": 3012,
+          "B_event": 38.97562443575083
+        },
+        "properties.placement": {
+          "bytes": 420,
+          "occurrences": 14,
+          "B_event": 0.06319590731266927
+        },
+        "properties.release_x": {
+          "bytes": 32531,
+          "occurrences": 1506,
+          "B_event": 4.8948239542582
+        },
+        "properties.release_y": {
+          "bytes": 31706,
+          "occurrences": 1506,
+          "B_event": 4.7706891363226
+        },
+        "properties.remaining_block_count": {
+          "bytes": 39019,
+          "occurrences": 1506,
+          "B_event": 5.871050255792958
+        },
+        "properties.rotation": {
+          "bytes": 19925,
+          "occurrences": 1506,
+          "B_event": 2.998043936202227
+        },
+        "properties.score": {
+          "bytes": 498,
+          "occurrences": 42,
+          "B_event": 0.07493229009930785
+        },
+        "properties.screen": {
+          "bytes": 1463,
+          "occurrences": 77,
+          "B_event": 0.22013241047246465
+        },
+        "properties.slot_index": {
+          "bytes": 21084,
+          "occurrences": 1506,
+          "B_event": 3.172434547095998
+        },
+        "properties.snap_distance": {
+          "bytes": 38999,
+          "occurrences": 1506,
+          "B_event": 5.868040926873308
+        },
+        "properties.target_cell_x": {
+          "bytes": 25602,
+          "occurrences": 1506,
+          "B_event": 3.85224195004514
+        },
+        "properties.target_cell_y": {
+          "bytes": 25602,
+          "occurrences": 1506,
+          "B_event": 3.85224195004514
+        },
+        "properties.total_block_count": {
+          "bytes": 924,
+          "occurrences": 42,
+          "B_event": 0.1390309960878724
+        },
+        "properties.wave_attempt_id": {
+          "bytes": 365680,
+          "occurrences": 6530,
+          "B_event": 55.02256996689738
+        },
+        "properties.wave_index": {
+          "bytes": 90244,
+          "occurrences": 6446,
+          "B_event": 13.578693951248871
+        },
+        "sequence": {
+          "bytes": 93475,
+          "occurrences": 6646,
+          "B_event": 14.064851038218478
+        },
+        "session_elapsed_ms": {
+          "bytes": 177105,
+          "occurrences": 6646,
+          "B_event": 26.64835991573879
+        },
+        "session_id": {
+          "bytes": 338946,
+          "occurrences": 6646,
+          "B_event": 51.0
+        },
+        "timezone_offset_minutes": {
+          "bytes": 191450,
+          "occurrences": 6646,
+          "B_event": 28.806801083358412
+        },
+        "ts": {
+          "bytes": 119628,
+          "occurrences": 6646,
+          "B_event": 18.0
+        }
+      },
+      "V4_measured_bytes": 110474,
+      "V5_measured_bytes": 87677,
+      "sessions": 25,
+      "hash_omission_nonlossless_B_event": 14.5922359313873
+    }
+  }
+}

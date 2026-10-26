@@ -1,0 +1,88 @@
+{
+ "runs": {
+  "amplitude_default": 5,
+  "base_map": 5,
+  "base_parse": 5,
+  "ga_default": 5
+ },
+ "median_raw": {
+  "amplitude_default": {
+   "init_cpu_ms": 2,
+   "init_alloc": 65632,
+   "replay_cpu_ms": 1975,
+   "replay_alloc": 51935104,
+   "replay_gc": 12,
+   "total_cpu_ms": 1982,
+   "total_alloc": 52144000,
+   "total_gc": 12,
+   "events": 600
+  },
+  "base_map": {
+   "init_cpu_ms": 0,
+   "init_alloc": 0,
+   "replay_cpu_ms": 378,
+   "replay_alloc": 2905408,
+   "replay_gc": 1,
+   "total_cpu_ms": 378,
+   "total_alloc": 2905408,
+   "total_gc": 1,
+   "events": 600
+  },
+  "base_parse": {
+   "init_cpu_ms": 0,
+   "init_alloc": 0,
+   "replay_cpu_ms": 436,
+   "replay_alloc": 2354416,
+   "replay_gc": 1,
+   "total_cpu_ms": 436,
+   "total_alloc": 2354416,
+   "total_gc": 1,
+   "events": 600
+  },
+  "ga_default": {
+   "init_cpu_ms": 76,
+   "init_alloc": 291168,
+   "replay_cpu_ms": 742,
+   "replay_alloc": 30176928,
+   "replay_gc": 11,
+   "total_cpu_ms": 777,
+   "total_alloc": 31397568,
+   "total_gc": 12,
+   "events": 600
+  }
+ },
+ "per_event_net": {
+  "amplitude_default": {
+   "init_cpu_ms_net": 2,
+   "init_alloc_KB_net": 64.09375,
+   "replay_cpu_ms_net": 1546,
+   "cpu_us_per_event_net": 2576.6666666666665,
+   "alloc_B_per_event_net": 82982.64,
+   "gc_count_net": 11,
+   "min_max_cpu_ms_sdk": [
+    1658,
+    2391
+   ],
+   "min_max_alloc_sdk": [
+    52000640,
+    52360192
+   ]
+  },
+  "ga_default": {
+   "init_cpu_ms_net": 76,
+   "init_alloc_KB_net": 284.34375,
+   "replay_cpu_ms_net": 399,
+   "cpu_us_per_event_net": 665.0,
+   "alloc_B_per_event_net": 47486.933333333334,
+   "gc_count_net": 11,
+   "min_max_cpu_ms_sdk": [
+    626,
+    1012
+   ],
+   "min_max_alloc_sdk": [
+    31253840,
+    31635136
+   ]
+  }
+ }
+}

@@ -1,0 +1,51 @@
+[
+  {
+    "raw_bytes": 1,
+    "original_window": 1024,
+    "synthesized_window": 1048576,
+    "wire_bytes_saved": 2,
+    "roundtrip": true
+  },
+  {
+    "raw_bytes": 128,
+    "original_window": 1024,
+    "synthesized_window": 1048576,
+    "wire_bytes_saved": 2,
+    "roundtrip": true
+  },
+  {
+    "raw_bytes": 1559,
+    "original_window": 2048,
+    "synthesized_window": 1048576,
+    "wire_bytes_saved": 2,
+    "roundtrip": true
+  },
+  {
+    "raw_bytes": 10000,
+    "original_window": 16384,
+    "synthesized_window": 1048576,
+    "wire_bytes_saved": 2,
+    "roundtrip": true
+  },
+  {
+    "raw_bytes": 100000,
+    "original_window": 262144,
+    "synthesized_window": 1048576,
+    "wire_bytes_saved": 2,
+    "roundtrip": true
+  },
+  {
+    "raw_bytes": 262144,
+    "original_window": 524288,
+    "synthesized_window": 1048576,
+    "wire_bytes_saved": 2,
+    "roundtrip": true
+  },
+  {
+    "raw_bytes": 1048576,
+    "original_window": 1048576,
+    "synthesized_window": 1048576,
+    "wire_bytes_saved": 2,
+    "roundtrip": true
+  }
+]

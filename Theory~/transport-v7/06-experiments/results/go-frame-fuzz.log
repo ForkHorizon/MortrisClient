@@ -1,0 +1,8 @@
+fuzz: elapsed: 0s, gathering baseline coverage: 0/39 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 39/39 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 176759 (58899/sec), new interesting: 5 (total: 44)
+fuzz: elapsed: 6s, execs: 364809 (62683/sec), new interesting: 5 (total: 44)
+fuzz: elapsed: 9s, execs: 553875 (63042/sec), new interesting: 5 (total: 44)
+fuzz: elapsed: 10s, execs: 616422 (57187/sec), new interesting: 5 (total: 44)
+PASS
+ok  	transport7-columns-check	10.371s

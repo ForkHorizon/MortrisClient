@@ -1,0 +1,7 @@
+host_load_at_start=6.61
+host_load_at_end=5.41
+--------- beginning of main
+10-21 04:28:24.520  4012  4052 I BENCH   : replay_done sdk=firebase events=2000 track_mean_us=3 track_max_us=181 wall_ms=20
+10-21 04:28:54.521  4012  4052 I BENCH   : perf init_cpu_ms=4 init_alloc=229760 replay_cpu_ms=287 replay_alloc=16617024 replay_gc=0 total_cpu_ms=1135 total_alloc=16846400 total_gc=1 events=2000
+10-21 04:28:54.527  4012  4052 I BENCH   : perf2 events=2000 cpu_total_ms=1139 cpu_replay_ms=287 alloc_replay=16617024 alloc_total=16846400 gc_replay=0 lat_p50_us=2 lat_p95_us=12 lat_p99_us=34 lat_max_us=181 pss_start_kb=20477 pss_peak_kb=51911 java_peak_kb=23515 native_peak_kb=16298 calib0=7.455 calib_best=1.587 calib_end=3.098 calibs=2000:1.587,
+10-21 04:28:54.527  4012  4052 I BENCH   : tail_done

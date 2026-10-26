@@ -1,0 +1,56 @@
+[
+ {
+  "event_type": "detail_taken",
+  "timestamp": 1792594494281,
+  "user_id": "u-bench-1",
+  "device_id": "38299416-7ac0-4c3d-ac4d-730909561158R",
+  "session_id": 1792594494170,
+  "uuid": "c257bf66-dad1-4207-a3be-19bd8b4d3c97",
+  "sequence_number": 2001,
+  "version_name": "1",
+  "os_name": "android",
+  "os_version": "16",
+  "api_level": 36,
+  "device_brand": "Nothing",
+  "device_manufacturer": "Nothing",
+  "device_model": "A142",
+  "carrier": "vodafone ES",
+  "country": "ES",
+  "language": "en",
+  "platform": "Android",
+  "library": {
+   "name": "amplitude-android",
+   "version": "2.40.0"
+  },
+  "api_properties": {
+   "androidADID": "8b52a322-ac8b-4197-a267-b8d88a28947e",
+   "limit_ad_tracking": false,
+   "gps_enabled": true
+  },
+  "event_properties": {
+   "origin": "player",
+   "city_id": 2,
+   "block_id": 21,
+   "house_id": 3,
+   "attempt_id": "4499c100-4f11-471b-b2fd-539e3b9a0966",
+   "wave_index": 0,
+   "app_version": "1.1.14",
+   "house_run_id": "447d758f-8ef2-46c9-9f39-5640948b44cb",
+   "interaction_id": "1d6e838a-60cd-4888-9134-89164a8ca8fc",
+   "schema_version": 3,
+   "progress_origin": "natural",
+   "wave_attempt_id": "4499c100-4f11-471b-b2fd-539e3b9a0966",
+   "active_elapsed_ms": 67846,
+   "details_remaining": 9,
+   "house_event_index": 59,
+   "interaction_index": 86,
+   "inventory_group_id": "3:21",
+   "placed_block_count": 13,
+   "attempt_event_index": 59
+  },
+  "user_properties": {},
+  "groups": {},
+  "group_properties": {},
+  "event_id": 2001
+ }
+]

@@ -1,0 +1,1 @@
+{"t": 1792558077.736852, "host": "graph.facebook.com", "method": "POST", "path": "/v16.0/123456789012345/activities", "hdr": 231, "body": 7051, "decoded": 112246, "enc": "gzip", "ctype": "application/x-www-form-urlencoded"}

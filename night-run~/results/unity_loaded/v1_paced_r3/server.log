@@ -1,0 +1,21 @@
+{"time":"2026-10-21T05:19:30.008966+02:00","level":"INFO","msg":"retention mode","require_verified_export":false}
+{"time":"2026-10-21T05:19:30.009037+02:00","level":"INFO","msg":"gameplay results mode","imported_results_only":false}
+{"time":"2026-10-21T05:19:30.009105+02:00","level":"INFO","msg":"listening","addr":"0.0.0.0:18082"}
+{"time":"2026-10-21T05:19:30.009217+02:00","level":"WARN","msg":"disk state changed","from":"normal","to":"critical","percent_used":85.53203010673397,"free_bytes":143899897856}
+{"time":"2026-10-21T05:19:30.011917+02:00","level":"INFO","msg":"precompute: project idle in window, writing empty cache","project_id":"puzzle_gravity_test"}
+{"time":"2026-10-21T05:19:30.012778+02:00","level":"INFO","msg":"maintenance run","kind":"unactivated_cleanup","rows_affected":0,"duration_ms":3}
+{"time":"2026-10-21T05:19:30.014747+02:00","level":"INFO","msg":"maintenance run","kind":"retention_delete","rows_affected":0,"duration_ms":1}
+{"time":"2026-10-21T05:19:41.501935+02:00","level":"INFO","msg":"request","request_id":"c54a12c4164149ce","method":"POST","route":"POST /v1/installs/register","status":200,"latency_ms":23}
+{"time":"2026-10-21T05:19:42.039128+02:00","level":"INFO","msg":"request","request_id":"0093144bd76998e6","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":48,"accepted":64,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T05:19:45.489377+02:00","level":"INFO","msg":"request","request_id":"2c21c092aab2e125","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":62,"accepted":100,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T05:19:49.27668+02:00","level":"INFO","msg":"request","request_id":"26c6d9082e723511","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":57,"accepted":100,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T05:19:52.668512+02:00","level":"INFO","msg":"request","request_id":"8347d9095ad541fe","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":62,"rejected":0,"accepted":100,"duplicates":0}
+{"time":"2026-10-21T05:19:56.003631+02:00","level":"INFO","msg":"request","request_id":"cd459a94675f4b73","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":65,"accepted":100,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T05:19:59.31628+02:00","level":"INFO","msg":"request","request_id":"6bbf8dd105a951a1","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":45,"accepted":100,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T05:20:02.709851+02:00","level":"INFO","msg":"request","request_id":"78aa5b1154d68976","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":44,"accepted":100,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T05:20:06.047533+02:00","level":"INFO","msg":"request","request_id":"0741ea9b048dec0f","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":42,"accepted":100,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T05:20:09.640041+02:00","level":"INFO","msg":"request","request_id":"1d9db9eff0ff16fc","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":34,"duplicates":0,"rejected":0,"accepted":100}
+{"time":"2026-10-21T05:20:12.961925+02:00","level":"INFO","msg":"request","request_id":"c7f0cab47d798b3d","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":32,"accepted":100,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T05:20:16.309262+02:00","level":"INFO","msg":"request","request_id":"93a756db8a240db0","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":38,"accepted":100,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T05:20:19.638494+02:00","level":"INFO","msg":"request","request_id":"cba829ff75791124","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":35,"accepted":100,"duplicates":0,"rejected":0}
+{"time":"2026-10-21T05:20:20.847692+02:00","level":"INFO","msg":"request","request_id":"e8e7c6e578e3af45","method":"POST","route":"POST /v1/events/batch","status":200,"latency_ms":11,"duplicates":0,"rejected":0,"accepted":36}

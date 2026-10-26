@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><LangVersion>9.0</LangVersion><Nullable>disable</Nullable><Optimize>true</Optimize>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems><NoWarn>CS0649;CS0169;CS8632</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../Runtime/Internal/Transport/*.cs" Link="T/%(Filename)%(Extension)" />
+    <Compile Include="../../Runtime/Internal/AndroidQueueBridge.cs" Link="T/AndroidQueueBridge.cs" />
+    <Compile Include="../../Native~/transport-tests/tests/FakeQueue.cs" Link="FakeQueue.cs" />
+    <Compile Include="../../Native~/transport-tests/tests/TestSupport.cs" Link="TestSupport.cs" />
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+</Project>

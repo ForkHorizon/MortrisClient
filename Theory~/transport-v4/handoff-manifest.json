@@ -1,0 +1,9 @@
+{
+  "archive": "evidence.zip",
+  "bytes": 1725189,
+  "sha256": "e6cfd6bd0a556096f7b7cfd3e5e372fd9901617dc11e476d1e7e7e9515361358",
+  "files": 314,
+  "all_original_inputs_present": 181,
+  "zip_integrity": "OK",
+  "layout": "Extract into empty directory; Theory~/transport-v2,transport-v3,transport-v4 and SDK sources retained. Create .venv in V4/06-experiments and follow README."
+}

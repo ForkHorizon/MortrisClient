@@ -1,0 +1,101 @@
+{
+  "status": "MODELED_NOT_MEASURED",
+  "events": 600,
+  "replay_sha256": "b4b6f7ec53e307142cc916357294fba20b4ae5349274675993690286b06cfd26",
+  "hyperkit_version": "1.5.14",
+  "source_sha256": {
+    "Runtime/SDK/Gamestoty/Plugins/Android/src/Gamestoty.java": "d5b5bad51fbe33e32fac2a02b646ab0044a6ea3ca921b0611a508a2200a9a088",
+    "Runtime/Services/Analytics/Handlers/FirebaseEventBuilder.cs": "715946841e5b546a1d5ef2da44982a5a92c98eae79781d25e8cab771bd9f1156"
+  },
+  "gamestoty_basic_event_JSON_bytes": [
+    383,
+    551
+  ],
+  "firebase_proxy_warning": "Assumed protobuf+gzip; not actual SDK schema/metadata, not an empirical bound.",
+  "firebase_proxy": [
+    {
+      "truncated_strings_and_fields": false,
+      "batch": 10,
+      "assumed_metadata_bytes": 128,
+      "raw_B_event": 578.435,
+      "assumed_gzip_B_event": 116.51166666666667
+    },
+    {
+      "truncated_strings_and_fields": false,
+      "batch": 10,
+      "assumed_metadata_bytes": 512,
+      "raw_B_event": 616.835,
+      "assumed_gzip_B_event": 158.67833333333334
+    },
+    {
+      "truncated_strings_and_fields": false,
+      "batch": 10,
+      "assumed_metadata_bytes": 2048,
+      "raw_B_event": 770.435,
+      "assumed_gzip_B_event": 317.65833333333336
+    },
+    {
+      "truncated_strings_and_fields": false,
+      "batch": 100,
+      "assumed_metadata_bytes": 128,
+      "raw_B_event": 566.645,
+      "assumed_gzip_B_event": 45.69833333333333
+    },
+    {
+      "truncated_strings_and_fields": false,
+      "batch": 100,
+      "assumed_metadata_bytes": 512,
+      "raw_B_event": 570.485,
+      "assumed_gzip_B_event": 50.005
+    },
+    {
+      "truncated_strings_and_fields": false,
+      "batch": 100,
+      "assumed_metadata_bytes": 2048,
+      "raw_B_event": 585.845,
+      "assumed_gzip_B_event": 66.54333333333334
+    },
+    {
+      "truncated_strings_and_fields": true,
+      "batch": 10,
+      "assumed_metadata_bytes": 128,
+      "raw_B_event": 565.8916666666667,
+      "assumed_gzip_B_event": 114.95166666666667
+    },
+    {
+      "truncated_strings_and_fields": true,
+      "batch": 10,
+      "assumed_metadata_bytes": 512,
+      "raw_B_event": 604.2916666666666,
+      "assumed_gzip_B_event": 157.04
+    },
+    {
+      "truncated_strings_and_fields": true,
+      "batch": 10,
+      "assumed_metadata_bytes": 2048,
+      "raw_B_event": 757.8916666666667,
+      "assumed_gzip_B_event": 315.9166666666667
+    },
+    {
+      "truncated_strings_and_fields": true,
+      "batch": 100,
+      "assumed_metadata_bytes": 128,
+      "raw_B_event": 554.1016666666667,
+      "assumed_gzip_B_event": 44.62833333333333
+    },
+    {
+      "truncated_strings_and_fields": true,
+      "batch": 100,
+      "assumed_metadata_bytes": 512,
+      "raw_B_event": 557.9416666666667,
+      "assumed_gzip_B_event": 48.915
+    },
+    {
+      "truncated_strings_and_fields": true,
+      "batch": 100,
+      "assumed_metadata_bytes": 2048,
+      "raw_B_event": 573.3016666666666,
+      "assumed_gzip_B_event": 65.45333333333333
+    }
+  ]
+}

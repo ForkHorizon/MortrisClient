@@ -1,0 +1,9 @@
+catalog 85da3175fb9ddb38 imported (11528 bytes)
+dictionary 933536cf9fae4ac0 imported (16384 bytes)
+/var/folders/zs/0wxbbps90t9c_pc2pxdfkhfc0000gn/T/tmp.oLmQvawpIB/config.txt: 1 file pushed, 0 skipped. 0.2 MB/s (27 bytes in 0.000s)
+/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/work/replay_real_20k.jsonl: 1 file pushed, 0 skipped. 1254.7 MB/s (14935898 bytes in 0.011s)
+V7PERF loaded events=1200 mode=v7
+V7PERF threads mode=v7 replay_ms=4278 top=8684:Thread-9=397;7898:UnityMain=88;7942:UnityGfxDeviceW=51;7879:HeapTaskDaemon=34;7878:Jit thread pool=16;7940:mali-event-hand=11;7883:binder:7870_1=5;8500:Thread-6=5;7918:Background Job.=5;8660:Thread-7=4;8665:UnityGfxDeviceW=2;7941:mali-mem-purge=2;7916:Job.Worker 1=2;7914:GC Finalizer=2;7906:binder:7870_4=2;8491:Loading.Preload=1;8678:Filter1=1;8683:UnityMain=1;7949:binder:7870_1=1;8685:IL2CPP Threadpo=1
+V7PERF result mode=v7 events=1200 accepted=1200 handoff_full_retries=86 other_results=0 replay_ms=4278 drain_ms=4260 cpu_ticks_replay=631 cpu_ticks_drain=479 cpu_ticks_total=1116 track_us_p50=266.6 track_us_p95=1409.2 track_us_p99=4550.5 track_us_max=9053.9 frame_ms_p50=3.13 frame_ms_p99=25.64 frame_ms_max=32.38 gc0=46 gc1=46 gc2=46 mono_start_kb=4484 mono_end_replay_kb=4984 mono_peak_kb=0 unity_total_start_kb=57036 unity_total_end_kb=58270 pss_start_kb=353375 pss_peak_kb=374246 heap_start_kb=4124 calib_start=132.589 calibs=
+host_load_start=10.56 20.25 17.26 host_load_end=4.89 11.32 14.02
+db_events=1200 packets_v2=12 batches_v1=0

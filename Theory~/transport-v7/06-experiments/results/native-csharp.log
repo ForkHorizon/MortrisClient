@@ -1,0 +1,41 @@
+[
+  {
+    "events": 100,
+    "iterations": 1000,
+    "raw_bytes": 3353,
+    "compressed_bytes": 2968,
+    "gc_bytes": 0,
+    "mean_ms": 0.136251125,
+    "runtime": ".NET 10.0.5",
+    "platform": "macOS 27.0.1",
+    "scope": "typed column packing + reused native zstd; excludes ingress, framing, Unity, JNI and HTTP",
+    "fixture": "native-base100",
+    "python_roundtrip": true
+  },
+  {
+    "events": 3,
+    "iterations": 1000,
+    "raw_bytes": 235,
+    "compressed_bytes": 172,
+    "gc_bytes": 0,
+    "mean_ms": 0.008039,
+    "runtime": ".NET 10.0.5",
+    "platform": "macOS 27.0.1",
+    "scope": "typed column packing + reused native zstd; excludes ingress, framing, Unity, JNI and HTTP",
+    "fixture": "native-edges",
+    "python_roundtrip": true
+  },
+  {
+    "events": 500,
+    "iterations": 1000,
+    "raw_bytes": 16605,
+    "compressed_bytes": 1732,
+    "gc_bytes": 0,
+    "mean_ms": 0.18477266599999997,
+    "runtime": ".NET 10.0.5",
+    "platform": "macOS 27.0.1",
+    "scope": "typed column packing + reused native zstd; excludes ingress, framing, Unity, JNI and HTTP",
+    "fixture": "native-500",
+    "python_roundtrip": true
+  }
+]

@@ -1,0 +1,38 @@
+{
+  "base": {
+    "dataset": "validation303",
+    "full_asset_bytes": 33998,
+    "no_ema_asset_bytes": 29045,
+    "full_B_per_event": 13.341236783082346,
+    "no_ema_B_per_event": 13.478372316565203,
+    "no_ema_raw_prior_bytes": 78105,
+    "not_primary_holdout_selection": true
+  },
+  "rich": {
+    "dataset": "validation303",
+    "full_asset_bytes": 50671,
+    "no_ema_asset_bytes": 44373,
+    "full_B_per_event": 31.87106135986733,
+    "no_ema_B_per_event": 32.02321724709785,
+    "no_ema_raw_prior_bytes": 86450,
+    "not_primary_holdout_selection": true
+  },
+  "alt": {
+    "dataset": "validation303",
+    "full_asset_bytes": 72551,
+    "no_ema_asset_bytes": 66322,
+    "full_B_per_event": 120.88,
+    "no_ema_B_per_event": 120.94592592592592,
+    "no_ema_raw_prior_bytes": 123992,
+    "not_primary_holdout_selection": true
+  },
+  "drift": {
+    "dataset": "validation303",
+    "full_asset_bytes": 26703,
+    "no_ema_asset_bytes": 26270,
+    "full_B_per_event": 26.513333333333332,
+    "no_ema_B_per_event": 26.875,
+    "no_ema_raw_prior_bytes": 98220,
+    "not_primary_holdout_selection": true
+  }
+}

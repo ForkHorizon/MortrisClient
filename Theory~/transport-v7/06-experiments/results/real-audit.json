@@ -1,0 +1,58 @@
+{
+  "source": "production DB rows; natural/player labels are producer assertions, not independent human-traffic proof",
+  "received_day_utc": "2026-10-16",
+  "dump_sha256": "abf84a30a9fda133d89c98fca91d256156f4c3fd6960a35312d86de5b13e68ec",
+  "dump_compressed_bytes": 67914154,
+  "counts": {
+    "events": 524934,
+    "wave_alias_present": 524934,
+    "wave_alias_mismatch": 0,
+    "hash_present": 286265,
+    "hash_with_csv": 286265,
+    "hash_mismatch": 0,
+    "truncated": 0,
+    "interaction_present": 509790,
+    "pair_collision": 0,
+    "id_has_multiple_pairs": 0
+  },
+  "installs": 162,
+  "sessions": 564,
+  "event_names": {
+    "attempt_recovered": 306,
+    "state_checkpoint": 114629,
+    "detail_taken": 114333,
+    "detail_released": 114331,
+    "placement_resolved": 114328,
+    "detail_returned": 52489,
+    "wave_completed": 2900,
+    "attempt_closed": 2949,
+    "wave_attempt_started": 2985,
+    "house_completed": 1039,
+    "app_backgrounded": 880,
+    "app_foregrounded": 591,
+    "hint_used": 534,
+    "house_run_started": 1109,
+    "memory_sample": 1326,
+    "interaction_abandoned": 168,
+    "device_profile": 37
+  },
+  "builds": [
+    {
+      "app_version": "1.1.14",
+      "build_number": "006a52326c444563859aa0d1fd2973e6",
+      "events": 522768
+    },
+    {
+      "app_version": "1.1.13",
+      "build_number": "af55e89b0e8f4c14bfe6462cba6f07e8",
+      "events": 2166
+    }
+  ],
+  "sample_limit_per_install": 600,
+  "train_installs": 38,
+  "holdout_installs": 124,
+  "train_events": 19882,
+  "holdout_events": 63943,
+  "split": "sha256(install_id) % 5 == 0 for training; all other installs held out; first600 per install",
+  "wire_reconstruction": "DB jsonb reorders properties; HTTP boundaries, exact JSON lexemes and SDK envelope not stored. Reconstructed 100-event body is not original HTTP capture."
+}

@@ -20,17 +20,17 @@ W = R + 'AnalyticsPersistenceWorker.cs'
 patch(W, 'if (Interlocked.CompareExchange(ref _isScheduled, 1, 0) == 0)\n                ThreadPool', 'V7Prof.Add(V7Prof.ScheduleCalls, 1);\n            if (Interlocked.CompareExchange(ref _isScheduled, 1, 0) == 0)\n                ThreadPool')
 patch(W, 'private void PersistPending()\n        {', 'private void PersistPending()\n        { V7Prof.Add(V7Prof.PersistCalls, 1); var pp = V7Prof.Begin(); try { PersistPendingInner(); } finally { V7Prof.End(V7Prof.PersistTotal, pp); } }\n\n        private void PersistPendingInner()\n        {')
 patch(W, 'var frames = _buffer.Drain(out var count);', 'var ps = V7Prof.Begin(); var frames = _buffer.Drain(out var count); V7Prof.End(V7Prof.Snapshot, ps);')
-patch(W, '                _bridge.EnqueueRecords(frames, count, _options.DurableEventLimit, _options.DurableByteLimit, (long)_options.MaxEventAge.TotalMilliseconds);',
- '                V7Prof.Add(V7Prof.PersistEvents, count);\n                _bridge.EnqueueRecords(frames, count, _options.DurableEventLimit, _options.DurableByteLimit, (long)_options.MaxEventAge.TotalMilliseconds);')
+patch(W, '                _bridge.EnqueueRecords(frames, count, _options.DurableEventLimit, _options.DurableByteLimit, (long)_options.MaxEventAge.TotalMilliseconds, counters);',
+ '                V7Prof.Add(V7Prof.PersistEvents, count);\n                _bridge.EnqueueRecords(frames, count, _options.DurableEventLimit, _options.DurableByteLimit, (long)_options.MaxEventAge.TotalMilliseconds, counters);')
 patch(W, 'var upload = background\n                    ? _uploader.Flush(_bridge, true, _options.BackgroundUploadTimeout)\n                    : _uploader.Flush(_bridge, HasFlushWaiters());', 'V7Prof.Add(V7Prof.FlushCalls, 1); var pf = V7Prof.Begin(); var upload = background ? _uploader.Flush(_bridge, true, _options.BackgroundUploadTimeout) : _uploader.Flush(_bridge, HasFlushWaiters()); V7Prof.End(V7Prof.UploaderFlush, pf);')
 # JNI bridge
 B = R + 'AndroidQueueBridge.cs'
 patch(B, '''_pending = _lowLevel
-                        ? EnqueueLowLevel(frames, count, eventLimit, byteLimit, maxAgeMilliseconds)
-                        : _queue.Call<int>("enqueueRecords", frames, count, eventLimit, byteLimit, maxAgeMilliseconds);''',
+                        ? EnqueueLowLevel(frames, count, eventLimit, byteLimit, maxAgeMilliseconds, counters)
+                        : _queue.Call<int>("enqueueRecords", frames, count, eventLimit, byteLimit, maxAgeMilliseconds, counters ?? "");''',
  '''_pending = V7Prof.Timed(V7Prof.JniEnqueueBatch, () => _lowLevel
-                        ? EnqueueLowLevel(frames, count, eventLimit, byteLimit, maxAgeMilliseconds)
-                        : _queue.Call<int>("enqueueRecords", frames, count, eventLimit, byteLimit, maxAgeMilliseconds));''')
+                        ? EnqueueLowLevel(frames, count, eventLimit, byteLimit, maxAgeMilliseconds, counters)
+                        : _queue.Call<int>("enqueueRecords", frames, count, eventLimit, byteLimit, maxAgeMilliseconds, counters ?? ""));''')
 patch(B, 'using (var result = _queue.Call<UnityEngine.AndroidJavaObject>("getState"))\n                    return ToState(result);',
  'var pj = V7Prof.Begin(); try { using (var result = _queue.Call<UnityEngine.AndroidJavaObject>("getState"))\n                    return ToState(result); } finally { V7Prof.End(V7Prof.JniGetState, pj); }')
 patch(B, 'public QueueBatch ReadOldest(int maxEvents) => QueueBatch.FromFrame(_lowLevel ? ReadLowLevel(maxEvents) : _queue.Call<byte[]>("readOldest", maxEvents));', 'public QueueBatch ReadOldest(int maxEvents) => V7Prof.Timed(V7Prof.JniReadBatch, () => QueueBatch.FromFrame(_lowLevel ? ReadLowLevel(maxEvents) : _queue.Call<byte[]>("readOldest", maxEvents)));')

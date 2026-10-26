@@ -1,0 +1,12 @@
+{
+  "profile": "drift",
+  "table_bytes": 65536,
+  "raw_prior_bytes": 102655,
+  "compressed_prior_bytes": 26703,
+  "body": {
+    "events": 2400,
+    "batches": 560,
+    "bytes": 62142,
+    "B_per_event": 25.8925
+  }
+}

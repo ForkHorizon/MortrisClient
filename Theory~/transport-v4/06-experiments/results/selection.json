@@ -1,0 +1,10 @@
+{
+  "source": "validation seed303 only, equal-weight log relative bytes across three profiles",
+  "scores": {
+    "clean": 0.0,
+    "packed": -0.008943396690738676,
+    "noef": -0.007416478251875969,
+    "trailer": -0.018680953268242945
+  },
+  "chosen": "trailer"
+}

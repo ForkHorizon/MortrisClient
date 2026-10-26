@@ -1,0 +1,1 @@
+{"events":773536,"wall_ns_per_event":{"json_parse":3304,"event_parse_classify":1396,"shape_and_alias":986,"row_build":160,"columns_pack_and_frame":1656,"zstd_compress":87},"alloc_bytes_per_event":{"json_parse":16564,"event_parse_classify":1243,"shape_and_alias":2943,"row_build":811,"pack_compress_frame":79}}

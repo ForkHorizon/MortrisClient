@@ -1,0 +1,1 @@
+$PY native_frames7.py > repro-native-frames.log 2>&1  28.18s user 0.99s system 100% cpu 29.054 total

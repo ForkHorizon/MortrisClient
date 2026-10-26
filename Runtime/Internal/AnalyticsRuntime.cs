@@ -17,11 +17,13 @@ namespace Daliys.Analytics.Internal
         private long _handoffDropNewest;
         private long _invalidEvents;
         private readonly EventRateLimiter _limiter;
+        private readonly bool _typedNumbers;
 
         internal AnalyticsRuntime(AnalyticsOptions options)
         {
             _options = options;
             _limiter = new EventRateLimiter(options.MaxEventsPerSecondPerName);
+            _typedNumbers = options.UseTransportV8;
             _persistenceWorker = new AnalyticsPersistenceWorker(options, ApplyServerPolicy);
             _session = new SessionTracker(NowMs, options.SessionTimeout, this);
             _persistenceWorker.AttachSession(_session);
@@ -85,6 +87,7 @@ namespace Daliys.Analytics.Internal
         private bool Write(string name, IReadOnlyDictionary<string, object> properties, Guid sessionId, long occurredAtUnixMs, long sessionElapsedMs, bool priority)
         {
             var writer = EventRecordWriter.ForThread;
+            writer.TypedNumbers = _typedNumbers;
             writer.Begin(name == "sys_session_end" ? SessionEndId(sessionId) : Guid.NewGuid(), sessionId, occurredAtUnixMs, sessionElapsedMs, _persistenceWorker.ContextBytes, name, properties == null ? 0 : properties.Count);
             if (properties is Dictionary<string, object> map)
             {
@@ -108,6 +111,8 @@ namespace Daliys.Analytics.Internal
             try { Write(name, properties, sessionId, occurredAtUnixMs, sessionElapsedMs, true); }
             catch (InvalidOperationException) { Interlocked.Increment(ref _invalidEvents); }
         }
+
+        internal long NextId(string counter) => _persistenceWorker.NextId(counter);
 
         internal void SetEventRateLimit(string eventName, int perSecond) => _limiter.SetLimit(eventName, perSecond);
 

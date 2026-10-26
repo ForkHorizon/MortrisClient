@@ -1,0 +1,30 @@
+Saved 8 strict source/frame fixtures
+Raw-column accounting balances on all four holdouts
+Exported five Transport V6 reports
+{
+  "status": "OK",
+  "matched_V4_V5_rows": 8,
+  "events_per_full_main_variant": 45741,
+  "main_V6_variants": 11,
+  "unchanged_input_files": 219,
+  "portable_strict_fixtures": 8,
+  "native_integer_cases": 1006,
+  "confirmation_seed": 2601,
+  "source_sha256": {
+    "native_check.py": "10335dfba570c7e6e35e7d354cb4926d0fad1d0614aeb662be6073919c022ec3",
+    "support.py": "7f7ebe1b9d93ee9971a2a5ff33fd632b3342a15e00a00ad68adc47eefae1e7eb",
+    "export_reports.py": "6f6ecb064041c5ef36f7d4fb6c230a6be327af707125218762e2afd7b456fdb6",
+    "run_all.sh": "7bae7ef92c81fc7ef73dd1395e40f5f7b5c3e979152f344ec11234875d7e5a4e",
+    "lz4_block.py": "a6057d6930401eb9f538e42764c6f32d6844f4d5c2e509ceb15eaf1b19c9cf34",
+    "bench.py": "13fdc780b6e7c15b1799514bfa969cc1aad1dcc11d7473d841cb25fa515c6fac",
+    "field_costs.py": "7afeb45e47dc02eef023c136a3de57b985475e5ca0b1152ccd5cd6d1e92c50a7",
+    "native.c": "b4ffda2f6311478853a6fabd0382164a3fbe8e4cf569e2c326ddca00dea3668e",
+    "verify.py": "5641970c1a302279a902d1f17d04bc1f075daa48c9434786d891cc6ce77b6323",
+    "codec.py": "4f78176f34c7b150308ce51e596811ddb40b0ec85aefa403f34d908047a55955",
+    "test_v6.py": "a06dec491a870f37715491f5a80015e29ca584e621e8a7c8eceefb4bc0428ba1",
+    "schema_tools.py": "31ab6e7148dbe60a079af474494552c39b79953c2681f0e93f34249510c5e05c",
+    "fixtures.py": "03bc6c75c0d055646901e3f362dacb26a5fcea799b3d9c944858f9781cf45260",
+    "confirm.py": "e17db6c6efff95f8dbf46ef278ca980b42273b434d5faf9aed5ceb48262b18ab"
+  },
+  "scope": "synthetic research; no device/Burst/IL2CPP/battery certification"
+}

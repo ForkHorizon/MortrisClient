@@ -1,0 +1,66 @@
+Global flags:
+  --errors                          will enable hidden error logging
+
+Commands:
+  editors
+    description: list the releases and installed editors
+    alias: e
+    example: Unity\ Hub.app/Contents/MacOS/Unity\ Hub -- --headless editors -r
+    options:
+      [default]                     list of available releases and installed editors on your machine combined
+      --releases|-r                 only list of available releases promoted by Unity
+      --installed|-i                only list of installed editors on your machine
+      --json|-j                     output as JSON format
+      --add <path>                  locating and associating an editor from a stipulated path
+      --architecture|-a <architecture>  show releases for specific architecture (x86_64 or arm64)
+
+  install-path
+    description: set/get the path where the Unity editors will be installed
+    alias: ip
+    example: Unity\ Hub.app/Contents/MacOS/Unity\ Hub -- --headless ip -s /Applications/Unity/Hub/Editor/
+    options:
+      --set|-s <path>               set the install path to the given path
+      --get|-g                      returns the install path
+      
+  install
+    description:
+      installs a new editor either from the releases list or archive
+    alias: i
+    example: Unity\ Hub.app/Contents/MacOS/Unity\ Hub -- --headless install --version 2019.1.11f1 --changeset 9b001d489a54
+    options:
+      --version|-v <version>        editor version to be installed (e.g. 2019.1.11f1) - required
+      --changeset|-c <changeset>    changeset of the editor if it is not in the release list (e.g. 9b001d489a54)
+                                    - required if the version is not in the releases. see editors -r
+      --module|-m <moduleid>        see install-modules for more information
+      --childModules|--cm           automatically installs all child modules of selected modules
+      --architecture|-a <architecture>  editor architecture to install (x86_64 or arm64)
+      
+  install-modules
+    description:
+      download and install a module (e.g. build support) to an installed editor
+    alias: im
+    example: Unity\ Hub.app/Contents/MacOS/Unity\ Hub -- --headless install-modules --version 2019.1.11f1 -m ios android
+    options:
+      --version|-v <version>        version of the editor to add the module to - required
+      --module|-m <moduleid>        the module id. The followings are the available values depending on version. You can specify multiple values, separated by spaces.
+            For a full list, please visit https://docs.unity3d.com/hub/manual/HubCLI.html
+            
+            Android Build Support: android
+            Android SDK & NDK Tools: android-sdk-ndk-tools
+            OpenJDK: android-open-jdk
+            Visual Studio for Mac: visualstudio
+            iOS Build Support: ios
+            tvOS Build Support: appletv
+            Linux Build Support: linux
+            Linux Build Support (Mono): linux-mono
+            Linux Build Support (IL2CPP): linux-il2cpp
+            Mac Build Support (IL2CPP): mac-il2cpp
+            Windows Build Support (Mono): windows-mono
+            WebGL Build Support: webgl
+            Lumin OS (Magic Leap) Build Support: lumin
+            Facebook Gameroom Build Support: facebook-games
+            Vuforia Augmented Reality Support: vuforia-ar
+            Documentation: documentation
+            Language packs: language-ja, language-ko, language-zh-cn, language-zh-hant, language-zh-hans
+      --childModules|--cm           automatically installs all child modules of selected modules
+

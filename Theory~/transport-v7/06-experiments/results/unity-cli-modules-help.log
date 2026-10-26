@@ -1,0 +1,78 @@
+Usage: unity install-modules|im [options]
+
+Install or list modules for an installed editor (fully interactive when no
+arguments provided)
+
+Options:
+  -e, --editor-version <version>     Version of the editor (interactive
+                                     selection if omitted)
+  -m, --module <module...>           Module IDs to install
+  -l, --list                         List available modules for the editor
+  --all                              Install all available modules
+  -a, --architecture <architecture>  Editor architecture (x86_64 or arm64)
+                                     (default: "unknown")
+  --cm, --child-modules              Install all child modules automatically
+  --no-cm, --no-child-modules        Do not install child modules automatically
+  --accept-eula                      Accept all module license agreements
+                                     automatically
+  --dry-run                          Print what would be downloaded without
+                                     installing
+  -y, --yes                          Automatically select the first match
+                                     without prompting
+  --reinstall                        Reinstall modules that are already
+                                     installed (repair)
+  -f, --force                        Reinstall modules and skip confirmation
+                                     prompts (implies --reinstall; also
+                                     auto-includes child modules)
+  --no-elevate                       Skip the elevated (UAC) install helper on
+                                     Windows; the Editor installer still asks
+                                     for elevation if Windows requires it
+  --retries <n>                      Retry a failed module download or
+                                     validation this many times with backoff
+                                     before giving up (0 disables retries)
+  --no-wait                          Fail at once instead of waiting when
+                                     another install (from the Hub or the CLI)
+                                     is running
+  --wait-timeout <seconds>           Stop waiting for another install after this
+                                     many seconds and fail (default: wait until
+                                     it finishes)
+  -h, --help                         display help for command
+
+Global Options:
+  -V, --version                      output the version number
+  --format <format>                  Output format: human, json, tsv, ndjson,
+                                     github (env: UNITY_FORMAT)
+  --json                             Shorthand for --format json
+  --no-banner                        Suppress the startup banner (env:
+                                     UNITY_NO_BANNER)
+  --no-pager                         Disable the pager for long output (env:
+                                     UNITY_NO_PAGER)
+  --non-interactive                  Disable interactive prompts. Useful in
+                                     CI/CD environments. (env:
+                                     UNITY_NON_INTERACTIVE)
+  --quiet                            Suppress informational output (env:
+                                     UNITY_QUIET)
+  --verbose                          Show full error details including stack
+                                     traces on failure (env: UNITY_VERBOSE)
+  --color <mode>                     Control colored output (choices: "auto",
+                                     "always", "never")
+  --no-color                         Disable colored output (shorthand for
+                                     --color never)
+  --proxy <url>                      HTTP/HTTPS/SOCKS/PAC proxy URL. Examples:
+                                     http://<user>:<pass>@host:8080,
+                                     socks5://host:1080,
+                                     pac+http://wpad/proxy.pac (env:
+                                     UNITY_PROXY)
+  --proxy-disable                    Disable proxy for this invocation, ignoring
+                                     all sources
+  --log-proxy                        Log every outbound request to
+                                     proxy-request.json for this run. Off by
+                                     default; typically used once when
+                                     reproducing a proxy issue for support. Also
+                                     settable via UNITY_LOG_PROXY=1 or the
+                                     proxyRequestLogging user setting. (env:
+                                     UNITY_LOG_PROXY)
+  --no-log-proxy                     Opt out of --log-proxy / UNITY_LOG_PROXY /
+                                     the persisted user setting for this run.
+                                     Use when logging is enabled globally but
+                                     you want one clean invocation.

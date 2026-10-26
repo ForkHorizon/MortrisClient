@@ -1,0 +1,4 @@
+V7PERF loaded events=1200 mode=v1
+V7PERF result mode=v1 events=1200 accepted=1200 handoff_full_retries=0 other_results=0 replay_ms=40201 drain_ms=76 cpu_ticks_replay=1774 cpu_ticks_drain=3 cpu_ticks_total=1777 track_us_p50=52.4 track_us_p95=165.5 track_us_p99=5122.5 track_us_max=9628.8 frame_ms_p50=0.05 frame_ms_p99=5.12 frame_ms_max=9.63 gc0=58 gc1=58 gc2=58 mono_start_kb=5920 mono_end_replay_kb=7004 mono_peak_kb=0 unity_total_start_kb=50110 unity_total_end_kb=52107 pss_start_kb=152580 pss_peak_kb=161304 heap_start_kb=5820 calib_start=2.925 calibs=
+host_load_start=25.42 15.91 12.38 host_load_end=30.32 18.48 13.51
+db_events=1200 packets_v2=0 batches_v1=13

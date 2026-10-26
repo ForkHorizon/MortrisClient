@@ -239,6 +239,9 @@ namespace Daliys.Analytics.Internal.Transport
             if (string.IsNullOrEmpty(token) || epoch < 1) throw new FormatException("hello returned no token or epoch");
             _token = token;
             _tokenResets = 0;
+            // the installation's V1 identity: a batch this session has to leave to V1 then belongs to the same installation and carries the ids the server derives
+            if (result.TryGetValue("install", out var install) && install is string installId && result.TryGetValue("credential", out var credential) && credential is string credentialText)
+                queue.AdoptIdentity(installId, credentialText);
             if (epoch != queueEpoch) queue.SetStreamEpoch(epoch);
             _epoch = epoch;
             _newEpoch = false;

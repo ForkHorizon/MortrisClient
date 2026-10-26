@@ -1,0 +1,172 @@
+{
+ "burst/none": {
+  "runs": 3,
+  "events": 2800,
+  "replay_s": 4.704,
+  "render_ticks_all_runs": [
+   30,
+   28,
+   30
+  ],
+  "main_ticks_all_runs": [
+   20,
+   19,
+   20
+  ],
+  "sdk_workers_ticks_all_runs": [
+   9,
+   8,
+   8
+  ],
+  "runtime_other_ticks_all_runs": [
+   13,
+   10,
+   10
+  ]
+ },
+ "burst/v1": {
+  "runs": 3,
+  "events": 2800,
+  "replay_s": 4.704,
+  "render_ticks_all_runs": [
+   25,
+   23,
+   26
+  ],
+  "main_ticks_all_runs": [
+   53,
+   53,
+   54
+  ],
+  "sdk_workers_ticks_all_runs": [
+   209,
+   219,
+   201
+  ],
+  "runtime_other_ticks_all_runs": [
+   9,
+   9,
+   9
+  ],
+  "sdk_workers_us_per_event": 746.4285714285714,
+  "main_thread_extra_us_per_event": 117.85714285714286,
+  "render_ticks_median": 25,
+  "render_ticks_none": 30,
+  "sdk_total_us_per_event": 864.2857142857143
+ },
+ "burst/v7": {
+  "runs": 3,
+  "events": 2800,
+  "replay_s": 4.704,
+  "render_ticks_all_runs": [
+   24,
+   24,
+   24
+  ],
+  "main_ticks_all_runs": [
+   58,
+   56,
+   56
+  ],
+  "sdk_workers_ticks_all_runs": [
+   224,
+   232,
+   223
+  ],
+  "runtime_other_ticks_all_runs": [
+   9,
+   9,
+   9
+  ],
+  "sdk_workers_us_per_event": 800.0,
+  "main_thread_extra_us_per_event": 128.57142857142858,
+  "render_ticks_median": 24,
+  "render_ticks_none": 30,
+  "sdk_total_us_per_event": 928.5714285714286
+ },
+ "paced/none": {
+  "runs": 3,
+  "events": 1200,
+  "replay_s": 40.07,
+  "render_ticks_all_runs": [
+   421,
+   420,
+   418
+  ],
+  "main_ticks_all_runs": [
+   170,
+   169,
+   167
+  ],
+  "sdk_workers_ticks_all_runs": [
+   84,
+   92,
+   86
+  ],
+  "runtime_other_ticks_all_runs": [
+   120,
+   126,
+   127
+  ]
+ },
+ "paced/v1": {
+  "runs": 3,
+  "events": 1200,
+  "replay_s": 40.067,
+  "render_ticks_all_runs": [
+   406,
+   418,
+   409
+  ],
+  "main_ticks_all_runs": [
+   233,
+   240,
+   238
+  ],
+  "sdk_workers_ticks_all_runs": [
+   817,
+   826,
+   819
+  ],
+  "runtime_other_ticks_all_runs": [
+   124,
+   86,
+   127
+  ],
+  "sdk_workers_us_per_event": 6825.0,
+  "main_thread_extra_us_per_event": 575.0,
+  "render_ticks_median": 409,
+  "render_ticks_none": 420,
+  "sdk_total_us_per_event": 7400.0
+ },
+ "paced/v7": {
+  "runs": 3,
+  "events": 1200,
+  "replay_s": 40.068,
+  "render_ticks_all_runs": [
+   409,
+   414,
+   404
+  ],
+  "main_ticks_all_runs": [
+   230,
+   239,
+   233
+  ],
+  "sdk_workers_ticks_all_runs": [
+   836,
+   828,
+   826
+  ],
+  "runtime_other_ticks_all_runs": [
+   108,
+   151,
+   131
+  ],
+  "sdk_workers_us_per_event": 6900.0,
+  "main_thread_extra_us_per_event": 533.3333333333334,
+  "render_ticks_median": 409,
+  "render_ticks_none": 420,
+  "sdk_total_us_per_event": 7433.333333333333
+ }
+}

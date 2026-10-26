@@ -93,12 +93,25 @@ public sealed class V7ProfProbe : MonoBehaviour
         string Cfg(string key, string def) => config.TryGetValue(key, out var v) ? v : def;
         var mode = Cfg("mode", "v7"); var scenario = Cfg("scenario", "perframe");
         var n = int.Parse(Cfg("n", "1200")); var k = int.Parse(Cfg("k", "100")); var gap = float.Parse(Cfg("gap", "6"), CultureInfo.InvariantCulture); var perFrame = int.Parse(Cfg("perframe", "1"));
-        var v7 = mode == "v7"; var none = mode == "none";
+        var v7 = mode == "v7"; var v8 = mode == "v8"; var none = mode == "none"; var v8Content = Cfg("v8content", "0") == "1";
+        var counterOf = new Dictionary<string, Dictionary<string, long>> { ["attempt_id"] = new Dictionary<string, long>(), ["house_run_id"] = new Dictionary<string, long>() };
         var need = scenario == "burst" ? n * k : n;
         foreach (var line in File.ReadLines(Path.Combine(dir, "replay.jsonl")))
         {
             if (_events.Count >= need) break;
-            var parsed = Parse(line); _events.Add(new KeyValuePair<string, Dictionary<string, object>>((string)parsed["name"], (Dictionary<string, object>)parsed["props"]));
+            var parsed = Parse(line); var props = (Dictionary<string, object>)parsed["props"];
+            if (v8Content)
+            {
+                // the event content decided for V8: no wave_attempt_id, interaction_id or state hash; attempt and house run are numbers
+                props.Remove("wave_attempt_id"); props.Remove("interaction_id"); props.Remove("placed_state_hash");
+                foreach (var pair in counterOf)
+                    if (props.TryGetValue(pair.Key, out var raw) && raw is string text)
+                    {
+                        if (!pair.Value.TryGetValue(text, out var number)) pair.Value[text] = number = pair.Value.Count + 1;
+                        props[pair.Key] = number;
+                    }
+            }
+            _events.Add(new KeyValuePair<string, Dictionary<string, object>>((string)parsed["name"], props));
         }
         Emit("loaded events=" + _events.Count + " mode=" + mode + " scenario=" + scenario + " n=" + n + " k=" + k + " gap=" + gap + " perframe=" + perFrame);
 
@@ -106,7 +119,7 @@ public sealed class V7ProfProbe : MonoBehaviour
         var calib0 = Calibrate(); var pss0 = PssKb();
         if (!none) Analytics.Initialize(new AnalyticsOptions
         {
-            ServerUrl = Server, ProjectId = Project, Environment = "test", DebugLogging = false, UseTransportV7 = v7,
+            ServerUrl = Server, ProjectId = Project, Environment = "test", DebugLogging = false, UseTransportV7 = v7, UseTransportV8 = v8,
             UploadInterval = TimeSpan.FromSeconds(double.Parse(Cfg("interval_s", "5"), CultureInfo.InvariantCulture)), UploadEventThreshold = int.Parse(Cfg("threshold", "100")),
             MaxPacketEvents = int.Parse(Cfg("packet", "200")), UploadOnBackground = Cfg("bg", "1") == "1", AppVersion = "1.1.14", BuildNumber = "prof-1",
             SessionTimeout = TimeSpan.FromSeconds(double.Parse(Cfg("timeout_s", "300"), CultureInfo.InvariantCulture)),

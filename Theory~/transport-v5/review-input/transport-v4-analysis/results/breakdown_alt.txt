@@ -1,0 +1,17 @@
+{'profile': 'alt', 'test': 'test101', 'cap': 100, 'stateful': True, 'hash_rule': False, 'events': 5400, 'batches': 54, 'B_per_event': 109.07574074074074, 'binary_decisions_per_event': 1528.5868518518519, 'py_encode_us_per_event': 1608.014285556136}
+('prop', 'opaque')                        69.603 B/ev  63.9%
+('prop', 'description')                   24.109 B/ev  22.1%
+('prop', 'measurement')                    7.317 B/ev   6.7%
+('prop', 'board')                          4.595 B/ev   4.2%
+ts                                         2.230 B/ev   2.0%
+name                                       0.472 B/ev   0.4%
+shape                                      0.392 B/ev   0.4%
+session                                    0.056 B/ev   0.1%
+('prop', 'counter')                        0.050 B/ev   0.0%
+('prop', 'phase')                          0.049 B/ev   0.0%
+elapsed                                    0.047 B/ev   0.0%
+device                                     0.028 B/ev   0.0%
+None                                       0.019 B/ev   0.0%
+('prop', 'release_label')                  0.013 B/ev   0.0%
+sent                                       0.007 B/ev   0.0%
+sequence                                   0.002 B/ev   0.0%

@@ -1,0 +1,206 @@
+{
+  "base": [
+    {
+      "dictionary_bytes": 16384,
+      "hash_log": 10,
+      "chain_log": 10,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 19.217238064722846,
+      "CCtx_size_max": 65622,
+      "events": 3121,
+      "seed": 303
+    },
+    {
+      "dictionary_bytes": 16384,
+      "hash_log": 11,
+      "chain_log": 11,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 18.905479013136816,
+      "CCtx_size_max": 73814,
+      "events": 3121,
+      "seed": 303
+    },
+    {
+      "dictionary_bytes": 16384,
+      "hash_log": 12,
+      "chain_log": 12,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 18.746876001281642,
+      "CCtx_size_max": 90198,
+      "events": 3121,
+      "seed": 303
+    },
+    {
+      "dictionary_bytes": 65536,
+      "hash_log": 10,
+      "chain_log": 10,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 19.480935597564883,
+      "CCtx_size_max": 65622,
+      "events": 3121,
+      "seed": 303
+    },
+    {
+      "dictionary_bytes": 65536,
+      "hash_log": 11,
+      "chain_log": 11,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 19.241589234219802,
+      "CCtx_size_max": 73814,
+      "events": 3121,
+      "seed": 303
+    },
+    {
+      "dictionary_bytes": 65536,
+      "hash_log": 12,
+      "chain_log": 12,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 18.8808074335149,
+      "CCtx_size_max": 90198,
+      "events": 3121,
+      "seed": 303
+    }
+  ],
+  "rich": [
+    {
+      "dictionary_bytes": 16384,
+      "hash_log": 10,
+      "chain_log": 10,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 43.11525704809287,
+      "CCtx_size_max": 99131,
+      "events": 2412,
+      "seed": 303
+    },
+    {
+      "dictionary_bytes": 16384,
+      "hash_log": 11,
+      "chain_log": 11,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 42.059701492537314,
+      "CCtx_size_max": 107323,
+      "events": 2412,
+      "seed": 303
+    },
+    {
+      "dictionary_bytes": 16384,
+      "hash_log": 12,
+      "chain_log": 12,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 41.751658374792704,
+      "CCtx_size_max": 123707,
+      "events": 2412,
+      "seed": 303
+    },
+    {
+      "dictionary_bytes": 65536,
+      "hash_log": 10,
+      "chain_log": 10,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 43.86733001658375,
+      "CCtx_size_max": 99131,
+      "events": 2412,
+      "seed": 303
+    },
+    {
+      "dictionary_bytes": 65536,
+      "hash_log": 11,
+      "chain_log": 11,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 42.15505804311775,
+      "CCtx_size_max": 107323,
+      "events": 2412,
+      "seed": 303
+    },
+    {
+      "dictionary_bytes": 65536,
+      "hash_log": 12,
+      "chain_log": 12,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 41.60945273631841,
+      "CCtx_size_max": 123707,
+      "events": 2412,
+      "seed": 303
+    }
+  ],
+  "alt": [
+    {
+      "dictionary_bytes": 16384,
+      "hash_log": 10,
+      "chain_log": 10,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 152.56592592592594,
+      "CCtx_size_max": 159441,
+      "events": 2700,
+      "seed": 303
+    },
+    {
+      "dictionary_bytes": 16384,
+      "hash_log": 11,
+      "chain_log": 11,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 150.06592592592594,
+      "CCtx_size_max": 167633,
+      "events": 2700,
+      "seed": 303
+    },
+    {
+      "dictionary_bytes": 16384,
+      "hash_log": 12,
+      "chain_log": 12,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 147.2288888888889,
+      "CCtx_size_max": 184017,
+      "events": 2700,
+      "seed": 303
+    },
+    {
+      "dictionary_bytes": 65536,
+      "hash_log": 10,
+      "chain_log": 10,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 152.6174074074074,
+      "CCtx_size_max": 159441,
+      "events": 2700,
+      "seed": 303
+    },
+    {
+      "dictionary_bytes": 65536,
+      "hash_log": 11,
+      "chain_log": 11,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 150.15407407407406,
+      "CCtx_size_max": 167633,
+      "events": 2700,
+      "seed": 303
+    },
+    {
+      "dictionary_bytes": 65536,
+      "hash_log": 12,
+      "chain_log": 12,
+      "window_log": 14,
+      "strategy": "fast",
+      "B_per_event": 147.26592592592593,
+      "CCtx_size_max": 184017,
+      "events": 2700,
+      "seed": 303
+    }
+  ]
+}

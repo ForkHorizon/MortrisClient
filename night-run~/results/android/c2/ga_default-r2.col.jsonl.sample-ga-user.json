@@ -1,0 +1,27 @@
+[
+ {
+  "v": 2,
+  "user_id": "u-bench-1",
+  "event_uuid": "8fe912a1-596d-4644-b38c-1c92a893cb9d",
+  "google_aid": "a73237d6-3fbb-4d54-a386-581a141c83d8",
+  "google_aid_src": "service",
+  "client_ts": 1792558200,
+  "sdk_version": "android 7.2.0",
+  "os_version": "android 7.1.1",
+  "manufacturer": "Google",
+  "device": "Android SDK built for arm64",
+  "platform": "android",
+  "session_id": "7ccf10be-e642-46e4-bf6d-068472822e94",
+  "session_num": 1,
+  "current_session_length": 0,
+  "lifetime_session_length": 0,
+  "connection_type": "wwan",
+  "android_bundle_id": "bench.sdk",
+  "android_app_version": "1",
+  "android_app_build": "1",
+  "android_app_signature": "3ad249eb021719d884a50153c5ad51b2f700592e",
+  "jailbroken": true,
+  "category": "user",
+  "install": true
+ }
+]

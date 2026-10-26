@@ -1,0 +1,108 @@
+{
+  "base": {
+    "historical": {
+      "events": 8944,
+      "batches": 321,
+      "installs": 6,
+      "sha256_V1_minus_id_length_prefixed": "1050aea4f9df8a90bb9ee2ca6d56f7fa0ee68485709e48046cc9e6c5f5619f3c",
+      "seed": 101
+    },
+    "train": {
+      "events": 22367,
+      "batches": 774,
+      "installs": 18,
+      "sha256_V1_minus_id_length_prefixed": "e8196182a72a801a8919ada27a87c18a3b7c6806e47907ba656a706e7e5c9760",
+      "seed": 202
+    },
+    "validation": {
+      "events": 3121,
+      "batches": 93,
+      "installs": 3,
+      "sha256_V1_minus_id_length_prefixed": "9aa4b8f6b7890b4849e0cb31e3f0da41cd389c1b94f8b6de5325a16c92ae6afd",
+      "seed": 303
+    },
+    "holdout": {
+      "events": 6519,
+      "batches": 254,
+      "installs": 6,
+      "sha256_V1_minus_id_length_prefixed": "83a805936f5e4e82e4b4f19e6f1743aea34fd3efed0fbf5d1604cb8a7d691f26",
+      "seed": 909
+    }
+  },
+  "rich": {
+    "historical": {
+      "events": 7899,
+      "batches": 288,
+      "installs": 6,
+      "sha256_V1_minus_id_length_prefixed": "6c5fa86a53cc5023b4f1f9301526561b9bf961f0eb9b6d4430938d1ff889991b",
+      "seed": 101
+    },
+    "train": {
+      "events": 24864,
+      "batches": 859,
+      "installs": 18,
+      "sha256_V1_minus_id_length_prefixed": "d9d340829fe65ea725f5ad57d3eaf9577000539b8b91780f2c749867f30b8a08",
+      "seed": 202
+    },
+    "validation": {
+      "events": 2412,
+      "batches": 90,
+      "installs": 3,
+      "sha256_V1_minus_id_length_prefixed": "00edfeb5eb43010b74aa9e68c5d11cc4618db06f4300a8c52bb0cd6a54069162",
+      "seed": 303
+    },
+    "holdout": {
+      "events": 7027,
+      "batches": 236,
+      "installs": 6,
+      "sha256_V1_minus_id_length_prefixed": "df8c09bc328bba1c7e6e0a414f9addbfeb5c5b49eadbab2c8c977a87b2c5a617",
+      "seed": 909
+    }
+  },
+  "alt": {
+    "historical": {
+      "events": 5400,
+      "batches": 176,
+      "installs": 6,
+      "sha256_V1_minus_id_length_prefixed": "3f94e2e3e2adc75357d8f1d2c71a31d6f5a6e110992cfa8ac5acf892a78f4fcd",
+      "seed": 101
+    },
+    "train": {
+      "events": 16200,
+      "batches": 518,
+      "installs": 18,
+      "sha256_V1_minus_id_length_prefixed": "1f8807593388664aa5af891fde9f3f4fb571ebc23e2446d1b20460a7ff7ff94a",
+      "seed": 202
+    },
+    "validation": {
+      "events": 2700,
+      "batches": 116,
+      "installs": 3,
+      "sha256_V1_minus_id_length_prefixed": "cca79f2cdd9b3eef166754658d9478c7a8cad7c4ca5aecb126998a2b2f74c78c",
+      "seed": 303
+    },
+    "holdout": {
+      "events": 5400,
+      "batches": 189,
+      "installs": 6,
+      "sha256_V1_minus_id_length_prefixed": "f4edf6e22d3309e821afbf998910e84f285897b3a1f2b59c47208e6efe730aa7",
+      "seed": 909
+    }
+  },
+  "drift": {
+    "train": {
+      "events": 7200,
+      "batches": 1737,
+      "installs": 12,
+      "sha256_V1_minus_id_length_prefixed": "51d884508d980d44a81af47c237e6818cc69ab89660ed783ab0e4a923fb85a85",
+      "seed": 202
+    },
+    "holdout": {
+      "events": 2400,
+      "batches": 560,
+      "installs": 4,
+      "sha256_V1_minus_id_length_prefixed": "006cc337a30f54f1997ca221291a3aae7f06f310cfbcc5db211efa40b9854a61",
+      "seed": 808
+    }
+  }
+}
