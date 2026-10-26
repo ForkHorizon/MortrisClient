@@ -11,6 +11,10 @@
 - Sessions: the SDK now observes pause/focus/quit, emits `sys_session_start`, `sys_app_background`, `sys_app_foreground` and `sys_session_end`, writes buffered
   events before the game is suspended, and closes the session of a process that died (Android exit reason). New options `EventBufferWindow` and
   `SessionTimeout`. Projects using V7 need the four lifecycle shapes in their catalog.
+- V8 transport (opt-in `AnalyticsOptions.UseTransportV8`, `Documentation/V8Transport.md`): server-issued short installation id and token, shapes learned by the SDK and
+  registered in the packet that first uses them, first packet of a normal launch without a handshake, minimal acknowledgement, server-trained dictionary. Numbers keep
+  their type in event records (`float` stays float32). `Analytics.NextId(counter)` hands out numbers that survive a crash together with the events that used them.
+  The Android queue gained a small key/value store (`v8.*`, `counters`), counters in the batch transaction and `adoptIdentity`.
 - Upload schedule (see `Theory~/transport-v8/PROTOCOL.md`, D13): default `UploadInterval` 120 s (was 30 s), `UploadEventThreshold` 200 (was 50), new
   `MaxPacketEvents` (200), `UploadOnBackground`, `BackgroundUploadMinGap`, `BackgroundUploadTimeout`; one short upload attempt when the game goes to the
   background or quits. New `MaxEventsPerSecondPerName` and `Analytics.SetEventRateLimit` for event floods.

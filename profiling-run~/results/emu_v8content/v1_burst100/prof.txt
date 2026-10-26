@@ -1,0 +1,26 @@
+loaded events=500 mode=v1 scenario=burst n=5 k=100 gap=12 perframe=1
+summary mode=v1 scenario=burst events=500 tracked=500 scenario_ms=60126 cpu_ticks_scenario=1493 cpu_ticks_drain=0 cpu_ticks_total=1493 track_us_p50=13.1 track_us_p95=19.0 track_us_p99=68.4 track_us_max=3180.1 frame_ms_p50=1.52 frame_ms_p99=1.77 frame_ms_max=4.76 gc0=13 gc1=13 gc2=13 main_alloc_bytes=0 alloc_counter_works=0 unity_gc_alloc_bytes_main_frames=6802740 unity_gc_alloc_count_main_frames=30652 art_bytes_allocated=2994176 art_objects_allocated=-3019 art_gc_count=1 mono_start_kb=3360 mono_peak_kb=4032 pss_start_kb=166750 pss_peak_kb=176308 calib=3.037
+S|track_total|500|10483|8852|106496
+S|track_enqueue|500|376|288|106496
+S|persist_total|20|259104|52371|1253376
+S|snapshot_batch|12|47|46|282624
+S|jni_enqueue_batch|5|26296|23285|0
+S|uploader_flush|12|231188|27530|1118208
+S|jni_get_state|22|2012|1696|0
+S|jni_read_batch|11|2436|2384|294912
+S|jni_delete_ack|5|4802|4531|0
+S|v1_parse_queued|5|12264|10611|1163264
+S|v1_send_batch(json+gzip+http)|5|206279|5075|2158592
+S|v1_gzip_body|5|3396|3136|266240
+S|http_send(wall)|5|200480|786|245760
+C|persist_calls|20
+C|persist_events|500
+C|flush_calls|12
+C|bytes_v1_gzip_bodies|34518
+C|bytes_v1_json_bodies|448882
+C|v1_batches|5
+C|schedule_calls|21
+threads top=23962:UnityGfxDeviceW=713;23967:UnityMain=690;23922:UnityMain=66;23965:AChoreographer_=4;23972:Thread-4=4;23939:Background Job.=3;23979:Thread-18=3;23913:binder:23888_2=1;23915:binder:23888_3=1;23916:binder:23888_4=1;23971:Filter1=1;23973:binder:23888_5=1;23980:Thread-15=1;23981:Thread-19=1
+done
+host_load_start=6.29 6.64 7.68 host_load_end=7.30 6.83 7.67
+db_events=502 packets_v2=0 batches_v1=7

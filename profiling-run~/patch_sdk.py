@@ -36,6 +36,8 @@ patch(B, 'using (var result = _queue.Call<UnityEngine.AndroidJavaObject>("getSta
 patch(B, 'public QueueBatch ReadOldest(int maxEvents) => QueueBatch.FromFrame(_lowLevel ? ReadLowLevel(maxEvents) : _queue.Call<byte[]>("readOldest", maxEvents));', 'public QueueBatch ReadOldest(int maxEvents) => V7Prof.Timed(V7Prof.JniReadBatch, () => QueueBatch.FromFrame(_lowLevel ? ReadLowLevel(maxEvents) : _queue.Call<byte[]>("readOldest", maxEvents)));')
 patch(B, 'var deleted = _queue.Call<int>("deleteAcknowledged", eventIdsJson);', 'var deleted = V7Prof.Timed(V7Prof.JniDeleteAck, () => _queue.Call<int>("deleteAcknowledged", eventIdsJson));')
 patch(B, 'var deleted = _queue.Call<int>("deleteThroughSequence", ackThrough);', 'var deleted = V7Prof.Timed(V7Prof.JniDeleteAck, () => _queue.Call<int>("deleteThroughSequence", ackThrough));')
+# V8 packets: wire bytes and count
+patch(R + 'Transport/V8Session.cs', 'var response = _http.PostBinary("/v3/packet", encoded.Frame, "application/vnd.mortris.m8", _token);', 'V7Prof.Add(V7Prof.BytesV7, encoded.Frame.Length); V7Prof.Add(V7Prof.Packets, 1); var response = _http.PostBinary("/v3/packet", encoded.Frame, "application/vnd.mortris.m8", _token);')
 # uploader (V1 path + http)
 U = R + 'AnalyticsUploader.cs'
 patch(U, 'var raw = events.ToJsonArray(_reader);', 'var pq = V7Prof.Begin(); var raw = events.ToJsonArray(_reader); V7Prof.End(V7Prof.V1ParseQueued, pq);')

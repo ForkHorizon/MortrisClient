@@ -1,0 +1,24 @@
+{"time":"2026-10-26T02:46:14.204221+01:00","level":"INFO","msg":"retention mode","require_verified_export":false}
+{"time":"2026-10-26T02:46:14.204304+01:00","level":"INFO","msg":"gameplay results mode","imported_results_only":false}
+{"time":"2026-10-26T02:46:14.204408+01:00","level":"INFO","msg":"listening","addr":"0.0.0.0:18082"}
+{"time":"2026-10-26T02:46:14.204423+01:00","level":"WARN","msg":"disk state changed","from":"normal","to":"critical","percent_used":95.79639505026557,"free_bytes":41809481728}
+{"time":"2026-10-26T02:46:14.206212+01:00","level":"INFO","msg":"precompute: project idle in window, writing empty cache","project_id":"puzzle_gravity_test"}
+{"time":"2026-10-26T02:46:14.206508+01:00","level":"INFO","msg":"maintenance run","kind":"unactivated_cleanup","rows_affected":0,"duration_ms":2}
+{"time":"2026-10-26T02:46:14.207566+01:00","level":"INFO","msg":"maintenance run","kind":"retention_delete","rows_affected":0,"duration_ms":0}
+{"time":"2026-10-26T02:46:22.757823+01:00","level":"INFO","msg":"request","request_id":"5bc57e5908f27b98","method":"POST","route":"POST /v3/hello","status":200,"latency_ms":6,"ack":0,"epoch":1}
+{"time":"2026-10-26T02:46:22.76295+01:00","level":"INFO","msg":"request","request_id":"9c60161a18cb4d06","method":"GET","route":"GET /v3/assets/dictionary/{id}","status":200,"latency_ms":0,"bytes":16384}
+{"time":"2026-10-26T02:46:22.826637+01:00","level":"INFO","msg":"request","request_id":"9d25ab999ef20961","method":"POST","route":"POST /v3/packet","status":200,"latency_ms":9,"ack":1,"rejected":0}
+{"time":"2026-10-26T02:46:22.830137+01:00","level":"INFO","msg":"request","request_id":"0c1e4363ac024a04","method":"GET","route":"GET /v3/policy","status":200,"latency_ms":0}
+{"time":"2026-10-26T02:46:22.853985+01:00","level":"INFO","msg":"request","request_id":"1cf6af019efff0b9","method":"POST","route":"POST /v3/packet","status":200,"latency_ms":4,"rejected":0,"ack":2}
+{"time":"2026-10-26T02:46:29.872356+01:00","level":"INFO","msg":"request","request_id":"1590284bbe115c08","method":"POST","route":"POST /v3/packet","status":200,"latency_ms":3,"ack":3,"rejected":0}
+{"time":"2026-10-26T02:46:37.187748+01:00","level":"INFO","msg":"request","request_id":"a104479ef5a59366","method":"POST","route":"POST /v3/packet","status":200,"latency_ms":3,"ack":5,"rejected":0}
+{"time":"2026-10-26T02:46:43.215914+01:00","level":"INFO","msg":"request","request_id":"039078c954915b98","method":"POST","route":"POST /v3/packet","status":200,"latency_ms":2,"ack":6,"rejected":0}
+{"time":"2026-10-26T02:46:49.252291+01:00","level":"INFO","msg":"request","request_id":"10144cb8feb5d3ae","method":"POST","route":"POST /v3/packet","status":200,"latency_ms":2,"ack":7,"rejected":0}
+{"time":"2026-10-26T02:47:01.318446+01:00","level":"INFO","msg":"request","request_id":"c62f825208c70d6a","method":"POST","route":"POST /v3/packet","status":200,"latency_ms":4,"ack":9,"rejected":0}
+{"time":"2026-10-26T02:47:07.355518+01:00","level":"INFO","msg":"request","request_id":"08aa7f03b82ffbaf","method":"POST","route":"POST /v3/packet","status":200,"latency_ms":2,"ack":10,"rejected":0}
+{"time":"2026-10-26T02:47:13.385895+01:00","level":"INFO","msg":"request","request_id":"9489c10135819ce8","method":"POST","route":"POST /v3/packet","status":200,"latency_ms":2,"ack":11,"rejected":0}
+{"time":"2026-10-26T02:47:19.422548+01:00","level":"INFO","msg":"request","request_id":"4de25eb90a9ecd09","method":"POST","route":"POST /v3/packet","status":200,"latency_ms":5,"ack":12,"rejected":0}
+{"time":"2026-10-26T02:47:31.487565+01:00","level":"INFO","msg":"request","request_id":"35e94d7eeefb70f8","method":"POST","route":"POST /v3/packet","status":200,"latency_ms":3,"ack":14,"rejected":0}
+{"time":"2026-10-26T02:47:37.519762+01:00","level":"INFO","msg":"request","request_id":"da3cf6862879f402","method":"POST","route":"POST /v3/packet","status":200,"latency_ms":3,"ack":15,"rejected":0}
+{"time":"2026-10-26T02:47:43.552836+01:00","level":"INFO","msg":"request","request_id":"ed6c9e6049469d7c","method":"POST","route":"POST /v3/packet","status":200,"latency_ms":3,"ack":16,"rejected":0}
+{"time":"2026-10-26T02:47:49.587068+01:00","level":"INFO","msg":"request","request_id":"7ed46bf8fc8c1478","method":"POST","route":"POST /v3/packet","status":200,"latency_ms":2,"ack":17,"rejected":0}
