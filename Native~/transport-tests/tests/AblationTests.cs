@@ -24,7 +24,7 @@ namespace M7Transport.Tests
             var dictionary = File.ReadAllBytes(Path.GetFullPath(Path.Combine(TestSupport.Root, "../../../../../night-run~/work/dictionary.bin")));
             var context = EventContext.Build("1.1.14", "perf-1", "android", "Android 16", "Nothing A142", "en-US", 120);
             var session = Guid.Parse("7b1f3c52-9a44-4e0e-8d61-2f5c0a9e1b77");
-            var results = new StringBuilder("variant,events,frames_failed,frame_bytes_per_event_dict,frame_bytes_per_event_nodict,raw_columns_per_event\n");
+            var results = new StringBuilder("variant,events,frames_failed,frame_bytes_per_event_dict,frame_bytes_per_event_nodict,raw_columns_per_event,first_failure\n");
             foreach (var name in File.ReadAllLines(Path.Combine(root, "manifest.txt")).Where(l => l.Length > 0))
             {
                 var dir = Path.Combine(root, name);
@@ -43,7 +43,7 @@ namespace M7Transport.Tests
                         }
                     events.Add(((string)json["name"], props, json.TryGetValue("ts", out var tsv) ? long.Parse(((JsonNumber)tsv).Lexeme, CultureInfo.InvariantCulture) : -1, json.TryGetValue("el", out var elv) ? long.Parse(((JsonNumber)elv).Lexeme, CultureInfo.InvariantCulture) : -1));
                 }
-                long withDict = 0, noDict = 0, raw = 0; var count = 0; var failed = 0;
+                long withDict = 0, noDict = 0, raw = 0; var count = 0; var failed = 0; string firstFailure = "";
                 foreach (var useDict in new[] { true, false })
                 {
                     var d = useDict ? dictionary : null;
@@ -63,13 +63,30 @@ namespace M7Transport.Tests
                             }
                             var queue = new FakeQueue(); queue.EnqueueRecords(frames.ToArray(), batch, 1000000, 1L << 40, 1L << 40);
                             var r = encoder.Encode(queue.ReadOldest(100000));
-                            if (!r.Ok) { if (useDict) failed++; continue; }
+                            if (!r.Ok) { if (useDict)
+                            {
+                                failed++;
+                                if (firstFailure.Length == 0)
+                                {
+                                    firstFailure = r.Failure;
+                                    if (Environment.GetEnvironmentVariable("M7_DEBUG") != null)
+                                    {
+                                        var batchRead = queue.ReadOldest(100000); var reader = new EventRecordReader(); var parsed = new ParsedEvent();
+                                        for (var bi = 0; bi < batchRead.Count; bi++)
+                                        {
+                                            batchRead.Parse(reader, bi, parsed); var me = M7Event.FromParsed(parsed, bi + 1, catalog.LogicalStrings);
+                                            var fl = me.Properties.Select(pp => new KeyValuePair<string, int>(pp.Key, pp.Value.Type)).ToList();
+                                            if (catalog.FindShape(me.Name, fl) < 0) { File.AppendAllText(Path.Combine(root, "debug.txt"), name + " " + me.Name + " " + string.Join(",", fl.Select(f => f.Key + ":" + f.Value)) + "\n"); break; }
+                                        }
+                                    }
+                                }
+                            } continue; }
                             if (useDict) { withDict += r.Frame.Length; count += batch; int p2 = 28; ReadVar(r.Frame, ref p2); raw += ReadVar(r.Frame, ref p2); }
                             else noDict += r.Frame.Length;
                         }
                     }
                 }
-                results.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3:F3},{4:F3},{5:F3}", name, count, failed, withDict / (double)Math.Max(1, count), noDict / (double)Math.Max(1, count), raw / (double)Math.Max(1, count)));
+                results.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3:F3},{4:F3},{5:F3},{6}", name, count, failed, withDict / (double)Math.Max(1, count), noDict / (double)Math.Max(1, count), raw / (double)Math.Max(1, count), firstFailure.Replace(',', ';')));
             }
             File.WriteAllText(Path.Combine(root, "results.csv"), results.ToString());
         }

@@ -18,7 +18,7 @@ step() { echo "[$(date +%H:%M:%S)] $*" | tee -a "$OUT/steps.txt"; }
 : > "$OUT/steps.txt"
 $ADB reverse tcp:18082 tcp:18082 >/dev/null; $ADB install -r "$APK" >/dev/null; $ADB shell pm clear $PKG >/dev/null
 DIR=/sdcard/Android/data/$PKG/files; $ADB shell mkdir -p $DIR
-printf "mode=$MODE\nscenario=forever\nn=100\ntimeout_s=4\nbuffer_ms=200\n" > "$TMP/config.txt"
+printf "mode=$MODE\nscenario=forever\nn=100\ntimeout_s=4\nbuffer_ms=200\ninterval_s=${INTERVAL_S:-5}\nbg=${BG:-1}\n" > "$TMP/config.txt"
 $ADB push "$TMP/config.txt" $DIR/config.txt >/dev/null; $ADB push "$NR/work/replay_real_20k.jsonl" $DIR/replay.jsonl >/dev/null
 $ADB logcat -c
 step "launch"; $ADB shell am start -n $ACT >/dev/null; sleep 14

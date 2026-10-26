@@ -107,7 +107,8 @@ public sealed class V7ProfProbe : MonoBehaviour
         if (!none) Analytics.Initialize(new AnalyticsOptions
         {
             ServerUrl = Server, ProjectId = Project, Environment = "test", DebugLogging = false, UseTransportV7 = v7,
-            UploadInterval = TimeSpan.FromSeconds(5), UploadEventThreshold = 100, AppVersion = "1.1.14", BuildNumber = "prof-1",
+            UploadInterval = TimeSpan.FromSeconds(double.Parse(Cfg("interval_s", "5"), CultureInfo.InvariantCulture)), UploadEventThreshold = int.Parse(Cfg("threshold", "100")),
+            MaxPacketEvents = int.Parse(Cfg("packet", "200")), UploadOnBackground = Cfg("bg", "1") == "1", AppVersion = "1.1.14", BuildNumber = "prof-1",
             SessionTimeout = TimeSpan.FromSeconds(double.Parse(Cfg("timeout_s", "300"), CultureInfo.InvariantCulture)),
             EventBufferWindow = TimeSpan.FromMilliseconds(double.Parse(Cfg("buffer_ms", "200"), CultureInfo.InvariantCulture)),
         });
