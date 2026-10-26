@@ -21,6 +21,8 @@ namespace Daliys.Analytics
         public int UploadEventThreshold { get; set; } = 200;
         /// <summary>Most events in one packet (V7 allows up to 500; the V1 fallback never sends more than 100 per request).</summary>
         public int MaxPacketEvents { get; set; } = 200;
+        /// <summary>Most events of one name per second (a burst of that size is allowed); 0 = no limit. Refused events return <see cref="TrackResult.RateLimited"/>.</summary>
+        public int MaxEventsPerSecondPerName { get; set; }
         /// <summary>When the game goes to the background or quits, try one short upload of what is queued instead of waiting for the next interval.</summary>
         public bool UploadOnBackground { get; set; } = true;
         /// <summary>Least time between two such background uploads (quick app switching must not cause a string of requests).</summary>
@@ -61,6 +63,9 @@ namespace Daliys.Analytics
 
             if (UploadEventThreshold <= 0)
                 throw new ArgumentOutOfRangeException(nameof(UploadEventThreshold));
+
+            if (MaxEventsPerSecondPerName < 0)
+                throw new ArgumentOutOfRangeException(nameof(MaxEventsPerSecondPerName));
 
             if (MaxPacketEvents < 1 || MaxPacketEvents > 500)
                 throw new ArgumentOutOfRangeException(nameof(MaxPacketEvents));

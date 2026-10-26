@@ -16,10 +16,12 @@ namespace Daliys.Analytics.Internal
         private int _serverCollectionEnabled = 1;
         private long _handoffDropNewest;
         private long _invalidEvents;
+        private readonly EventRateLimiter _limiter;
 
         internal AnalyticsRuntime(AnalyticsOptions options)
         {
             _options = options;
+            _limiter = new EventRateLimiter(options.MaxEventsPerSecondPerName);
             _persistenceWorker = new AnalyticsPersistenceWorker(options, ApplyServerPolicy);
             _session = new SessionTracker(NowMs, options.SessionTimeout, this);
             _persistenceWorker.AttachSession(_session);
@@ -44,6 +46,9 @@ namespace Daliys.Analytics.Internal
                 Interlocked.Increment(ref _invalidEvents);
                 return TrackResult.InvalidProperties;
             }
+
+            if (!_limiter.TryAcquire(eventName))
+                return TrackResult.RateLimited;
 
             var session = _session.Current;
             var now = NowMs();
@@ -104,6 +109,8 @@ namespace Daliys.Analytics.Internal
             catch (InvalidOperationException) { Interlocked.Increment(ref _invalidEvents); }
         }
 
+        internal void SetEventRateLimit(string eventName, int perSecond) => _limiter.SetLimit(eventName, perSecond);
+
         internal void SetCollectionEnabled(bool enabled, bool clearPendingWhenDisabled)
         {
             Interlocked.Exchange(ref _localCollectionEnabled, enabled ? 1 : 0);
@@ -144,7 +151,8 @@ namespace Daliys.Analytics.Internal
                 collectionEnabled: IsCollectionEnabled,
                 handoffCount: _persistenceWorker.HandoffCount,
                 handoffDropNewest: Interlocked.Read(ref _handoffDropNewest),
-                invalidEvents: Interlocked.Read(ref _invalidEvents));
+                invalidEvents: Interlocked.Read(ref _invalidEvents),
+                rateLimited: _limiter.Limited);
         }
 
         internal void Dispose() => _persistenceWorker.Dispose();

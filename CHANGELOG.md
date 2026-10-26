@@ -11,6 +11,9 @@
 - Sessions: the SDK now observes pause/focus/quit, emits `sys_session_start`, `sys_app_background`, `sys_app_foreground` and `sys_session_end`, writes buffered
   events before the game is suspended, and closes the session of a process that died (Android exit reason). New options `EventBufferWindow` and
   `SessionTimeout`. Projects using V7 need the four lifecycle shapes in their catalog.
+- Upload schedule (see `Theory~/transport-v8/PROTOCOL.md`, D13): default `UploadInterval` 120 s (was 30 s), `UploadEventThreshold` 200 (was 50), new
+  `MaxPacketEvents` (200), `UploadOnBackground`, `BackgroundUploadMinGap`, `BackgroundUploadTimeout`; one short upload attempt when the game goes to the
+  background or quits. New `MaxEventsPerSecondPerName` and `Analytics.SetEventRateLimit` for event floods.
 - Android queue schema v3: a durable journal of locally dropped sequence ranges (evicted, expired, or cleared
   events), a `stream_base` marker, and `AnalyticsQueue.getSequenceState()`. Foundation for the V7 sequence-identity
   delivery contract; the wire format and server contract are unchanged.

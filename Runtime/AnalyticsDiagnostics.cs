@@ -4,13 +4,14 @@ namespace Daliys.Analytics
 {
     public sealed class AnalyticsDiagnostics
     {
-        internal AnalyticsDiagnostics(bool initialized, bool collectionEnabled, int handoffCount, long handoffDropNewest, long invalidEvents)
+        internal AnalyticsDiagnostics(bool initialized, bool collectionEnabled, int handoffCount, long handoffDropNewest, long invalidEvents, long rateLimited = 0)
         {
             IsInitialized = initialized;
             IsCollectionEnabled = collectionEnabled;
             HandoffCount = handoffCount;
             HandoffDropNewest = handoffDropNewest;
             InvalidEvents = invalidEvents;
+            RateLimited = rateLimited;
         }
 
         public bool IsInitialized { get; }
@@ -18,6 +19,8 @@ namespace Daliys.Analytics
         public int HandoffCount { get; }
         public long HandoffDropNewest { get; }
         public long InvalidEvents { get; }
+        /// <summary>Events refused by the per-name rate limit.</summary>
+        public long RateLimited { get; }
     }
 
     public enum TrackResult
@@ -27,7 +30,8 @@ namespace Daliys.Analytics
         CollectionDisabled,
         InvalidEventName,
         InvalidProperties,
-        HandoffFull
+        HandoffFull,
+        RateLimited
     }
 
     public enum FlushStatus

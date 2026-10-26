@@ -16,7 +16,14 @@ What this means for the game:
 
 - Events are in memory for at most `EventBufferWindow` before they are durable. A process killed without warning loses at most that window.
 - Leaving the game writes immediately (below), so the normal "player minimised the game" path loses nothing.
-- Uploading is unchanged: `UploadInterval` / `UploadEventThreshold`, and `FlushAsync()` still forces a write and an upload.
+- Uploading: `UploadInterval` (120 s), `UploadEventThreshold` (200 queued events start an upload early), `MaxPacketEvents` (200 per V7 packet, 1 to 500; the V1
+  fallback never sends more than 100 per request) and `FlushAsync()`, which still forces a write and an upload. After the first packet an upload goes on only
+  while a whole packet is waiting, the rest follows with the next due upload.
+- When the game goes to the background or quits (`UploadOnBackground`, on by default) the SDK writes the queue as before and then makes one short upload attempt
+  (`BackgroundUploadTimeout`, 10 s; no retry, nothing is penalised if it fails; `BackgroundUploadMinGap`, 30 s, keeps quick app switching from causing a string of
+  requests). Events that did not get through stay queued.
+- Runaway events: `MaxEventsPerSecondPerName` (0 = off) and `Analytics.SetEventRateLimit(name, perSecond)` refuse events of one name above that rate
+  (`TrackResult.RateLimited`, counted in `AnalyticsDiagnostics.RateLimited`).
 - `AnalyticsOptions.EventBufferWindow = TimeSpan.Zero` writes every event at once (the old behaviour, much more CPU).
 
 ## Sessions and leaving the game

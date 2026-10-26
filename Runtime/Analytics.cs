@@ -57,6 +57,14 @@ namespace Daliys.Analytics
             Volatile.Read(ref _runtime)?.SetCollectionEnabled(enabled, clearPendingWhenDisabled);
         }
 
+        /// <summary>Limits one event name to <paramref name="perSecond"/> events per second (0 = back to the default from the options, negative = never limit it).</summary>
+        public static void SetEventRateLimit(string eventName, int perSecond)
+        {
+            if (string.IsNullOrEmpty(eventName))
+                throw new ArgumentNullException(nameof(eventName));
+            Volatile.Read(ref _runtime)?.SetEventRateLimit(eventName, perSecond);
+        }
+
         public static AnalyticsDiagnostics GetDiagnostics()
         {
             var runtime = Volatile.Read(ref _runtime);
