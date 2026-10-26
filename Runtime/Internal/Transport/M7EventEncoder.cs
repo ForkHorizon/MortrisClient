@@ -12,6 +12,8 @@ namespace Daliys.Analytics.Internal.Transport
         internal long[] Sequences;
         /// <summary>Why the batch cannot be sent as V7 (the caller falls back to V1 for it).</summary>
         internal string Failure;
+        /// <summary>V8: the shape and alias counts the frame leaves the server with once it is accepted.</summary>
+        internal int ShapeCount, AliasCount;
     }
 
     /// <summary>
