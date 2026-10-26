@@ -53,6 +53,7 @@ public final class AnalyticsQueueInstrumentationTest extends Instrumentation {
             testAdoptedIdentityReplacesTheLocalOneAndKeepsTheQueue(getTargetContext());
             testZeroEventLimitAndZeroAgeMeanNoLimit(getTargetContext());
             testByteLimitCountsRowOverheadEvictsOldestAndCountsEvictions(getTargetContext());
+            testStageTimersCountOnlyWhileProfilingIsOn(getTargetContext());
             result.putString(REPORT_KEY_STREAMRESULT, "U1 device queue tests passed.\n");
             finish(Activity.RESULT_OK, result);
         } catch (Throwable failure) {
@@ -488,6 +489,27 @@ public final class AnalyticsQueueInstrumentationTest extends Instrumentation {
         JSONArray pending = new JSONArray(pendingJson(queue, 100));
         assertEquals(ids[15], pending.getJSONObject(0).getString("event_id"));  // the oldest fifteen went
         assertEquals(15L, longOf(queue.getMeta("evicted_total")) - before);
+        queue.close();
+    }
+
+    private static void testStageTimersCountOnlyWhileProfilingIsOn(Context context) throws Exception {
+        AnalyticsQueue queue = new AnalyticsQueue(context);
+        queue.clearAllPendingEvents();
+        enqueue(queue, 0, BYTE_LIMIT, 0, id(9700));
+        assertEquals("{}", queue.getProfile());                            // off by default: nothing recorded
+        queue.setProfiling(true);
+        String[] ids = new String[10];
+        for (int i = 0; i < ids.length; i++) ids[i] = id(9710 + i);
+        enqueue(queue, 0, BYTE_LIMIT, 0, ids);
+        queue.readOldest(5);
+        JSONObject profile = new JSONObject(queue.getProfile());
+        assertEquals(1L, profile.getJSONArray("enq.total").getLong(0));
+        assertEquals(10L, profile.getJSONArray("enq.insert_exec").getLong(0));
+        assertEquals(1L, profile.getJSONArray("enq.commit").getLong(0));
+        assertEquals(1L, profile.getJSONArray("read.total").getLong(0));
+        assertTrue(profile.getJSONArray("enq.total").getLong(1) > 0);      // wall time
+        queue.setProfiling(false);                                         // turning it off clears the numbers
+        assertEquals("{}", queue.getProfile());
         queue.close();
     }
 

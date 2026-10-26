@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Daliys.Analytics;
+using Daliys.Analytics.Internal;
 using UnityEngine;
 using Unity.Profiling;
 using UnityEngine.Profiling;
@@ -160,12 +161,19 @@ public sealed class CmpProbe : MonoBehaviour
         Emit("loaded events=" + _names.Count + " sdk=" + sdk + " scenario=" + scenario);
         GC.Collect(); yield return null; yield return new WaitForSeconds(2f);
 
-        var calib0 = Calibrate(); var mem0 = Mem(); R["calib_ns_start"] = calib0;
+        AnalyticsProf.Reset();
+        var calib0 = Calibrate(); var mem0 = Mem(); R["calib_ns_start"] = calib0; R["prof_compiled"] = AnalyticsProf.Compiled;
         var up0 = Uptime(); var cpuInit0 = ProcCpuTicks(); var swInit = Stopwatch.StartNew(); var monoInit0 = Profiler.GetMonoUsedSizeLong(); var artInit0 = ArtStat("art.gc.bytes-allocated");
         AndroidJavaClass cmp = null;
         if (mortris)
         {
             var opt = new AnalyticsOptions { ServerUrl = server, ProjectId = project, Environment = "test", DebugLogging = Cfg("debug", "0") == "1", AppVersion = "1.1.14", BuildNumber = "cmp-1", UseTransportV7 = sdk == "mortris_v7", UseTransportV8 = sdk == "mortris_v8" };
+            if (config.TryGetValue("profile", out var profileName)) opt.UseProfile(profileName == "realtime" ? AnalyticsProfile.Realtime : profileName == "saver" ? AnalyticsProfile.TrafficSaver : AnalyticsProfile.Standard);
+            if (config.TryGetValue("adaptive", out var adaptive)) opt.AdaptivePacketSize = adaptive == "1";
+            if (config.TryGetValue("queue_mb", out var queueMb)) opt.DurableByteLimit = long.Parse(queueMb, ci) * 1024L * 1024L;
+            if (config.TryGetValue("buffer_kb", out var bufferKb)) opt.EventBufferBytes = int.Parse(bufferKb, ci) * 1024;
+            if (config.TryGetValue("backlog_packet", out var backlogPacket)) opt.BacklogPacketEvents = int.Parse(backlogPacket, ci);
+            if (config.TryGetValue("backlog_pause_ms", out var backlogPause)) opt.BacklogPacketPause = TimeSpan.FromMilliseconds(double.Parse(backlogPause, ci));
             if (config.ContainsKey("interval_s")) opt.UploadInterval = TimeSpan.FromSeconds(double.Parse(config["interval_s"], ci));
             if (config.ContainsKey("threshold")) opt.UploadEventThreshold = int.Parse(config["threshold"]);
             if (config.ContainsKey("packet")) opt.MaxPacketEvents = int.Parse(config["packet"]);
@@ -185,6 +193,8 @@ public sealed class CmpProbe : MonoBehaviour
         var settle = float.Parse(Cfg("settle_s", "8"), ci); yield return new WaitForSeconds(settle);
         if (mortris) { var warm = Analytics.FlushAsync(); while (!warm.IsCompleted) yield return null; }
 
+        if (AnalyticsProf.Compiled) R["prof_init"] = AnalyticsProf.Dump(true);   // start-up and first flush: init stages, bridge creation, hello, catalog, dictionary
+        AnalyticsProf.Reset();
         var pss = Mem(); R["mem_before"] = new List<double> { pss[0], pss[1], pss[2], pss[3] };
         var tt0 = ThreadTicks(); var cpu0 = ProcCpuTicks(); var gc0 = GC.CollectionCount(0); var gc1 = GC.CollectionCount(1); var gc2 = GC.CollectionCount(2);
         var mainAlloc0 = GC.GetAllocatedBytesForCurrentThread(); _gcBytesSum = 0; _gcCountSum = 0; var monoUsed0 = Profiler.GetMonoUsedSizeLong();
@@ -209,6 +219,19 @@ public sealed class CmpProbe : MonoBehaviour
             for (var r = 0; r < n; r++)
             {
                 var f = Stopwatch.StartNew(); for (var j = 0; j < k; j++) TrackOne(); frameWork.Add(f.Elapsed.TotalMilliseconds); Sample();
+                yield return new WaitForSeconds(gap);
+            }
+        }
+        else if (scenario == "batch")
+        {
+            // TrackBatchAsync: k events per call, n calls, gap seconds between calls; the frame time is what the call costs the game
+            for (var r = 0; r < n; r++)
+            {
+                var list = new List<BatchEvent>(k); var f = Stopwatch.StartNew();
+                for (var j = 0; j < k && index < _names.Count; j++, index++) list.Add(new BatchEvent(_names[index], _props[index]));
+                var task = Analytics.TrackBatchAsync(list); frameWork.Add(f.Elapsed.TotalMilliseconds); var wait = Stopwatch.StartNew();
+                while (!task.IsCompleted) yield return null;
+                var res = task.Result; tracked += res.Accepted; latencies.Add(wait.Elapsed.TotalMilliseconds * 1000); Sample();
                 yield return new WaitForSeconds(gap);
             }
         }
@@ -245,6 +268,7 @@ public sealed class CmpProbe : MonoBehaviour
         var tt1 = ThreadTicks(); var dl = new List<KeyValuePair<string, long>>();
         foreach (var kv in tt1) { tt0.TryGetValue(kv.Key, out var b4); if (kv.Value - b4 > 0) dl.Add(new KeyValuePair<string, long>(kv.Key, kv.Value - b4)); }
         dl.Sort((a, b) => b.Value.CompareTo(a.Value)); var tp = new Dictionary<string, object>(); for (var i = 0; i < Math.Min(40, dl.Count); i++) tp[dl[i].Key] = dl[i].Value; R["threads_scenario"] = tp;
+        if (AnalyticsProf.Compiled) R["prof_scenario"] = AnalyticsProf.Dump(true);
         Save(); Emit("scenario_done events=" + index + " cpu_ticks=" + cpuScenario + " track_p50=" + P(latencies, .5).ToString("F1", ci) + "us");
 
         // tail: the SDK works on its own (timers, retries, queues) until the driver sees the delivery settle and creates stop.txt
@@ -260,6 +284,8 @@ public sealed class CmpProbe : MonoBehaviour
         foreach (var kv in tt2) { ttTail0.TryGetValue(kv.Key, out var b4); if (kv.Value - b4 > 0) dl2.Add(new KeyValuePair<string, long>(kv.Key, kv.Value - b4)); }
         dl2.Sort((a, b) => b.Value.CompareTo(a.Value)); var tp2 = new Dictionary<string, object>(); for (var i = 0; i < Math.Min(40, dl2.Count); i++) tp2[dl2[i].Key] = dl2[i].Value; R["threads_tail"] = tp2;
         Sample(); var memEnd = Mem(); R["mem_peak"] = new List<double> { peakPss, peakJava, peakNative }; R["mem_end"] = new List<double> { memEnd[0], memEnd[1], memEnd[2], memEnd[3] }; R["calib_ns_end"] = Calibrate();
+        if (AnalyticsProf.Compiled) R["prof_tail"] = AnalyticsProf.Dump(true);
+        if (mortris) { var dg = Analytics.GetDiagnostics(); R["diag"] = new Dictionary<string, object> { ["invalid"] = dg.InvalidEvents, ["handoff_drop"] = dg.HandoffDropNewest, ["queue_evicted"] = dg.QueueEvictedEvents, ["buffer_flushed_by_track"] = dg.BufferFlushedByTrack, ["rate_limited"] = dg.RateLimited }; }
         if (adapter) { try { R["adapter_events"] = cmp.CallStatic<long>("count"); } catch (Exception) { } }
         Save(); Emit("done"); yield return new WaitForSeconds(1.5f);
         Application.Quit();

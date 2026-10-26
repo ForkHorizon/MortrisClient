@@ -52,14 +52,22 @@ namespace Daliys.Analytics.Internal
         {
             _options = options;
             _buffer = new EventBuffer(BufferCapacity, options.EventBufferBytes);
+            var pi = AnalyticsProf.Begin();
             _device = AnalyticsDeviceContext.Create(options);
+            AnalyticsProf.End(Stage.InitDeviceContext, pi);
+            pi = AnalyticsProf.Begin();
             ContextBytes = EventContext.Build(_device.AppVersion, _device.BuildNumber, _device.Platform, _device.OSVersion, _device.DeviceClass, _device.Locale, _device.TimezoneOffsetMinutes);
+            AnalyticsProf.End(Stage.InitEventContext, pi);
             _policyChanged = policyChanged;
+            pi = AnalyticsProf.Begin();
             _uploader = new AnalyticsUploader(options, _device, policyChanged);
+            AnalyticsProf.End(Stage.InitUploader, pi);
+            pi = AnalyticsProf.Begin();
             _uploadTimer = new Timer(_ => Schedule(), null, options.UploadInterval, options.UploadInterval);
             _flushTimer = new Timer(_ => { Volatile.Write(ref _timerArmed, 0); Schedule(); }, null, Timeout.Infinite, Timeout.Infinite);
             _heartbeatTimer = new Timer(_ => { Volatile.Write(ref _heartbeatDue, 1); Schedule(); }, null, HeartbeatInterval, HeartbeatInterval);
             _restoreTimer = new Timer(_ => UploadSoon(), null, Timeout.Infinite, Timeout.Infinite);
+            AnalyticsProf.End(Stage.InitTimers, pi);
         }
 
         /// <summary>The device fields every record carries, encoded once.</summary>
@@ -77,11 +85,18 @@ namespace Daliys.Analytics.Internal
         {
             if (Volatile.Read(ref _isDisposed) != 0)
                 return false;
-            if (!_buffer.TryAppend(record, length, priority))
+            var tb = AnalyticsProf.Begin();
+            var appended = _buffer.TryAppend(record, length, priority);
+            AnalyticsProf.End(Stage.TrackBuffer, tb);
+            if (!appended)
             {
                 // A burst filled the buffer. Nothing is dropped: this call writes the buffer to the durable queue itself (the frame gets longer, which is the price of not using
                 // Analytics.TrackBatchAsync) and then appends. Only where there is no queue to write to (the Editor) or the write failed does the event stay refused.
-                if (priority || !FlushBufferOnCaller() || !_buffer.TryAppend(record, length, priority))
+                var tp = AnalyticsProf.Begin();
+                var flushed = !priority && FlushBufferOnCaller();
+                AnalyticsProf.End(Stage.TrackPressureFlush, tp);
+                AnalyticsProf.Count(AnalyticsProf.Counter.TrackBufferFull);
+                if (!flushed || !_buffer.TryAppend(record, length, priority))
                     return false;
                 Interlocked.Increment(ref _bufferFlushedByTrack);
             }
@@ -214,7 +229,9 @@ namespace Daliys.Analytics.Internal
                         var stored = "";
                         try { if (AndroidQueueBridge.IsSupported && EnsureBridge() != null) stored = _bridge.GetMeta("counters"); }
                         catch (Exception exception) { if (_options.DebugLogging) Debug.LogException(exception); }
+                        var pc = AnalyticsProf.Begin();
                         _counters.Load(stored);
+                        AnalyticsProf.End(Stage.CountersLoad, pc);
                     }
                 }
             }
@@ -233,6 +250,12 @@ namespace Daliys.Analytics.Internal
         /// foreground: it must not wait for the worker, which may be inside a network call. Does not upload anything.
         /// </summary>
         internal bool PersistNow()
+        {
+            var tn = AnalyticsProf.Begin();
+            try { return PersistNowCore(); } finally { AnalyticsProf.End(Stage.PersistNow, tn); }
+        }
+
+        private bool PersistNowCore()
         {
             if (!AndroidQueueBridge.IsSupported || Volatile.Read(ref _isDisposed) != 0) return false;
             try
@@ -295,6 +318,12 @@ namespace Daliys.Analytics.Internal
 
         private void PersistPending()
         {
+            var tw = AnalyticsProf.Begin();
+            try { PersistPendingCore(); } finally { AnalyticsProf.End(Stage.WorkerPass, tw); AnalyticsProf.Count(AnalyticsProf.Counter.WorkerPasses); }
+        }
+
+        private void PersistPendingCore()
+        {
             var status = FlushStatus.PersistedToDevice;
 #if UNITY_ANDROID && !UNITY_EDITOR
             var jniAttached = false;
@@ -304,11 +333,17 @@ namespace Daliys.Analytics.Internal
             var mine = TakeFlushWaiters();
             try
             {
-                if (IsIdle(mine.Count > 0))
+                var ti = AnalyticsProf.Begin();
+                var idle = IsIdle(mine.Count > 0);
+                AnalyticsProf.End(Stage.WorkerIdleCheck, ti);
+                if (idle)
                     return; // a timer tick with nothing buffered, no state change and no upload due: no need to attach to the JVM
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-                if (AndroidJNI.AttachCurrentThread() != 0)
+                var ta = AnalyticsProf.Begin();
+                var attachResult = AndroidJNI.AttachCurrentThread();
+                AnalyticsProf.End(Stage.WorkerAttach, ta);
+                if (attachResult != 0)
                     throw new InvalidOperationException("Unable to attach the analytics persistence worker to the Android JVM.");
                 jniAttached = true;
 #endif
@@ -332,17 +367,23 @@ namespace Daliys.Analytics.Internal
                         if (!force || _buffer.Count == 0)
                             break;
                     }
+                    var ts = AnalyticsProf.Begin();
                     SaveSessionState(false);
+                    AnalyticsProf.End(Stage.WorkerSaveSession, ts);
+                    ts = AnalyticsProf.Begin();
                     RefreshEvictedCount();
+                    AnalyticsProf.End(Stage.WorkerEvictedRead, ts);
                 }
 
                 // A clear requested after the write step above must not let the upload send what it was meant to remove; the finally block reschedules.
                 if (Volatile.Read(ref _clearRequested) == 1)
                     return;
                 var background = Interlocked.Exchange(ref _backgroundUploadRequested, 0) == 1;
+                var tu = AnalyticsProf.Begin();
                 var upload = background
                     ? _uploader.Flush(_bridge, true, _options.BackgroundUploadTimeout)
                     : _uploader.Flush(_bridge, mine.Count > 0);
+                AnalyticsProf.End(Stage.WorkerUpload, tu);
                 status = upload.Status;
             }
             catch (Exception exception)
@@ -355,10 +396,16 @@ namespace Daliys.Analytics.Internal
             {
 #if UNITY_ANDROID && !UNITY_EDITOR
                 if (jniAttached)
+                {
+                    var td = AnalyticsProf.Begin();
                     AndroidJNI.DetachCurrentThread();
+                    AnalyticsProf.End(Stage.WorkerDetach, td);
+                }
 #endif
                 Interlocked.Exchange(ref _isScheduled, 0);
+                var tc = AnalyticsProf.Begin();
                 CompleteFlushes(mine, status);
+                AnalyticsProf.End(Stage.WorkerComplete, tc);
                 if (HasFlushWaiters()) Schedule();
 
                 if (status == FlushStatus.PersistenceFailed && _buffer.Count > 0 && Interlocked.CompareExchange(ref _timerArmed, 1, 0) == 0)
@@ -375,9 +422,19 @@ namespace Daliys.Analytics.Internal
 
         private void WriteBuffer()
         {
+            var tw = AnalyticsProf.Begin();
+            var td = AnalyticsProf.Begin();
             var frames = _buffer.Drain(out var count);
+            AnalyticsProf.End(Stage.WorkerBufferDrain, td);
             if (count == 0)
                 return;
+            AnalyticsProf.Count(AnalyticsProf.Counter.WorkerWrites);
+            AnalyticsProf.Count(AnalyticsProf.Counter.EventsWritten, count);
+            try { WriteDrained(frames, count); } finally { AnalyticsProf.End(Stage.WorkerWriteBuffer, tw); }
+        }
+
+        private void WriteDrained(byte[] frames, int count)
+        {
 
             // counters are read after the drain: every number the drained events use was handed out before they were tracked
             var counters = _counters.Snapshot();
@@ -407,7 +464,14 @@ namespace Daliys.Analytics.Internal
             _bridge != null && _sessionRecovered && _buffer.Count == 0 && Volatile.Read(ref _clearRequested) == 0 && Volatile.Read(ref _heartbeatDue) == 0 &&
             Volatile.Read(ref _backgroundUploadRequested) == 0 && !flushRequested && !HasFlushWaiters() && (_session == null || _session.StateVersion == _savedSessionVersion) && _uploader.NothingToDo(_bridge, false);
 
-        private IAnalyticsQueueBridge EnsureBridge() => _bridge ?? (_bridge = AndroidQueueBridge.TryCreate());
+        private IAnalyticsQueueBridge EnsureBridge()
+        {
+            if (_bridge != null) return _bridge;
+            var t = AnalyticsProf.Begin();
+            _bridge = AndroidQueueBridge.TryCreate();
+            AnalyticsProf.End(Stage.BridgeCreate, t);
+            return _bridge;
+        }
 
         /// <summary>The first run of a process closes the session its predecessor left open (see SessionTracker.Recover).</summary>
         private void RecoverPreviousSession()
@@ -415,9 +479,11 @@ namespace Daliys.Analytics.Internal
             if (_sessionRecovered || _session == null)
                 return;
             _sessionRecovered = true;
+            var t = AnalyticsProf.Begin();
             var previous = _bridge.LoadSessionState();
             var exit = string.IsNullOrEmpty(previous) ? "" : _bridge.GetPreviousExitInfo();
             _session.Recover(previous, exit);
+            AnalyticsProf.End(Stage.SessionRecover, t);
         }
 
         private void SaveSessionState(bool force)

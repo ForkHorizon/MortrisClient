@@ -15,6 +15,7 @@ namespace Daliys.Analytics
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
 
+            var tTotal = AnalyticsProf.Begin();
             options.Validate();
             var existing = Volatile.Read(ref _runtime);
             if (existing != null)
@@ -25,7 +26,9 @@ namespace Daliys.Analytics
                 return;
             }
 
+            var tInit = AnalyticsProf.Begin();
             var created = new AnalyticsRuntime(options);
+            AnalyticsProf.End(Stage.InitRuntime, tInit);
             if (Interlocked.CompareExchange(ref _runtime, created, null) != null)
             {
                 created.Dispose();
@@ -34,7 +37,10 @@ namespace Daliys.Analytics
                 return;
             }
 
+            var tLife = AnalyticsProf.Begin();
             AnalyticsLifecycle.Attach(created);
+            AnalyticsProf.End(Stage.InitLifecycle, tLife);
+            AnalyticsProf.End(Stage.InitTotal, tTotal);
         }
 
         public static TrackResult Track(string eventName, IReadOnlyDictionary<string, object> properties = null)
@@ -93,6 +99,12 @@ namespace Daliys.Analytics
                 throw new ArgumentNullException(nameof(eventName));
             Volatile.Read(ref _runtime)?.SetEventRateLimit(eventName, perSecond);
         }
+
+        /// <summary>Stage timers of the profiling build (empty unless the SDK was compiled with DALIYS_ANALYTICS_PROFILE): see Theory~/profiling-v2/PROFILING_PLAN.md.</summary>
+        public static string DumpProfile(bool includeTrace = true) => AnalyticsProf.Dump(includeTrace);
+
+        /// <summary>Forgets the stage timers recorded so far (profiling build only).</summary>
+        public static void ResetProfile() => AnalyticsProf.Reset();
 
         public static AnalyticsDiagnostics GetDiagnostics()
         {

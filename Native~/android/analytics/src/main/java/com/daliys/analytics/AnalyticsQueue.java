@@ -72,7 +72,10 @@ public final class AnalyticsQueue implements Closeable {
 
     /** Cheap: answered from memory. */
     public synchronized QueueResult getState() {
-        return new QueueResult(identity.installationId, identity.credential, 0, 0, 0, pendingCount, pendingBytes);
+        long p0 = profBegin();
+        QueueResult result = new QueueResult(identity.installationId, identity.credential, 0, 0, 0, pendingCount, pendingBytes);
+        profEnd(P_STATE, p0);
+        return result;
     }
 
     /**
@@ -81,6 +84,15 @@ public final class AnalyticsQueue implements Closeable {
      * inclusive ranges that the server must not wait for. Acknowledged rows are not listed.
      */
     public synchronized String getSequenceState() throws JSONException {
+        long p0 = profBegin();
+        try {
+            return sequenceStateText();
+        } finally {
+            profEnd(P_SEQ_STATE, p0);
+        }
+    }
+
+    private String sequenceStateText() throws JSONException {
         JSONArray dropped = new JSONArray();
         long[][] ranges = readDroppedRanges();
         for (long[] range : ranges) dropped.put(new JSONArray().put(range[0]).put(range[1]));
@@ -126,6 +138,7 @@ public final class AnalyticsQueue implements Closeable {
      * settled are pruned. Returns the number of deleted rows.
      */
     public synchronized int deleteThroughSequence(long ackThrough) {
+        long p0 = profBegin();
         int deleted;
         database.beginTransaction();
         try {
@@ -148,6 +161,7 @@ public final class AnalyticsQueue implements Closeable {
             database.endTransaction();
         }
         if (deleted > 0) refreshCounters();
+        profEnd(P_DELETE, p0);
         return deleted;
     }
 
@@ -190,14 +204,18 @@ public final class AnalyticsQueue implements Closeable {
     /** Reads a value the SDK keeps in the queue's durable storage ("v8.*" keys and "counters"); a missing key reads as the empty string. */
     public synchronized String getMeta(String key) {
         if (key == null || !isAppMetaKey(key)) throw new IllegalArgumentException("Not a storage key: " + key);
+        long p0 = profBegin();
         String value = getMetadata(key);
+        profEnd(P_META_GET, p0);
         return value == null ? "" : value;
     }
 
     public synchronized void setMeta(String key, String value) {
         if (key == null || !isAppMetaKey(key)) throw new IllegalArgumentException("Not a storage key: " + key);
         if (value == null || value.length() > 262144) throw new IllegalArgumentException("Invalid storage value.");
+        long p0 = profBegin();
         putMetadata(key, value);
+        profEnd(P_META_SET, p0);
     }
 
     /**
@@ -224,6 +242,49 @@ public final class AnalyticsQueue implements Closeable {
      * record (format byte 1, 16-byte event id, ... see EventRecord.cs); the queue reads nothing but the id from it and assigns the sequence numbers.
      * Returns the number of rows queued afterwards.
      */
+    // --- stage timers (off by default: one boolean test per stage). The profiling build of the Unity SDK turns them on and reads them with getProfile().
+    private static final String[] PROF_NAMES = {"enq.total", "enq.insert_loop", "enq.insert_exec", "enq.meta_sequence", "enq.expire", "enq.bounds", "enq.counters", "enq.commit",
+            "read.total", "read.query", "delete.total", "state", "sequence_state", "meta_get", "meta_set", "session_save", "session_load"};
+    private static final int P_ENQ = 0, P_INSERT_LOOP = 1, P_INSERT_EXEC = 2, P_META_SEQ = 3, P_EXPIRE = 4, P_BOUNDS = 5, P_COUNTERS = 6, P_COMMIT = 7, P_READ = 8, P_READ_QUERY = 9,
+            P_DELETE = 10, P_STATE = 11, P_SEQ_STATE = 12, P_META_GET = 13, P_META_SET = 14, P_SESSION_SAVE = 15, P_SESSION_LOAD = 16;
+    private boolean profiling;
+    private final long[] profCalls = new long[PROF_NAMES.length], profWall = new long[PROF_NAMES.length], profCpu = new long[PROF_NAMES.length], profAlloc = new long[PROF_NAMES.length],
+            profMax = new long[PROF_NAMES.length];
+
+    public synchronized void setProfiling(boolean on) {
+        profiling = on;
+        java.util.Arrays.fill(profCalls, 0); java.util.Arrays.fill(profWall, 0); java.util.Arrays.fill(profCpu, 0); java.util.Arrays.fill(profAlloc, 0); java.util.Arrays.fill(profMax, 0);
+    }
+
+    /** Per stage: calls, wall ns, thread CPU ns (totals only), ART bytes allocated across the stage (totals only; all threads), longest call ns. */
+    public synchronized String getProfile() throws JSONException {
+        JSONObject root = new JSONObject();
+        for (int i = 0; i < PROF_NAMES.length; i++) {
+            if (profCalls[i] == 0) continue;
+            root.put(PROF_NAMES[i], new JSONArray().put(profCalls[i]).put(profWall[i]).put(profCpu[i]).put(profAlloc[i]).put(profMax[i]));
+        }
+        return root.toString();
+    }
+
+    private long profBegin() { return profiling ? System.nanoTime() : 0L; }
+    private long profCpuBegin() { return profiling ? android.os.Debug.threadCpuTimeNanos() : 0L; }
+    private long profAllocBegin() {
+        if (!profiling) return 0L;
+        try { return Long.parseLong(android.os.Debug.getRuntimeStat("art.gc.bytes-allocated")); } catch (RuntimeException ignored) { return 0L; }
+    }
+    private void profEnd(int stage, long t0) {
+        if (!profiling) return;
+        long d = System.nanoTime() - t0;
+        profCalls[stage]++; profWall[stage] += d; if (d > profMax[stage]) profMax[stage] = d;
+    }
+    private void profEndTotal(int stage, long t0, long cpu0, long alloc0) {
+        if (!profiling) return;
+        profEnd(stage, t0);
+        profCpu[stage] += android.os.Debug.threadCpuTimeNanos() - cpu0;
+        long after = profAllocBegin();
+        if (after > alloc0) profAlloc[stage] += after - alloc0;
+    }
+
     public synchronized int enqueueRecords(byte[] data, int count, int eventLimit, long byteLimit, long maxAgeMillis) {
         return enqueueRecords(data, count, eventLimit, byteLimit, maxAgeMillis, null);
     }
@@ -243,8 +304,10 @@ public final class AnalyticsQueue implements Closeable {
 
         long now = System.currentTimeMillis();
         boolean committed = false;
+        long pTotal = profBegin(), pCpu = profCpuBegin(), pAlloc = profAllocBegin();
         database.beginTransaction();
         try {
+            long pLoop = profBegin();
             SQLiteStatement insert = insertStatement();
             long sequence = nextSequence;
             int position = 0;
@@ -261,31 +324,45 @@ public final class AnalyticsQueue implements Closeable {
                 insert.bindBlob(4, Arrays.copyOfRange(data, position, position + length));
                 insert.bindLong(5, length);
                 insert.bindLong(6, now);
+                long pExec = profBegin();
                 if (insert.executeInsert() != -1L) {
                     sequence++;
                     pendingCount++;
                     pendingBytes += length;
                 }
+                profEnd(P_INSERT_EXEC, pExec);
                 position += length;
             }
+            profEnd(P_INSERT_LOOP, pLoop);
+            long pStage = profBegin();
             if (sequence != nextSequence) {
                 putMetadata(META_NEXT_SEQUENCE, Long.toString(sequence));
                 nextSequence = sequence;
             }
+            profEnd(P_META_SEQ, pStage);
+            pStage = profBegin();
             if (maxAgeMillis > 0) expireIfDue(now, maxAgeMillis);
+            profEnd(P_EXPIRE, pStage);
+            pStage = profBegin();
             enforceBounds(eventLimit, byteLimit);
+            profEnd(P_BOUNDS, pStage);
+            pStage = profBegin();
             if (counters != null && !counters.isEmpty()) putMetadata(META_COUNTERS, counters);
+            profEnd(P_COUNTERS, pStage);
             database.setTransactionSuccessful();
             committed = true;
         } finally {
             boolean ended = false;
+            long pCommit = profBegin();
             try {
                 database.endTransaction();
                 ended = true;
             } finally {
+                profEnd(P_COMMIT, pCommit);
                 if (!committed || !ended) reloadCaches(); // a failed commit leaves the cached counters ahead of the database
             }
         }
+        profEndTotal(P_ENQ, pTotal, pCpu, pAlloc);
         return pendingCount;
     }
 
@@ -295,9 +372,11 @@ public final class AnalyticsQueue implements Closeable {
      */
     public synchronized byte[] readOldest(int maxEvents) {
         if (maxEvents <= 0) throw new IllegalArgumentException("maxEvents must be positive.");
+        long pTotal = profBegin(), pCpu = profCpuBegin(), pAlloc = profAllocBegin();
         byte[] out = new byte[4 + Math.min(maxEvents, Math.max(1, pendingCount)) * 256];
         int length = 4;
         int rows = 0;
+        long pQuery = profBegin();
         try (Cursor cursor = database.query("pending_events", new String[]{"format", "sequence", "payload"}, null,
                 null, null, null, "row_id ASC", Integer.toString(maxEvents))) {
             while (cursor.moveToNext()) {
@@ -313,18 +392,25 @@ public final class AnalyticsQueue implements Closeable {
                 rows++;
             }
         }
+        profEnd(P_READ_QUERY, pQuery);
         out[0] = (byte) (rows >>> 24); out[1] = (byte) (rows >>> 16); out[2] = (byte) (rows >>> 8); out[3] = (byte) rows;
-        return Arrays.copyOf(out, length);
+        byte[] result = Arrays.copyOf(out, length);
+        profEndTotal(P_READ, pTotal, pCpu, pAlloc);
+        return result;
     }
 
     /** Saves the small session-state document the C# side keeps for session-end detection (one row, replaced). */
     public synchronized void saveSessionState(String state) {
+        long p0 = profBegin();
         putMetadata(META_SESSION_STATE, state);
+        profEnd(P_SESSION_SAVE, p0);
     }
 
     /** Returns the saved session state, or an empty string. */
     public synchronized String loadSessionState() {
+        long p0 = profBegin();
         String state = getMetadata(META_SESSION_STATE);
+        profEnd(P_SESSION_LOAD, p0);
         return state == null ? "" : state;
     }
 

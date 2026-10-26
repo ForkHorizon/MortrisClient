@@ -67,6 +67,12 @@ namespace Daliys.Analytics.Internal.Transport
         /// <summary>Sends the oldest queued batch as one packet. <paramref name="readBatch"/> returns the queue's rows (called once the stream is ready).</summary>
         internal V7SendResult Send(IAnalyticsQueueBridge queue, Func<QueueBatch> readBatch)
         {
+            var t = AnalyticsProf.Begin();
+            try { return SendCore(queue, readBatch); } finally { AnalyticsProf.End(Stage.V8Send, t); }
+        }
+
+        private V7SendResult SendCore(IAnalyticsQueueBridge queue, Func<QueueBatch> readBatch)
+        {
             if (_disabled) return Fallback("V8 is disabled for this process");
             if (_settings.Clock() < _unavailableUntil) return Fallback(LastFallbackReason ?? "V8 is not available");
             try
@@ -81,14 +87,19 @@ namespace Daliys.Analytics.Internal.Transport
                     if (batch == null || batch.Count == 0) return V7SendResult.Empty;
                     var sequence = MiniJson.ParseObject(queue.GetSequenceState());
                     var info = StreamInfo(sequence);
+                    var pe = AnalyticsProf.Begin();
                     var encoded = _encoder.Encode(batch, info);
+                    AnalyticsProf.End(Stage.V8Encode, pe);
                     if (!encoded.Ok)
                     {
                         // a shape the server would not take must not stay in the table, or every later packet would carry it again
                         _shapes.TruncateTo(_serverShapes);
                         return Fallback(encoded.Failure);
                     }
+                    var ph = AnalyticsProf.Begin();
                     var response = _http.PostBinary("/v3/packet", encoded.Frame, "application/vnd.mortris.m8", _token);
+                    AnalyticsProf.End(Stage.V8Http, ph);
+                    AnalyticsProf.Count(AnalyticsProf.Counter.Packets); AnalyticsProf.Count(AnalyticsProf.Counter.PacketBytes, encoded.Frame.Length); AnalyticsProf.Count(AnalyticsProf.Counter.EventsAccepted, batch.Count);
                     var outcome = Interpret(queue, response, encoded, out again);
                     if (again) continue;
                     if (outcome.Kind == V7ResultKind.Delivered) _consecutiveFailures = 0;
@@ -137,6 +148,12 @@ namespace Daliys.Analytics.Internal.Transport
 
         private void Persist(IAnalyticsQueueBridge queue)
         {
+            var t = AnalyticsProf.Begin();
+            try { PersistCore(queue); } finally { AnalyticsProf.End(Stage.V8Persist, t); }
+        }
+
+        private void PersistCore(IAnalyticsQueueBridge queue)
+        {
             queue.SetMeta(KeyToken, _token);
             queue.SetMeta(KeyShapes, _shapes.ToJson(_settings.ProjectId, _serverShapes));
             queue.SetMeta(KeyServerShapes, _serverShapes.ToString(CultureInfo.InvariantCulture));
@@ -182,6 +199,12 @@ namespace Daliys.Analytics.Internal.Transport
         }
 
         private V7SendResult Hello(IAnalyticsQueueBridge queue)
+        {
+            var t = AnalyticsProf.Begin();
+            try { return HelloCore(queue); } finally { AnalyticsProf.End(Stage.V8Hello, t); }
+        }
+
+        private V7SendResult HelloCore(IAnalyticsQueueBridge queue)
         {
             var sequence = MiniJson.ParseObject(queue.GetSequenceState());
             var queueEpoch = ToLong(sequence["stream_epoch"]);
@@ -269,6 +292,12 @@ namespace Daliys.Analytics.Internal.Transport
 
         private V7SendResult AdoptCatalog()
         {
+            var t = AnalyticsProf.Begin();
+            try { return AdoptCatalogCore(); } finally { AnalyticsProf.End(Stage.V8Catalog, t); }
+        }
+
+        private V7SendResult AdoptCatalogCore()
+        {
             var response = _http.Get("/v3/catalog", _token);
             if (response.Status == 401) { _token = ""; _needHello = true; return V7SendResult.Retry(401, null, "catalog: token refused"); }
             if (IsTransient(response.Status)) return V7SendResult.Retry(response.Status, response.RetryAfter, "catalog: " + response.Status);
@@ -284,12 +313,20 @@ namespace Daliys.Analytics.Internal.Transport
 
         private V7SendResult BuildEncoder(IAnalyticsQueueBridge queue)
         {
+            var t = AnalyticsProf.Begin();
+            try { return BuildEncoderCore(queue); } finally { AnalyticsProf.End(Stage.V8BuildEncoder, t); }
+        }
+
+        private V7SendResult BuildEncoderCore(IAnalyticsQueueBridge queue)
+        {
             if (_dictionaryId != NoDictionary && _dictionary == null)
             {
                 _dictionary = _store.TryRead("dictionary", _dictionaryId);
                 if (_dictionary == null || AssetId(_dictionary) != _dictionaryId)
                 {
+                    var pd = AnalyticsProf.Begin();
                     var response = _http.Get("/v3/assets/dictionary/" + _dictionaryId, _token);
+                    AnalyticsProf.End(Stage.V8Dictionary, pd);
                     if (response.Status == 401) { _token = ""; _needHello = true; return V7SendResult.Retry(401, null, "dictionary: token refused"); }
                     if (IsTransient(response.Status)) return V7SendResult.Retry(response.Status, response.RetryAfter, "dictionary: " + response.Status);
                     if (!response.IsSuccess || AssetId(response.Body) != _dictionaryId)
@@ -323,6 +360,12 @@ namespace Daliys.Analytics.Internal.Transport
         // --- packets -------------------------------------------------------------------------------------------------
 
         private V7SendResult Interpret(IAnalyticsQueueBridge queue, V7Response response, M7EncodeResult encoded, out bool again)
+        {
+            var t = AnalyticsProf.Begin();
+            try { return InterpretCore(queue, response, encoded, out again); } finally { AnalyticsProf.End(Stage.V8Interpret, t); }
+        }
+
+        private V7SendResult InterpretCore(IAnalyticsQueueBridge queue, V7Response response, M7EncodeResult encoded, out bool again)
         {
             again = false;
             var status = response.Status;
@@ -419,6 +462,12 @@ namespace Daliys.Analytics.Internal.Transport
         }
 
         private V7SendResult FetchPolicy(IAnalyticsQueueBridge queue, long p)
+        {
+            var t = AnalyticsProf.Begin();
+            try { return FetchPolicyCore(queue, p); } finally { AnalyticsProf.End(Stage.V8Policy, t); }
+        }
+
+        private V7SendResult FetchPolicyCore(IAnalyticsQueueBridge queue, long p)
         {
             var response = _http.Get("/v3/policy", _token);
             if (!response.IsSuccess) return null;        // keep the old policy; the next packet's p will ask again

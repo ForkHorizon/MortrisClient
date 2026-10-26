@@ -108,7 +108,15 @@ namespace Daliys.Analytics.Internal.Transport
 
         /// <summary>The client every analytics request goes through. A redirect is never followed: a POST body (and the
         /// credential) must go to the configured server only, so a 3xx surfaces as a plain non-success status.</summary>
-        internal static HttpClient CreateClient() => new HttpClient(new HttpClientHandler { AllowAutoRedirect = false, AutomaticDecompression = System.Net.DecompressionMethods.GZip });
+        internal static HttpClient CreateClient()
+        {
+            var handler = new HttpClientHandler { AllowAutoRedirect = false, AutomaticDecompression = System.Net.DecompressionMethods.GZip };
+#if DALIYS_ANALYTICS_PROFILE
+            // the profiling build talks to a local TLS meter (comparison-run~/tools/tlsmeter.py) that has a self-made certificate; never in the shipped SDK
+            handler.ServerCertificateCustomValidationCallback = (message, certificate, chain, errors) => true;
+#endif
+            return new HttpClient(handler);
+        }
 
         internal HttpV7Transport(HttpClient client, string serverUrl) { _client = client; _baseUrl = serverUrl.TrimEnd('/'); }
 
@@ -135,6 +143,7 @@ namespace Daliys.Analytics.Internal.Transport
 
         private V7Response Send(HttpMethod method, string path, HttpContent content, IReadOnlyDictionary<string, string> headers, string credential)
         {
+            AnalyticsProf.Count(AnalyticsProf.Counter.Requests);
             using (var request = new HttpRequestMessage(method, new Uri(_baseUrl + path, UriKind.Absolute)) { Content = content })
             {
                 if (!string.IsNullOrEmpty(credential)) request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", credential);

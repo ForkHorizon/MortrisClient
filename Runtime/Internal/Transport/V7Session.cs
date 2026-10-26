@@ -80,6 +80,12 @@ namespace Daliys.Analytics.Internal.Transport
         /// </summary>
         internal V7SendResult Send(IAnalyticsQueueBridge queue, AnalyticsQueueState state, Func<QueueBatch> readBatch)
         {
+            var t = AnalyticsProf.Begin();
+            try { return SendCore(queue, state, readBatch); } finally { AnalyticsProf.End(Stage.V7Send, t); }
+        }
+
+        private V7SendResult SendCore(IAnalyticsQueueBridge queue, AnalyticsQueueState state, Func<QueueBatch> readBatch)
+        {
             if (_disabled) return Fallback("V7 is disabled for this process");
             if (_settings.Clock() < _unavailableUntil) return Fallback(LastFallbackReason ?? "V7 is not available");
             try
@@ -92,7 +98,9 @@ namespace Daliys.Analytics.Internal.Transport
 
                     var batch = readBatch();
                     if (batch == null || batch.Count == 0) return V7SendResult.Empty;
+                    var pe = AnalyticsProf.Begin();
                     var encoded = _encoder.Encode(batch);
+                    AnalyticsProf.End(Stage.V7Encode, pe);
                     if (!encoded.Ok) return Fallback(encoded.Failure);
 
                     var aliases = UploadAliases(state, out var restart);
@@ -346,7 +354,8 @@ namespace Daliys.Analytics.Internal.Transport
                 ["X-Mortris-Sent-At"] = _settings.Clock().UtcDateTime.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'", CultureInfo.InvariantCulture),
                 ["X-Mortris-Sdk"] = _settings.SdkName + "/" + _settings.SdkVersion,
             };
-            return _http.PostPacket("/v2/events/packet", encoded.Frame, headers, state.InstallationCredential);
+            var ph = AnalyticsProf.Begin();
+            try { return _http.PostPacket("/v2/events/packet", encoded.Frame, headers, state.InstallationCredential); } finally { AnalyticsProf.End(Stage.V7Http, ph); }
         }
 
         /// <summary>Maps the packet response. <paramref name="again"/> asks the caller to run the whole attempt once more.</summary>

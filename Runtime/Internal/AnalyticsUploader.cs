@@ -37,7 +37,15 @@ namespace Daliys.Analytics.Internal
         private readonly AnalyticsOptions _options;
         private readonly AnalyticsDeviceContext _device;
         private readonly Action<ServerPolicy> _policyChanged;
-        private readonly HttpClient _client = HttpV7Transport.CreateClient();
+        private readonly HttpClient _client = ProfiledClient();
+
+        private static HttpClient ProfiledClient()
+        {
+            var t = AnalyticsProf.Begin();
+            var client = HttpV7Transport.CreateClient();
+            AnalyticsProf.End(Stage.InitHttpClient, t);
+            return client;
+        }
         private DateTimeOffset _nextAttemptAt;
         private DateTimeOffset _nextPolicyCheckAt;
         private DateTimeOffset _nextUploadAt;
@@ -65,8 +73,12 @@ namespace Daliys.Analytics.Internal
             _device = device;
             _policyChanged = policyChanged;
             _nextUploadAt = DateTimeOffset.UtcNow.Add(options.UploadInterval);
+            var pi = AnalyticsProf.Begin();
             _v7 = options.UseTransportV8 ? null : CreateV7Session();
+            AnalyticsProf.End(Stage.InitV7Session, pi);
+            pi = AnalyticsProf.Begin();
             _v8 = options.UseTransportV8 ? CreateV8Session() : null;
+            AnalyticsProf.End(Stage.InitV8Session, pi);
         }
 
         /// <summary>Test seam: a session with injected HTTP, storage and compressor.</summary>
@@ -222,6 +234,12 @@ namespace Daliys.Analytics.Internal
 
         private UploadResult FlushCore(IAnalyticsQueueBridge queue, bool force)
         {
+            var tf = AnalyticsProf.Begin();
+            try { return FlushCoreInner(queue, force); } finally { AnalyticsProf.End(Stage.UploadFlush, tf); }
+        }
+
+        private UploadResult FlushCoreInner(IAnalyticsQueueBridge queue, bool force)
+        {
             var now = DateTimeOffset.UtcNow;
             if (_installConflict || _permanentFailure || (!force && (now < _nextAttemptAt || !_networkReachable)))
                 return UploadResult.Deferred;
@@ -241,7 +259,9 @@ namespace Daliys.Analytics.Internal
                 // V8 registers by itself (hello) and learns the policy from the server's version number; the V1 registration waits until a batch has to go through V1.
                 if (!(_v8 != null && !_v8.Disabled))
                 {
+                    var tpp = AnalyticsProf.Begin();
                     var preparation = PrepareV1(queue, ref state, now);
+                    AnalyticsProf.End(Stage.UploadPolicy, tpp);
                     if (preparation != null)
                         return preparation;
                 }
@@ -282,7 +302,11 @@ namespace Daliys.Analytics.Internal
                                 batchSize = NextPacketSize(queue);
                                 // draining a backlog: a short pause between packets so the upload does not fight the game for the connection (a forced flush has no pause)
                                 if (!force && _options.BacklogPacketPause > TimeSpan.Zero && queue.PendingCount >= FullPacket())
+                                {
+                                    var tpz = AnalyticsProf.Begin();
                                     Thread.Sleep(_options.BacklogPacketPause);
+                                    AnalyticsProf.End(Stage.UploadPause, tpz);
+                                }
                                 continue;
                             }
                             case V7ResultKind.Empty:
@@ -336,7 +360,9 @@ namespace Daliys.Analytics.Internal
 
                     var originalIds = EventIds(events);
                     var sentIds = originalIds;
+                    var tb1 = AnalyticsProf.Begin();
                     var raw = events.ToJsonArray(_reader);
+                    AnalyticsProf.End(Stage.V1Build, tb1);
                     Dictionary<string, string> derivedToOriginal = null;
                     if (TryUseDerivedIds(queue, state, events, out var derivedRaw, out var map))
                     {
@@ -453,11 +479,16 @@ namespace Daliys.Analytics.Internal
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, Endpoint(path)))
             {
+                var tz = AnalyticsProf.Begin();
                 request.Content = gzip ? GzipContent(body) : new StringContent(body, Encoding.UTF8, "application/json");
+                if (gzip) AnalyticsProf.End(Stage.V1Gzip, tz);
                 if (!string.IsNullOrEmpty(credential))
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", credential);
 
-                using (var response = _client.SendAsync(request, _deadline.Token).GetAwaiter().GetResult())
+                var th = AnalyticsProf.Begin();
+                var sent = _client.SendAsync(request, _deadline.Token).GetAwaiter().GetResult();
+                AnalyticsProf.End(Stage.V1Http, th);
+                using (var response = sent)
                 {
                     var responseBody = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                     return new ServerResponse((int)response.StatusCode, responseBody, RetryAfter(response));

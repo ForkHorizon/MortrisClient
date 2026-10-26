@@ -8,7 +8,7 @@ CR = Path(__file__).resolve().parent.parent; ADB = os.path.expanduser('~/Library
 ap = argparse.ArgumentParser(); ap.add_argument('--serial', required=True); ap.add_argument('--label', required=True); ap.add_argument('--sdk', required=True); ap.add_argument('--out', required=True)
 ap.add_argument('--data', default='puzzle_slice_00.jsonl'); ap.add_argument('--net', default='reverse'); ap.add_argument('--stack', default=''); ap.add_argument('--port', type=int, default=18090)
 ap.add_argument('--apk', default=str(CR / 'work/cmp-arm64.apk')); ap.add_argument('--kv', nargs='*', default=[]); ap.add_argument('--laptop', default=os.environ.get('LAPTOP_IP', '192.168.0.17'))
-ap.add_argument('--tail-max', type=int, default=600); ap.add_argument('--quiet', type=int, default=0); ap.add_argument('--expect', type=int, default=0, help='events the backend should end up with (0: only quiet rule)'); ap.add_argument('--scen-max', type=int, default=900); ap.add_argument('--offline', action='store_true'); ap.add_argument('--kill-after', type=float, default=0); ap.add_argument('--net-opts', default=''); ap.add_argument('--project', default='puzzle_gravity_test'); ap.add_argument('--fixed-tail', type=int, default=0); ap.add_argument('--no-install', action='store_true'); ap.add_argument('--dump', action='store_true')
+ap.add_argument('--tail-max', type=int, default=600); ap.add_argument('--quiet', type=int, default=0); ap.add_argument('--expect', type=int, default=0, help='events the backend should end up with (0: only quiet rule)'); ap.add_argument('--scen-max', type=int, default=900); ap.add_argument('--offline', action='store_true'); ap.add_argument('--tls', action='store_true', help='profiling APK only: HTTPS through tools/tlsmeter.py, raw TLS bytes per connection into tls.jsonl'); ap.add_argument('--prefill', type=int, default=0); ap.add_argument('--kill-after', type=float, default=0); ap.add_argument('--net-opts', default=''); ap.add_argument('--project', default='puzzle_gravity_test'); ap.add_argument('--fixed-tail', type=int, default=0); ap.add_argument('--no-install', action='store_true'); ap.add_argument('--dump', action='store_true')
 a = ap.parse_args()
 OUT = Path(a.out) / a.label; OUT.mkdir(parents=True, exist_ok=True)
 def sh(*c, timeout=120):
@@ -33,6 +33,12 @@ subprocess.run(f'lsof -ti tcp:{a.port} | xargs kill 2>/dev/null', shell=True); t
 def start_col(): return subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=open(OUT / 'collector.err', 'w'))
 col = None
 if not a.offline: col = start_col(); time.sleep(1.2)
+TLS_PORT = a.port + 353
+tlsproc = None
+if a.tls:
+    subprocess.run(f'lsof -ti tcp:{TLS_PORT} | xargs kill 2>/dev/null', shell=True)
+    tlsproc = subprocess.Popen([sys.executable, str(CR / 'tools/tlsmeter.py'), str(TLS_PORT), f'127.0.0.1:{a.port}', str(OUT / 'tls.jsonl')], stdout=subprocess.DEVNULL, stderr=open(OUT / 'tlsmeter.err', 'w')); time.sleep(1.5)
+    if a.net == 'reverse': sh('reverse', f'tcp:{TLS_PORT}', f'tcp:{TLS_PORT}')
 def stats():
     try:
         import urllib.request
@@ -47,7 +53,7 @@ db0 = dbcount()
 if not a.no_install: sh('install', '-r', a.apk, timeout=300)
 sh('shell', 'am', 'force-stop', PKG); sh('shell', 'pm', 'clear', PKG); sh('shell', 'pm', 'grant', PKG, 'android.permission.POST_NOTIFICATIONS')
 D = f'/sdcard/Android/data/{PKG}/files'; sh('shell', 'mkdir', '-p', D)
-cfg = {'project': a.project, 'sdk': a.sdk, 'host': host, 'server': f'http://{host}', 'data': 'replay.jsonl'}
+cfg = {'project': a.project, 'sdk': a.sdk, 'host': host, 'server': (f'https://127.0.0.1:{TLS_PORT}' if a.tls else f'http://{host}'), 'data': 'replay.jsonl'}
 for kv in a.kv: k, v = kv.split('=', 1); cfg[k] = v
 cfg.setdefault('tail_max_s', str(a.tail_max))
 cfgfile = OUT / 'config.txt'; cfgfile.write_text('\n'.join(f'{k}={v}' for k, v in cfg.items()) + '\n')
@@ -132,6 +138,7 @@ if 'ws' in events and 'we' in events: info['window_wall_s'] = events['we'] - eve
 (OUT / 'run.json').write_text(json.dumps(info, indent=1)); (OUT / 'logcat.txt').write_text(''.join(lines))
 sh('shell', 'am', 'force-stop', PKG)
 if col: col.terminate(); col.wait()
+if tlsproc: tlsproc.terminate()
 events['closing'] = True
 for p in LC: p.kill()
 if mort: pass

@@ -1,5 +1,6 @@
 #!/bin/bash
-# Builds the unified comparison APK (release IL2CPP arm64): unpatched SDK copy + competitor SDKs through bench.CmpAdapter. Usage: build.sh [apk-name]
+# Builds the unified comparison APK (release IL2CPP arm64): unpatched SDK copy + competitor SDKs through bench.CmpAdapter. Usage: [PROFILE=1] [DEV=1] build.sh [apk-name]
+# PROFILE=1 compiles the SDK's stage timers in (cmp-prof-arm64.apk); DEV=1 makes a Development player (cmp-prof-dev-arm64.apk for allocation counters).
 set -eu
 CR=$(cd "$(dirname "$0")" && pwd); CLIENT=$(cd "$CR/.." && pwd); APKNAME=${1:-cmp-arm64.apk}
 UNITY=${UNITY:-/Applications/Unity/Hub/Editor/6000.3.16f1/Unity.app/Contents/MacOS/Unity}
@@ -15,5 +16,5 @@ m = json.load(open(path)); m['dependencies']['com.daliys.analytics'] = 'file:' +
 PY
 A=$WORK/project/Assets; rm -rf "$A/Cmp" "$A/Plugins" "$A/Scenes"; mkdir -p "$A/Cmp/Editor" "$A/Plugins/Android"
 cp "$CR/unity/CmpProbe.cs" "$A/Cmp/"; cp "$CR/unity/CmpBuild.cs" "$A/Cmp/Editor/"; cp -R "$CR/unity/plugins/Android/". "$A/Plugins/Android/"
-"$UNITY" -batchmode -nographics -quit -projectPath "$WORK/project" -buildTarget Android -executeMethod CmpBuild.Build -v7-apk "$WORK/$APKNAME" -logFile "$WORK/build.log" || { grep -E "error CS|rror:|FAILED|What went wrong" -A3 "$WORK/build.log" | head -60; exit 1; }
+"$UNITY" -batchmode -nographics -quit -projectPath "$WORK/project" -buildTarget Android -executeMethod CmpBuild.Build -v7-apk "$WORK/$APKNAME" ${PROFILE:+-cmp-profile} ${DEV:+-cmp-dev} -logFile "$WORK/build.log" || { grep -E "error CS|rror:|FAILED|What went wrong" -A3 "$WORK/build.log" | head -60; exit 1; }
 ls -la "$WORK/$APKNAME"

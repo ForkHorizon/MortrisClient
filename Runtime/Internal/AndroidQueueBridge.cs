@@ -56,7 +56,12 @@ namespace Daliys.Analytics.Internal
             using (var unityPlayer = new UnityEngine.AndroidJavaClass("com.unity3d.player.UnityPlayer"))
             using (var activity = unityPlayer.GetStatic<UnityEngine.AndroidJavaObject>("currentActivity"))
             {
-                return activity == null ? null : new AndroidQueueBridgeInstance(activity);
+                if (activity == null) return null;
+                var instance = new AndroidQueueBridgeInstance(activity);
+                if (!AnalyticsProf.Compiled) return instance;
+                instance.EnableJavaProfile();
+                AnalyticsProf.JavaProfile = instance.GetJavaProfile;
+                return new ProfiledQueueBridge(instance);
             }
         }
 
@@ -128,6 +133,14 @@ namespace Daliys.Analytics.Internal
             }
 
             private int _pending;
+
+            /// <summary>Profiling build only: the Java queue records its own stage timers from now on.</summary>
+            internal void EnableJavaProfile() { try { _queue.Call("setProfiling", true); } catch (System.Exception) { } }
+
+            internal string GetJavaProfile()
+            {
+                try { return _queue.Call<string>("getProfile"); } catch (System.Exception) { return ""; }
+            }
 
             public int PendingCount => System.Threading.Volatile.Read(ref _pending);
 
