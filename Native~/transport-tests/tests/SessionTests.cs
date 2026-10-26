@@ -202,6 +202,28 @@ namespace M7Transport.Tests
         }
 
         [Fact]
+        public void AServerThatTakesFewerEventsPerPacketIsReportedLikeATooLargePacket()
+        {
+            using (var rig = new Rig())
+            {
+                rig.Http.Override = call => call.Path == "/v2/events/packet" ? ScriptedHttp.Error(400, "invalid_batch_size") : null;
+                var result = rig.Send();
+                Assert.Equal(V7ResultKind.PayloadTooLarge, result.Kind);
+                Assert.Equal(400, result.Status);
+            }
+        }
+
+        [Fact]
+        public void AnotherBadRequestIsStillAProtocolFailure()
+        {
+            using (var rig = new Rig())
+            {
+                rig.Http.Override = call => call.Path == "/v2/events/packet" ? ScriptedHttp.Error(400, "invalid_request") : null;
+                Assert.NotEqual(V7ResultKind.PayloadTooLarge, rig.Send().Kind);
+            }
+        }
+
+        [Fact]
         public void ARolledBackCounterOpensANewStreamAndContinues()
         {
             using (var rig = new Rig())

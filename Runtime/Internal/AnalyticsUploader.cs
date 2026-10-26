@@ -48,6 +48,8 @@ namespace Daliys.Analytics.Internal
         private ServerPolicy _currentPolicy;
         private readonly V7Session _v7;
         private HttpV7Transport _http;
+        /// <summary>The packet size in use: the option, lowered for good when the server says it takes fewer events per packet.</summary>
+        private int _packetCap;
         private volatile CancellationTokenSourceBox _deadline = CancellationTokenSourceBox.None;
         private readonly EventRecordReader _reader = new EventRecordReader();
 
@@ -57,6 +59,7 @@ namespace Daliys.Analytics.Internal
             _device = device;
             _policyChanged = policyChanged;
             _nextUploadAt = DateTimeOffset.UtcNow.Add(options.UploadInterval);
+            _packetCap = options.MaxPacketEvents;
             _v7 = CreateV7Session();
         }
 
@@ -67,6 +70,7 @@ namespace Daliys.Analytics.Internal
             _device = device;
             _policyChanged = policyChanged;
             _nextUploadAt = DateTimeOffset.UtcNow.Add(options.UploadInterval);
+            _packetCap = options.MaxPacketEvents;
             _v7 = v7;
         }
 
@@ -90,7 +94,7 @@ namespace Daliys.Analytics.Internal
 
         /// <summary>True when <see cref="Flush"/> would return without doing anything (backing off, nothing due): lets the worker skip attaching to the JVM on idle ticks.</summary>
         /// <summary>Events that make a "full" packet for the transport in use.</summary>
-        private int FullPacket() => _v7 != null && !_v7.Disabled ? _options.MaxPacketEvents : Math.Min(_options.MaxPacketEvents, MaximumV1BatchSize);
+        private int FullPacket() => _v7 != null && !_v7.Disabled ? _packetCap : Math.Min(_packetCap, MaximumV1BatchSize);
 
         internal bool NothingToDo(IAnalyticsQueueBridge queue, bool force)
         {
@@ -178,7 +182,7 @@ namespace Daliys.Analytics.Internal
                 if (_currentPolicy != null && _currentPolicy.Mode == ServerPolicyMode.DisableCollection)
                     return UploadResult.Uploaded;
 
-                var batchSize = _options.MaxPacketEvents;
+                var batchSize = _packetCap;
                 var sent = 0;
                 while (true)
                 {
@@ -225,6 +229,7 @@ namespace Daliys.Analytics.Internal
                                 if (batchSize > 1)
                                 {
                                     batchSize = Math.Max(1, batchSize / 2);
+                                    if (v7.Status == 400) _packetCap = Math.Min(_packetCap, batchSize); // the server's limit on events per packet: remember it
                                     continue;
                                 }
                                 break; // one event that cannot fit a packet: V1 decides what to do with it

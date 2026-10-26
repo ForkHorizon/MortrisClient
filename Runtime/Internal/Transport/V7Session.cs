@@ -355,6 +355,8 @@ namespace Daliys.Analytics.Internal.Transport
             again = false;
             if (response.Status == 401) return V7SendResult.Unauthorized();
             if (response.Status == 413) return new V7SendResult { Kind = V7ResultKind.PayloadTooLarge, Status = 413 };
+            // A server that takes fewer events per packet than the client sends says so with 400 invalid_batch_size: smaller packets, not a protocol failure.
+            if (response.Status == 400 && response.ErrorCode == "invalid_batch_size") return new V7SendResult { Kind = V7ResultKind.PayloadTooLarge, Status = 400 };
             if (IsTransient(response.Status)) return V7SendResult.Retry(response.Status, response.RetryAfter, "packet: " + response.Status);
             if (response.Status == 404 && response.ErrorCode == "unknown_stream") { queue.BeginNewStream(); _forceSync = true; again = true; return null; }
             if (response.Status == 409 && response.ErrorCode == "alias_epoch_mismatch") { _aliasesUploaded = 0; again = true; return null; }
