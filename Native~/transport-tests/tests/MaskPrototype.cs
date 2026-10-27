@@ -16,10 +16,6 @@ namespace Daliys.Analytics.Internal.Transport
     /// </summary>
     internal sealed partial class M7Columns
     {
-        private readonly int[] _bucketCount = new int[16001], _bucketStart = new int[16001], _orderIndex = new int[16000], _fill = new int[16001];
-        private M7Cell[] _gatherCells = new M7Cell[500 * 64];
-        private M7Row[] _gatherRows = new M7Row[500 * 64];
-
         private void PrepareHeader(M7Row[] rows, bool numeric, bool stringsModel, byte[] destination)
         {
             if (rows.Length < 1 || rows.Length > 500) throw new ArgumentException("bounds");
@@ -42,36 +38,6 @@ namespace Daliys.Analytics.Internal.Transport
                     work[i] = value;
                 }
                 Ints(rows.Length);
-            }
-        }
-
-        /// <summary>The value columns, gathered in one pass over the rows (a counting sort by column) instead of one pass over all rows per column.</summary>
-        private void ValueColumnsBucketed(M7Row[] rows, int[] types)
-        {
-            var nc = 0; var total = 0;
-            foreach (var r in rows)
-            {
-                if (r.Columns.Length != r.Values.Length) throw new ArgumentException("fields");
-                foreach (var c in r.Columns)
-                {
-                    if (c < 0 || c >= types.Length) throw new ArgumentException("column");
-                    if (!seen[c]) { seen[c] = true; _orderIndex[c] = nc; order[nc++] = c; _bucketCount[_orderIndex[c]] = 0; }
-                    _bucketCount[_orderIndex[c]]++; total++;
-                }
-            }
-            if (total > _gatherCells.Length) { _gatherCells = new M7Cell[total]; _gatherRows = new M7Row[total]; }
-            var start = 0;
-            for (var k = 0; k < nc; k++) { _bucketStart[k] = start; _fill[k] = start; start += _bucketCount[k]; }
-            foreach (var r in rows)
-                for (var j = 0; j < r.Columns.Length; j++)
-                {
-                    var k = _orderIndex[r.Columns[j]]; var at = _fill[k]++;
-                    _gatherCells[at] = r.Values[j]; _gatherRows[at] = r;
-                }
-            for (var k = 0; k < nc; k++)
-            {
-                var n = _bucketCount[k]; Array.Copy(_gatherCells, _bucketStart[k], cells, 0, n); Array.Copy(_gatherRows, _bucketStart[k], owners, 0, n);
-                Values(n, types[order[k]]);
             }
         }
 

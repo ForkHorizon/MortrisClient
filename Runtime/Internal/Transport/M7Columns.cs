@@ -242,10 +242,44 @@ namespace Daliys.Analytics.Internal.Transport
             for (int i = 0; i < count; i++) Text(strings[i], type);
             Ints(n);
         }
+        // Value columns in the order of first appearance. One pass over the rows buckets the cells by column (a counting sort), instead of one pass over all rows per column:
+        // O(rows x fields) rather than O(columns x rows x fields), which matters with hundreds of shapes. The bytes are the same as the per-column scan produced.
+        readonly int[] bucketCount = new int[16000], bucketStart = new int[16000], bucketFill = new int[16000], columnRank = new int[16000];
+        M7Cell[] gatherCells = new M7Cell[500 * 64];
+        M7Row[] gatherRows = new M7Row[500 * 64];
+
+        void ValueColumnsBucketed(M7Row[] rows, int[] types)
+        {
+            int nc = 0, total = 0;
+            foreach (M7Row r in rows)
+            {
+                if (r.Columns.Length != r.Values.Length) throw new ArgumentException("fields");
+                foreach (int c in r.Columns)
+                {
+                    if (c < 0 || c >= types.Length) throw new ArgumentException("column");
+                    if (!seen[c]) { seen[c] = true; columnRank[c] = nc; order[nc++] = c; bucketCount[columnRank[c]] = 0; }
+                    bucketCount[columnRank[c]]++; total++;
+                }
+            }
+            if (total > gatherCells.Length) { gatherCells = new M7Cell[total]; gatherRows = new M7Row[total]; }
+            int start = 0;
+            for (int k = 0; k < nc; k++) { bucketStart[k] = start; bucketFill[k] = start; start += bucketCount[k]; }
+            foreach (M7Row r in rows)
+                for (int j = 0; j < r.Columns.Length; j++)
+                {
+                    int k = columnRank[r.Columns[j]], at = bucketFill[k]++;
+                    gatherCells[at] = r.Values[j]; gatherRows[at] = r;
+                }
+            for (int k = 0; k < nc; k++)
+            {
+                int n = bucketCount[k]; Array.Copy(gatherCells, bucketStart[k], cells, 0, n); Array.Copy(gatherRows, bucketStart[k], owners, 0, n);
+                Values(n, types[order[k]]);
+            }
+        }
         internal int Pack(M7Row[] rows, int[] types, bool ids, byte[] destination, bool numeric = false, bool stringsModel = false)
         {
             if (rows.Length < 1 || rows.Length > 500 || types.Length > seen.Length) throw new ArgumentException("bounds");
-            integerModel = numeric; stringModel = stringsModel; output = destination; pos = 0; Array.Clear(seen, 0, seen.Length); Array.Clear(previousSeen, 0, previousSeen.Length); int nc = 0;
+            integerModel = numeric; stringModel = stringsModel; output = destination; pos = 0; Array.Clear(seen, 0, seen.Length); Array.Clear(previousSeen, 0, previousSeen.Length);
             for (int col = 0; col < 5; col++)
             {
                 for (int i = 0; i < rows.Length; i++)
@@ -263,17 +297,7 @@ namespace Daliys.Analytics.Internal.Transport
                 Ints(rows.Length);
             }
             if (ids) foreach (M7Row r in rows) { if (r.Id.Length != 16) throw new ArgumentException("id"); Bytes(r.Id); }
-            foreach (M7Row r in rows)
-            {
-                if (r.Columns.Length != r.Values.Length) throw new ArgumentException("fields");
-                foreach (int c in r.Columns) { if (c < 0 || c >= types.Length) throw new ArgumentException("column"); if (!seen[c]) { seen[c] = true; order[nc++] = c; } }
-            }
-            for (int c = 0; c < nc; c++)
-            {
-                int n = 0;
-                foreach (M7Row r in rows) for (int j = 0; j < r.Columns.Length; j++) if (r.Columns[j] == order[c]) { owners[n] = r; cells[n++] = r.Values[j]; }
-                Values(n, types[order[c]]);
-            }
+            ValueColumnsBucketed(rows, types);
             return pos;
         }
     }
