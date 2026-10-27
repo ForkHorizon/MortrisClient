@@ -143,7 +143,7 @@ public sealed class CmpProbe : MonoBehaviour
         R["config"] = new Dictionary<string, object>(); foreach (var kv in config) ((Dictionary<string, object>)R["config"])[kv.Key] = kv.Value;
 
         var counterOf = new Dictionary<string, Dictionary<string, long>> { ["attempt_id"] = new Dictionary<string, long>(), ["house_run_id"] = new Dictionary<string, long>() };
-        var need = scenario == "burst" ? n * k : n;
+        var need = scenario == "burst" || scenario == "batch" ? n * k : n;
         foreach (var line in File.ReadLines(Path.Combine(dir, Cfg("data", "replay.jsonl"))))
         {
             if (_names.Count >= need) break;

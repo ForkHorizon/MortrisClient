@@ -4,7 +4,7 @@ allocation sets, PROFILE=1 DEV=1 ./build.sh cmp-prof-dev-arm64.apk (Development 
 Usage: matrix_profile.py SERIAL SETNAME STACK [groups] [reps]     groups (default all): init rate profile batch burst backlog tls dev
 Every cell is a fresh install with the same real events (slice r of data/puzzle_slice_NN.jsonl, so reps differ by player). Results: results/SETNAME/<label>/result.json (+ prof_* keys),
 analysis: tools/analyze_profile.py SETNAME."""
-import subprocess, sys, time
+import os, subprocess, sys, time
 from pathlib import Path
 CR = Path(__file__).resolve().parent.parent
 serial, setname, stack = sys.argv[1:4]; groups = (sys.argv[4] if len(sys.argv) > 4 else 'init,rate,profile,batch,burst,backlog,tls,dev').split(','); reps = int(sys.argv[5]) if len(sys.argv) > 5 else 3
@@ -14,7 +14,7 @@ def cell(label, sdk, kv, rep, apk=APK, data='puzzle_slice_{rep:02d}.jsonl', quie
     if (OUT / label / 'run.json').exists(): return
     if installed.get('apk') != apk:
         subprocess.run([str(Path.home() / 'Library/Android/sdk/platform-tools/adb'), '-s', serial, 'install', '-r', apk], capture_output=True); installed['apk'] = apk
-    cmd = [sys.executable, str(CR / 'tools/run_cell.py'), '--serial', serial, '--label', label, '--sdk', sdk, '--out', str(OUT), '--data', data.format(rep=rep), '--stack', stack, '--no-install',
+    cmd = [sys.executable, str(CR / 'tools/run_cell.py'), '--serial', serial, '--port', os.environ.get('PORT', '18090'), '--label', label, '--sdk', sdk, '--out', str(OUT), '--data', data.format(rep=rep), '--stack', stack, '--no-install',
            '--tail-max', str(tail), '--quiet', str(quiet), '--scen-max', str(scen_max), '--kv'] + kv + list(extra)
     try: r = subprocess.run(cmd, capture_output=True, text=True, timeout=scen_max + tail + 600)
     except subprocess.TimeoutExpired: print(time.strftime('%H:%M:%S'), label, 'CELL TIMEOUT', flush=True); return

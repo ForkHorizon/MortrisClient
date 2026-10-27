@@ -8,7 +8,7 @@ CR = Path(__file__).resolve().parent.parent; ADB = os.path.expanduser('~/Library
 ap = argparse.ArgumentParser(); ap.add_argument('--serial', required=True); ap.add_argument('--label', required=True); ap.add_argument('--sdk', required=True); ap.add_argument('--out', required=True)
 ap.add_argument('--data', default='puzzle_slice_00.jsonl'); ap.add_argument('--net', default='reverse'); ap.add_argument('--stack', default=''); ap.add_argument('--port', type=int, default=18090)
 ap.add_argument('--apk', default=str(CR / 'work/cmp-arm64.apk')); ap.add_argument('--kv', nargs='*', default=[]); ap.add_argument('--laptop', default=os.environ.get('LAPTOP_IP', '192.168.0.17'))
-ap.add_argument('--tail-max', type=int, default=600); ap.add_argument('--quiet', type=int, default=0); ap.add_argument('--expect', type=int, default=0, help='events the backend should end up with (0: only quiet rule)'); ap.add_argument('--scen-max', type=int, default=900); ap.add_argument('--offline', action='store_true'); ap.add_argument('--tls', action='store_true', help='profiling APK only: HTTPS through tools/tlsmeter.py, raw TLS bytes per connection into tls.jsonl'); ap.add_argument('--prefill', type=int, default=0); ap.add_argument('--kill-after', type=float, default=0); ap.add_argument('--net-opts', default=''); ap.add_argument('--project', default='puzzle_gravity_test'); ap.add_argument('--fixed-tail', type=int, default=0); ap.add_argument('--no-install', action='store_true'); ap.add_argument('--dump', action='store_true')
+ap.add_argument('--tail-max', type=int, default=600); ap.add_argument('--quiet', type=int, default=0); ap.add_argument('--expect', type=int, default=0, help='events the backend should end up with (0: only quiet rule)'); ap.add_argument('--scen-max', type=int, default=900); ap.add_argument('--offline', action='store_true'); ap.add_argument('--wifi-cycle', default='', help='OFF_S,ON_S,CYCLES: after the window starts, switch Wi-Fi and mobile data off for OFF_S then on for ON_S, CYCLES times (emulator)'); ap.add_argument('--tls', action='store_true', help='profiling APK only: HTTPS through tools/tlsmeter.py, raw TLS bytes per connection into tls.jsonl'); ap.add_argument('--prefill', type=int, default=0); ap.add_argument('--kill-after', type=float, default=0); ap.add_argument('--net-opts', default=''); ap.add_argument('--project', default='puzzle_gravity_test'); ap.add_argument('--fixed-tail', type=int, default=0); ap.add_argument('--no-install', action='store_true'); ap.add_argument('--dump', action='store_true')
 a = ap.parse_args()
 OUT = Path(a.out) / a.label; OUT.mkdir(parents=True, exist_ok=True)
 def sh(*c, timeout=120):
@@ -32,6 +32,7 @@ cmd += shlex.split(a.net_opts)
 subprocess.run(f'lsof -ti tcp:{a.port} | xargs kill 2>/dev/null', shell=True); time.sleep(0.5)
 def start_col(): return subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=open(OUT / 'collector.err', 'w'))
 col = None
+COLLECTOR_T0 = time.time()
 if not a.offline: col = start_col(); time.sleep(1.2)
 TLS_PORT = a.port + 353
 tlsproc = None
@@ -101,6 +102,17 @@ def watchdog():
 
 info = dict(label=a.label, sdk=a.sdk, host=host, net=a.net, data=a.data, kv=a.kv, battery_start=bat0, db0=db0)
 watchdog()
+info['collector_t0'] = COLLECTOR_T0
+def wifi_cycler():
+    off_s, on_s, cycles = [float(x) for x in a.wifi_cycle.split(',')]
+    while 'ws' not in events and 'fatal' not in events and 'closing' not in events: time.sleep(0.5)
+    log = []
+    for _ in range(int(cycles)):
+        if 'sd' in events or 'closing' in events: break
+        sh('shell', 'svc wifi disable; svc data disable'); log.append(('off', time.time())); time.sleep(off_s)
+        sh('shell', 'svc wifi enable; svc data enable'); log.append(('on', time.time())); time.sleep(on_s)
+    sh('shell', 'svc wifi enable; svc data enable'); info['wifi_events'] = log
+if a.wifi_cycle: threading.Thread(target=wifi_cycler, daemon=True).start()
 # wait for scenario to finish
 if a.kill_after:
     while 'ws' not in events and time.time() - t_start < 120: time.sleep(0.5)
@@ -140,6 +152,7 @@ sh('shell', 'am', 'force-stop', PKG)
 if col: col.terminate(); col.wait()
 if tlsproc: tlsproc.terminate()
 events['closing'] = True
+if a.wifi_cycle: sh('shell', 'svc wifi enable; svc data enable')
 for p in LC: p.kill()
 if mort: pass
 print(a.label, 'ok' if (OUT / 'result.json').stat().st_size > 10 else 'NO RESULT', info['settled'], round(info['wall_s']), flush=True)
