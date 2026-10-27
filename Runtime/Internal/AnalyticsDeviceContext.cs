@@ -30,13 +30,19 @@ namespace Daliys.Analytics.Internal
 
         internal static AnalyticsDeviceContext Create(AnalyticsOptions options)
         {
+            var t = AnalyticsProf.Begin();
             var appVersion = FirstNonEmpty(options.AppVersion, Application.version, "unknown");
             var buildNumber = FirstNonEmpty(options.BuildNumber, Application.buildGUID, "unknown");
             var platform = Application.platform.ToString().ToLowerInvariant();
+            AnalyticsProf.End(Stage.DeviceApp, t); t = AnalyticsProf.Begin();
             var osVersion = FirstNonEmpty(SystemInfo.operatingSystem, "unknown");
+            AnalyticsProf.End(Stage.DeviceOs, t); t = AnalyticsProf.Begin();
             var deviceClass = FirstNonEmpty(SystemInfo.deviceModel, SystemInfo.deviceType.ToString(), "unknown");
+            AnalyticsProf.End(Stage.DeviceModel, t); t = AnalyticsProf.Begin();
             var locale = FirstNonEmpty(CultureInfo.CurrentCulture.Name, Application.systemLanguage.ToString(), "und");
+            AnalyticsProf.End(Stage.DeviceCulture, t); t = AnalyticsProf.Begin();
             var timezoneOffsetMinutes = (int)TimeZoneInfo.Local.GetUtcOffset(DateTime.UtcNow).TotalMinutes;
+            AnalyticsProf.End(Stage.DeviceTimezone, t);
             return new AnalyticsDeviceContext(appVersion, buildNumber, platform, osVersion, deviceClass, locale, timezoneOffsetMinutes);
         }
 

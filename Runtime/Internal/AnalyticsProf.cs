@@ -12,6 +12,8 @@ namespace Daliys.Analytics.Internal
         // start-up (main thread, inside Analytics.Initialize) and first-use costs
         InitTotal, InitRuntime, InitLimiter, InitWorker, InitDeviceContext, InitEventContext, InitUploader, InitHttpClient, InitV8Session, InitV7Session, InitTimers,
         InitSessionTracker, InitSessionStart, InitLifecycle, BridgeCreate, SessionRecover, CountersLoad,
+        // inside AnalyticsDeviceContext.Create (what the 180 ms of init.device_context are made of)
+        DeviceApp, DeviceOs, DeviceModel, DeviceCulture, DeviceTimezone,
         // Track() on the calling thread
         TrackTotal, TrackValidate, TrackLimiter, TrackEncode, TrackBuffer, TrackPressureFlush, BatchEncode, BatchWrite,
         // the persistence worker pass
@@ -50,6 +52,7 @@ namespace Daliys.Analytics.Internal
         {
             "init.total", "init.runtime", "init.limiter", "init.worker", "init.device_context", "init.event_context", "init.uploader", "init.http_client", "init.v8_session", "init.v7_session", "init.timers",
             "init.session_tracker", "init.session_start", "init.lifecycle", "bridge.create", "session.recover", "counters.load",
+            "device.app", "device.os", "device.model", "device.culture", "device.timezone",
             "track.total", "track.validate", "track.limiter", "track.encode", "track.buffer", "track.pressure_flush", "batch.encode", "batch.write",
             "worker.pass", "worker.idle_check", "worker.attach", "worker.write_buffer", "worker.buffer_drain", "worker.save_session", "worker.evicted_read", "worker.upload", "worker.detach", "worker.complete",
             "jni.enqueue", "jni.get_state", "jni.read_oldest", "jni.delete", "jni.sequence_state", "jni.meta", "jni.session", "jni.other",
