@@ -49,3 +49,13 @@
 # Local MCP connection files can contain credentials.
 /.mcp.json
 /.mcp.json.bak-*
+
+.projectmem/events.jsonl
+.projectmem/watch.pid
+.projectmem/watch.log
+.projectmem/structure.json
+
+# Run data and raw datasets never go into git (kept outside the package in ../../../MortrisClient-data)
+/MortrisV7Data/
+/night-run~/work/
+/night-run~/unitywork/
