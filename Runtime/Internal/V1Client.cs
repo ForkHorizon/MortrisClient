@@ -25,13 +25,16 @@ namespace Daliys.Analytics.Internal
             _options = options; _device = device; _client = client; _deadline = deadline;
         }
 
-        private V1Response Register(AnalyticsQueueState state) => PostJson("/v1/installs/register", JsonUtility.ToJson(new RegisterRequest
+        private V1Response Register(AnalyticsQueueState state) => PostJson("/v1/installs/register", RegisterBody(_options, _device, state), null, false);
+
+        /// <summary>The body of <c>POST /v1/installs/register</c> (shared with the browser pipeline).</summary>
+        internal static string RegisterBody(AnalyticsOptions options, AnalyticsDeviceContext device, AnalyticsQueueState state) => JsonUtility.ToJson(new RegisterRequest
         {
-            schema_version = 1, project_id = _options.ProjectId, install_id = state.InstallationId,
+            schema_version = 1, project_id = options.ProjectId, install_id = state.InstallationId,
             installation_credential = state.InstallationCredential, sdk_name = AnalyticsDeviceContext.SdkName,
-            sdk_version = AnalyticsDeviceContext.SdkVersion, app_version = _device.AppVersion,
-            build_number = _device.BuildNumber, platform = _device.Platform,
-        }), null, false);
+            sdk_version = AnalyticsDeviceContext.SdkVersion, app_version = device.AppVersion,
+            build_number = device.BuildNumber, platform = device.Platform,
+        });
 
         internal RegistrationAttempt RegisterWithCredentialRecovery(IAnalyticsQueueBridge queue, AnalyticsQueueState state)
         {
@@ -44,23 +47,30 @@ namespace Daliys.Analytics.Internal
             return new RegistrationAttempt(state, response);
         }
 
-        internal V1Response FetchPolicy(AnalyticsQueueState state) => PostJson("/v1/client/policy", JsonUtility.ToJson(new PolicyRequest
-        {
-            schema_version = 1, project_id = _options.ProjectId, install_id = state.InstallationId,
-            sdk = new SdkInfo { name = AnalyticsDeviceContext.SdkName, version = AnalyticsDeviceContext.SdkVersion },
-            app_version = _device.AppVersion, build_number = _device.BuildNumber, platform = _device.Platform,
-        }), state.InstallationCredential, false);
+        internal V1Response FetchPolicy(AnalyticsQueueState state) => PostJson("/v1/client/policy", PolicyBody(_options, _device, state), state.InstallationCredential, false);
 
-        internal V1Response SendBatch(AnalyticsQueueState state, string eventsJson)
+        /// <summary>The body of <c>POST /v1/client/policy</c> (shared with the browser pipeline).</summary>
+        internal static string PolicyBody(AnalyticsOptions options, AnalyticsDeviceContext device, AnalyticsQueueState state) => JsonUtility.ToJson(new PolicyRequest
         {
-            var payload = new StringBuilder();
-            payload.Append("{\"schema_version\":1,\"project_id\":"); EventRecordJson.AppendString(payload, _options.ProjectId);
+            schema_version = 1, project_id = options.ProjectId, install_id = state.InstallationId,
+            sdk = new SdkInfo { name = AnalyticsDeviceContext.SdkName, version = AnalyticsDeviceContext.SdkVersion },
+            app_version = device.AppVersion, build_number = device.BuildNumber, platform = device.Platform,
+        });
+
+        internal V1Response SendBatch(AnalyticsQueueState state, string eventsJson) =>
+            PostJson("/v1/events/batch", BatchBody(_options, state, eventsJson), state.InstallationCredential, true);
+
+        /// <summary>The body of <c>POST /v1/events/batch</c>; <paramref name="eventsJson"/> is the JSON array of events (shared with the browser pipeline).</summary>
+        internal static string BatchBody(AnalyticsOptions options, AnalyticsQueueState state, string eventsJson)
+        {
+            var payload = new StringBuilder(eventsJson.Length + 256);
+            payload.Append("{\"schema_version\":1,\"project_id\":"); EventRecordJson.AppendString(payload, options.ProjectId);
             payload.Append(",\"install_id\":"); EventRecordJson.AppendString(payload, state.InstallationId);
             payload.Append(",\"sdk\":{\"name\":"); EventRecordJson.AppendString(payload, AnalyticsDeviceContext.SdkName);
             payload.Append(",\"version\":"); EventRecordJson.AppendString(payload, AnalyticsDeviceContext.SdkVersion);
-            payload.Append("},\"sent_at_client\":"); EventRecordJson.AppendString(payload, DateTimeOffset.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'"));
+            payload.Append("},\"sent_at_client\":"); EventRecordJson.AppendString(payload, DateTimeOffset.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'", System.Globalization.CultureInfo.InvariantCulture));
             payload.Append(",\"events\":").Append(eventsJson).Append('}');
-            return PostJson("/v1/events/batch", payload.ToString(), state.InstallationCredential, true);
+            return payload.ToString();
         }
 
         private V1Response PostJson(string path, string body, string credential, bool gzip)
@@ -171,6 +181,15 @@ namespace Daliys.Analytics.Internal
                 throw new InvalidDataException("Response client_policy has an invalid next_check_seconds.");
             var mode = policy.mode == "active" ? ServerPolicyMode.Active : policy.mode == "pause_upload" ? ServerPolicyMode.PauseUpload : policy.mode == "disable_collection" ? ServerPolicyMode.DisableCollection : throw new InvalidDataException("Unknown client policy mode.");
             return new ServerPolicy(mode, policy.discard_pending, policy.next_check_seconds);
+        }
+
+        /// <summary>A Retry-After header value (seconds or an HTTP date) as a delay; null when absent or unreadable.</summary>
+        internal static TimeSpan? ParseRetryAfter(string value, DateTimeOffset now)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return null;
+            if (int.TryParse(value.Trim(), System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var seconds)) return TimeSpan.FromSeconds(seconds);
+            if (DateTimeOffset.TryParse(value, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal, out var date)) return date - now;
+            return null;
         }
 
         private static TimeSpan? RetryAfter(HttpResponseMessage response)

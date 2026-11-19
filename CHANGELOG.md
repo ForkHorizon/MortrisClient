@@ -3,6 +3,10 @@
 ## 0.2.0 - Unreleased
 
 - Started the 0.2.0 development line on `develop`.
+- WebGL players (browser portals such as CrazyGames): a main-thread pipeline with a `localStorage` queue, V1 gzip batches through `UnityWebRequest`,
+  page-visibility session handling and a `fetch` keepalive on page hide (`Runtime/Internal/Web`, `Runtime/Plugins/WebGL/MortrisWeb.jslib`). Android is
+  unchanged behind the new `IEventPipeline` seam. See "WebGL" in `Documentation/IntegrationGuide.md`; the server needs `MORTRIS_CORS_ORIGINS`.
+- Fix: the V1 batch `sent_at_client` is formatted with the invariant culture (a Thai-calendar device produced a Buddhist year and the server refused the batch).
 - V8 is the default transport (`AnalyticsOptions.UseTransportV8`, default `true`, V1 as the fallback). The V7 transport (`UseTransportV7`, `/v2`) is removed.
 - A full V8 packet is the `MaxPacketEvents` option (200), not the V1 limit of 100: after the first packet an upload goes on only while a whole V8 packet waits.
 - Binary transport groundwork that V8 is built on: native zstd plugin (arm64-v8a, armeabi-v7a, macOS Editor), C# column encoder,

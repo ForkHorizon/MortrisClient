@@ -2,7 +2,7 @@
   "name": "com.daliys.analytics",
   "version": "0.2.0",
   "displayName": "Mortris Analytics",
-  "description": "Mortris offline-first, privacy-conscious analytics for Unity Android games.",
+  "description": "Mortris offline-first, privacy-conscious analytics for Unity Android and WebGL games.",
   "author": {
     "name": "Fork Horizon"
   },
@@ -12,6 +12,7 @@
   "keywords": [
     "analytics",
     "android",
+    "webgl",
     "offline"
   ]
 }

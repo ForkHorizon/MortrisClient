@@ -24,7 +24,11 @@ namespace Daliys.Analytics.Internal
             _instance = host.AddComponent<AnalyticsLifecycle>();
             _instance._runtime = runtime;
             _instance.StartCoroutine(_instance.WatchNetwork());
+            // In a browser the page being hidden (tab switch, minimise, close) is what "the player left" means; Unity's pause callback does not fire there.
+            Web.WebPlatform.WatchVisibility(hidden => { if (_instance != null) _instance._runtime?.OnApplicationPause(hidden); });
         }
+
+        private void Update() => _runtime?.Tick();
 
         /// <summary>Removes the forwarder (the runtime was replaced or disposed, as tests do).</summary>
         internal static void Detach()
