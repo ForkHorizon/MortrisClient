@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.2.0 - 2026-11-19
+
+- First release of the 0.2.0 line (V8 transport, event-pipeline rewrite, sessions, WebGL players).
+- WebGL players (browser portals such as CrazyGames): a main-thread pipeline with a `localStorage` queue, V1 gzip batches through `UnityWebRequest`,
+  page-visibility session handling and a `fetch` keepalive on page hide (`Runtime/Internal/Web`, `Runtime/Plugins/WebGL/MortrisWeb.jslib`). Android is
+  unchanged behind the new `IEventPipeline` seam. See "WebGL" in `Documentation/IntegrationGuide.md`; the server needs `MORTRIS_CORS_ORIGINS`.
+- Fix: the V1 batch `sent_at_client` is formatted with the invariant culture (a Thai-calendar device produced a Buddhist year and the server refused the batch).
+- V8 is the default transport (`AnalyticsOptions.UseTransportV8`, default `true`, V1 as the fallback). The V7 transport (`UseTransportV7`, `/v2`) is removed.
+- A full V8 packet is the `MaxPacketEvents` option (200), not the V1 limit of 100: after the first packet an upload goes on only while a whole V8 packet waits.
+- Binary transport groundwork that V8 is built on: native zstd plugin (arm64-v8a, armeabi-v7a, macOS Editor), C# column encoder,
+  sequence streams with acknowledgement by sequence, alias handling and automatic V1 fallback. See `Documentation/V8Transport.md`.
+- Event pipeline rewrite: events are written once as binary records and buffered in memory (`AnalyticsOptions.EventBufferWindow`, 200 ms); the Android
+  queue (schema v4) stores them as blobs in one transaction per window and keeps its counters in memory; V8 and V1 both read the records, so no
+  JSON is built or parsed on the way. Rows queued by older versions are migrated. See `Documentation/EventPipelineAndSessions.md`.
+- Sessions: the SDK now observes pause/focus/quit, emits `sys_session_start`, `sys_app_background`, `sys_app_foreground` and `sys_session_end`, writes buffered
+  events before the game is suspended, and closes the session of a process that died (Android exit reason). New options `EventBufferWindow` and
+  `SessionTimeout`.
+- Start-up: the UTC offset is read from `java.util.TimeZone` on an Android device instead of `TimeZoneInfo.Local`, which took about 100 ms on first use on the main thread during `Analytics.Initialize`.
+- M7/M8 encoder: value columns are gathered in one pass over the rows (counting sort by column) instead of one pass per column; same bytes, about three times faster on catalogs with many shapes (944 shapes: 34 -> 11 µs per event on the host).
+- Profiling support (never on in the shipped SDK): `AnalyticsProf` stage timers, compiled in only with the scripting define `DALIYS_ANALYTICS_PROFILE` (every call is empty without it), a timed queue bridge, stage timers inside the Java queue (`setProfiling` / `getProfile`), `Analytics.DumpProfile()`; the profiling build also trusts the local TLS meter's certificate. See `Theory~/profiling-v2/PROFILING_PLAN.md`.
+- Queue, buffer and upload changes (`Documentation/QueueAndUploads.md`): the in-memory buffer is bounded by bytes only (`EventBufferBytes`, 2 MB) and a `Track()` that finds it full writes it to the queue itself instead of dropping the event (and the array is given back after a burst); new `Analytics.TrackBatchAsync` writes many events (optionally with their own times) on a background thread; the on-device queue is bounded by bytes (`DurableByteLimit`, 64 MB, overhead counted), has no count limit and no expiry by default, and counts dropped-oldest events (`AnalyticsDiagnostics.QueueEvictedEvents`); `AnalyticsOptions.UseProfile` (Realtime / Standard / TrafficSaver), `BacklogPacketEvents` (500), `BacklogPacketPause`, `AdaptivePacketSize`; retries wait with jitter, honour `Retry-After`, make no attempt while `Application.internetReachability` says there is no network (checked every 5 s, no permission), upload shortly after it returns and forget the back-off when the player comes back.
+- `FlushAsync` no longer completes early: a flush requested while a regular persistence pass was running is served by its own forced pass instead of being completed by the running one (the last events used to wait for the 120 s timer).
+- V8 transport (opt-in `AnalyticsOptions.UseTransportV8`, `Documentation/V8Transport.md`): server-issued short installation id and token, shapes learned by the SDK and
+  registered in the packet that first uses them, first packet of a normal launch without a handshake, minimal acknowledgement, server-trained dictionary. Numbers keep
+  their type in event records (`float` stays float32). `Analytics.NextId(counter)` hands out numbers that survive a crash together with the events that used them.
+  The Android queue gained a small key/value store (`v8.*`, `counters`), counters in the batch transaction and `adoptIdentity`.
+- Upload schedule (see `Theory~/transport-v8/PROTOCOL.md`, D13): default `UploadInterval` 120 s (was 30 s), `UploadEventThreshold` 200 (was 50), new
+  `MaxPacketEvents` (200), `UploadOnBackground`, `BackgroundUploadMinGap`, `BackgroundUploadTimeout`; one short upload attempt when the game goes to the
+  background or quits. New `MaxEventsPerSecondPerName` and `Analytics.SetEventRateLimit` for event floods.
+- Android queue schema v3: a durable journal of locally dropped sequence ranges (evicted, expired, or cleared
+  events), a `stream_base` marker, and `AnalyticsQueue.getSequenceState()`. Foundation for the V7 sequence-identity
+  delivery contract; the wire format and server contract are unchanged.
+
+
 ## 0.1.4 - Unreleased
 
 - Added human and AI integration guides with lifecycle, consent, event-schema,

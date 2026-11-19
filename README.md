@@ -1,7 +1,7 @@
 # Mortris Analytics
 
 `com.daliys.analytics` is an offline-first Unity Package Manager package for
-Mortris Android game analytics. It persists validated gameplay events locally,
+Mortris game analytics on Android and WebGL (browser) players. It persists validated gameplay events locally,
 then registers and uploads them in the background when the network is usable.
 
 Start with the [integration guide](Documentation/IntegrationGuide.md). For an
@@ -11,7 +11,8 @@ use the [development and validation guide](Documentation/Development.md).
 
 ## What it guarantees
 
-- Android-only durable SQLite queue in the app's no-backup storage.
+- Android: durable SQLite queue in the app's no-backup storage. WebGL: a
+  bounded `localStorage` queue (see the integration guide).
 - At-least-once delivery: an event remains queued until the server acknowledges
   it as accepted, duplicate, or permanently rejected.
 - Gzip batching, retry/backoff, `Retry-After`, one `401` re-registration, and
@@ -26,7 +27,7 @@ In Unity Package Manager, choose **Add package from git URL** and use the
 current release tag:
 
 ```text
-git@github.com:ForkHorizon/MortrisClient.git#v0.1.4
+git@github.com:ForkHorizon/MortrisClient.git#v0.2.0
 ```
 
 For a local checkout during SDK development:

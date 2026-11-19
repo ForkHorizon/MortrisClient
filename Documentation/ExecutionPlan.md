@@ -91,3 +91,8 @@ difference before retirement of the old provider.
 Soak lifecycle, malformed server, queue pressure, clock changes, policy,
 consent reset, upgrade, process-kill, and low-end Android scenarios. Publish
 only when the delivery guarantees and documented loss modes are demonstrated.
+
+## Binary transport
+
+V8 (`Documentation/V8Transport.md`) is the binary transport and the only one being developed. Sequence identity, the queue journal and native zstd
+from earlier work carry over into it.

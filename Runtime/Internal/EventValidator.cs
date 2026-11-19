@@ -27,17 +27,33 @@ namespace Daliys.Analytics.Internal
             if (properties.Count > MaxPropertyCount)
                 return false;
 
-            foreach (var property in properties)
+            // Dictionary is what callers pass; its struct enumerator avoids the boxed one an interface foreach allocates on every Track.
+            if (properties is Dictionary<string, object> map)
             {
-                if (!IsSnakeCaseIdentifier(property.Key, MaxPropertyKeyBytes) ||
-                    Encoding.UTF8.GetByteCount(property.Key) > MaxPropertyKeyBytes ||
-                    !IsSupportedValue(property.Value) ||
-                    (property.Value is string text && Encoding.UTF8.GetByteCount(text) > MaxPropertyValueBytes))
-                    return false;
+                var characters = 0L;
+                foreach (var property in map)
+                {
+                    if (!IsValidProperty(property.Key, property.Value))
+                        return false;
+                    characters += property.Key.Length + (property.Value is string text ? text.Length : 0);
+                }
+                // Every character escapes to at most 6 bytes and a number is at most 40: when even that bound fits, the exact estimate cannot exceed the limit.
+                if (2 + 6 * characters + 50L * map.Count <= MaxPropertiesBytes)
+                    return true;
+                return EstimateEncodedPropertiesBytes(map) <= MaxPropertiesBytes;
             }
 
+            foreach (var property in properties)
+                if (!IsValidProperty(property.Key, property.Value))
+                    return false;
             return EstimateEncodedPropertiesBytes(properties) <= MaxPropertiesBytes;
         }
+
+        private static bool IsValidProperty(string key, object value) =>
+            IsSnakeCaseIdentifier(key, MaxPropertyKeyBytes) &&
+            Encoding.UTF8.GetByteCount(key) <= MaxPropertyKeyBytes &&
+            IsSupportedValue(value) &&
+            !(value is string text && Encoding.UTF8.GetByteCount(text) > MaxPropertyValueBytes);
 
         internal static bool IsSupportedValue(object value)
         {
@@ -92,16 +108,28 @@ namespace Daliys.Analytics.Internal
             var bytes = 2; // {}
             var first = true;
             foreach (var property in properties)
-            {
-                if (!first)
-                    bytes++;
-                first = false;
-                bytes += 2 + EscapedStringBytes(property.Key) + 1;
-                bytes += ValueBytes(property.Value);
-                if (bytes > MaxPropertiesBytes)
-                    return bytes;
-            }
+                if (AddPropertyBytes(ref bytes, ref first, property)) return bytes;
             return bytes;
+        }
+
+        private static int EstimateEncodedPropertiesBytes(Dictionary<string, object> properties)
+        {
+            var bytes = 2; // {}
+            var first = true;
+            foreach (var property in properties)
+                if (AddPropertyBytes(ref bytes, ref first, property)) return bytes;
+            return bytes;
+        }
+
+        /// <summary>Adds one encoded "key":value (and its comma) to <paramref name="bytes"/>; true once the limit is exceeded. Shared by both overloads, which differ only in the enumerator.</summary>
+        private static bool AddPropertyBytes(ref int bytes, ref bool first, KeyValuePair<string, object> property)
+        {
+            if (!first)
+                bytes++;
+            first = false;
+            bytes += 2 + EscapedStringBytes(property.Key) + 1;
+            bytes += ValueBytes(property.Value);
+            return bytes > MaxPropertiesBytes;
         }
 
         private static int ValueBytes(object value)
@@ -112,14 +140,39 @@ namespace Daliys.Analytics.Internal
                 return 2 + EscapedStringBytes(text);
             if (value is bool flag)
                 return flag ? 4 : 5;
-            return Encoding.UTF8.GetByteCount(((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
+            return NumberChars(value);
+        }
+
+        /// <summary>Length of the number's invariant text (all ASCII), formatted into stack space instead of a new string.</summary>
+        private static int NumberChars(object value)
+        {
+            Span<char> buffer = stackalloc char[64];
+            int written;
+            bool ok;
+            switch (value)
+            {
+                case int v: ok = v.TryFormat(buffer, out written, default, CultureInfo.InvariantCulture); break;
+                case long v: ok = v.TryFormat(buffer, out written, default, CultureInfo.InvariantCulture); break;
+                case double v: ok = v.TryFormat(buffer, out written, "R", CultureInfo.InvariantCulture); break;
+                case float v: ok = v.TryFormat(buffer, out written, "R", CultureInfo.InvariantCulture); break;
+                case uint v: ok = v.TryFormat(buffer, out written, default, CultureInfo.InvariantCulture); break;
+                case ulong v: ok = v.TryFormat(buffer, out written, default, CultureInfo.InvariantCulture); break;
+                case short v: ok = v.TryFormat(buffer, out written, default, CultureInfo.InvariantCulture); break;
+                case ushort v: ok = v.TryFormat(buffer, out written, default, CultureInfo.InvariantCulture); break;
+                case byte v: ok = v.TryFormat(buffer, out written, default, CultureInfo.InvariantCulture); break;
+                case sbyte v: ok = v.TryFormat(buffer, out written, default, CultureInfo.InvariantCulture); break;
+                case decimal v: ok = v.TryFormat(buffer, out written, default, CultureInfo.InvariantCulture); break;
+                default: return Encoding.UTF8.GetByteCount(((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
+            }
+            return ok ? written : Encoding.UTF8.GetByteCount(((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
         }
 
         private static int EscapedStringBytes(string value)
         {
             var bytes = 0;
-            foreach (var character in value)
+            for (var index = 0; index < value.Length; index++)
             {
+                var character = value[index];
                 if (character == '"' || character == '\\' || character == '\b' || character == '\f' ||
                     character == '\n' || character == '\r' || character == '\t')
                 {
@@ -130,9 +183,17 @@ namespace Daliys.Analytics.Internal
                 {
                     bytes += 6;
                 }
+                else if (character < 0x80)
+                {
+                    bytes += 1;
+                }
+                else if (character < 0x800)
+                {
+                    bytes += 2;
+                }
                 else
                 {
-                    bytes += Encoding.UTF8.GetByteCount(character.ToString());
+                    bytes += 3; // BMP characters above 0x7FF; a surrogate is counted per half (3 + 3), deliberately above its real 4 bytes: the limit stays conservative
                 }
             }
             return bytes;

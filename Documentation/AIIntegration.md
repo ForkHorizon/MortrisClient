@@ -11,7 +11,7 @@ source as part of a consumer integration.
 
 ## Package and API
 
-- Git package: `git@github.com:ForkHorizon/MortrisClient.git#v0.1.4`
+- Git package: `git@github.com:ForkHorizon/MortrisClient.git#v0.2.0`
 - UPM package identifier: `com.daliys.analytics`
 - C# namespace: `Daliys.Analytics`
 - Public calls: `Analytics.Initialize`, `Analytics.Track`,
