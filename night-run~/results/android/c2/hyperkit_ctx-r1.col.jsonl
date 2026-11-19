@@ -1,2 +1,0 @@
-{"t": 7.922, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 236, "req_body_bytes": 839, "resp_bytes": 72, "content_encoding": "", "decoded_body_bytes": 839, "events": 1, "cats": {"?": 1}, "new_connection": true, "user_agent": "okhttp/4.2.2"}
-{"t": 8.063, "method": "POST", "path": "/hk/events/bench_game", "req_header_bytes": 240, "req_body_bytes": 3396542, "resp_bytes": 72, "content_encoding": "", "decoded_body_bytes": 3396542, "events": 3000, "cats": {"?": 3001}, "new_connection": true, "user_agent": "okhttp/4.2.2"}

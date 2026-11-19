@@ -1,8 +1,0 @@
-sys_session_start|240d3be3-7ef6-4037-888e-509f84028204|2026-10-26 02:53:44.284+01|{"cold_start": true}
-sys_app_background|240d3be3-7ef6-4037-888e-509f84028204|2026-10-26 02:53:55.554+01|{"reason": "pause", "active_ms": 11270}
-sys_session_end|240d3be3-7ef6-4037-888e-509f84028204|2026-10-26 02:53:55.554+01|{"reason": "timeout", "active_ms": 11270, "background": true, "duration_ms": 11270}
-sys_app_foreground|5379772a-99a6-40bd-9dc6-c703a2cd15f0|2026-10-26 02:54:04.206+01|{"paused_ms": 8652, "new_session": true}
-sys_session_start|5379772a-99a6-40bd-9dc6-c703a2cd15f0|2026-10-26 02:54:04.206+01|{"cold_start": false}
-sys_session_end|5379772a-99a6-40bd-9dc6-c703a2cd15f0|2026-10-26 02:54:13.235+01|{"reason": "signaled", "active_ms": 9029, "background": false, "duration_ms": 9029}
-sys_session_start|e1b8a485-51c3-4307-a760-8973b97671b2|2026-10-26 02:54:19.532+01|{"cold_start": true}
-sys_app_background|e1b8a485-51c3-4307-a760-8973b97671b2|2026-10-26 02:54:32.819+01|{"reason": "pause", "active_ms": 13287}

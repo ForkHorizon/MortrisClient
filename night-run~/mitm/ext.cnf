@@ -1,4 +1,0 @@
-subjectAltName=DNS:app-measurement.com,DNS:*.app-measurement.com,DNS:firebaseinstallations.googleapis.com,DNS:*.googleapis.com,DNS:www.googleadservices.com,DNS:*.google.com,DNS:*.adjust.com,DNS:adjust.com,DNS:*.adjust.net.in,DNS:*.adjust.world,DNS:*.adjust.io,DNS:graph.facebook.com,DNS:*.facebook.com
-basicConstraints=CA:FALSE
-keyUsage=digitalSignature,keyEncipherment
-extendedKeyUsage=serverAuth

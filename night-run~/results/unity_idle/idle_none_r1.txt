@@ -1,1 +1,0 @@
-V7PERF idle mode=none hold_s=60 cpu_ticks=1344 threads=60 top=15816:UnityMain=682;15811:UnityGfxDeviceW=606;15772:UnityMain=41;15822:Thread-4=3;15814:AChoreographer_=2;15761:binder:15747_2=1;15762:binder:15747_3=1;15783:binder:15747_5=1

@@ -1,9 +1,0 @@
-project=puzzle_gravity_test
-sdk=ga
-host=127.0.0.1:18190
-server=http://127.0.0.1:18190
-data=replay.jsonl
-scenario=rate
-hz=100
-n=6000
-tail_max_s=900

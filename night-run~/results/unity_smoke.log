@@ -1,8 +1,0 @@
-catalog 85da3175fb9ddb38 imported (11528 bytes)
-dictionary 933536cf9fae4ac0 imported (16384 bytes)
-/var/folders/zs/0wxbbps90t9c_pc2pxdfkhfc0000gn/T/tmp.MriNE39KCk/config.txt: 1 file pushed, 0 skipped. 0.4 MB/s (27 bytes in 0.000s)
-/Users/daliys/Daliys/UnityProjects/MortrisUnity/Assets/MortrisClient/night-run~/work/replay_real_20k.jsonl: 1 file pushed, 0 skipped. 1626.8 MB/s (14935898 bytes in 0.009s)
-V7PERF loaded events=3000 mode=v7
-V7PERF result mode=v7 events=3000 accepted=3000 handoff_full_retries=10 other_results=0 replay_ms=5333 drain_ms=5808 cpu_ticks_replay=309 cpu_ticks_drain=187 cpu_ticks_total=496 track_us_p50=11.8 track_us_p95=42.7 track_us_p99=981.7 track_us_max=8994.5 frame_ms_p50=0.32 frame_ms_p99=5.96 frame_ms_max=9.41 gc0=78 gc1=78 gc2=78 mono_start_kb=14160 mono_end_replay_kb=20532 mono_peak_kb=23368 unity_total_start_kb=50110 unity_total_end_kb=52554 pss_start_kb=166217 pss_peak_kb=181248 heap_start_kb=14056 calib_start=1.111 calibs=2.480
-host_load_start=8.20 8.87 9.47 host_load_end=7.37 8.65 9.38
-db_events=3000 packets_v2=32 batches_v1=0

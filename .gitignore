@@ -59,3 +59,9 @@
 /MortrisV7Data/
 /night-run~/work/
 /night-run~/unitywork/
+
+# Run results, benchmark harness output and review dumps: local only (archive in ../../../MortrisClient-data)
+/night-run~/
+/comparison-run~/
+/profiling-run~/
+/.codex/

@@ -1,4 +1,0 @@
-{"mode": "v1", "events": 4000, "requests": 40, "wall_s": 1.68, "errors": 0, "first_error": "", "db_events": 4000, "server_cpu_s": 0.78, "postgres_cpu_s": 0.0, "server_cpu_us_per_event": 195.0, "postgres_cpu_us_per_event": 0.0, "server_rss_peak_mb": 147.781, "postgres_rss_peak_mb": 18.7188, "events_per_s": 2380.952380952381, "host_load_start": "11.98 10.72 10.06"}
-./run_server_load.sh: line 45: 24302 Terminated: 15          ( peak=0; while kill -0 $SPID 2> /dev/null; do
-    r=$(rss $SPID); pr=$(rss $(pgrep -f "$TMP/data")); echo "$r $pr" >> "$OUT/rss.samples"; sleep 0.5;
-done ) > /dev/null 2>&1

@@ -1,7 +1,0 @@
-V7PERF idle mode=none hold_s=60 cpu_ticks=1344 threads=60 top=15816:UnityMain=682;15811:UnityGfxDeviceW=606;15772:UnityMain=41;15822:Thread-4=3;15814:AChoreographer_=2;15761:binder:15747_2=1;15762:binder:15747_3=1;15783:binder:15747_5=1
-V7PERF idle mode=v1 hold_s=60 cpu_ticks=1357 threads=67 top=16044:UnityMain=681;16038:UnityGfxDeviceW=614;16000:UnityMain=40;15986:Jit thread pool=3;16049:Thread-4=2;15992:binder:15978_2=1;16016:Background Job.=1;16042:AChoreographer_=1
-V7PERF idle mode=v7 hold_s=60 cpu_ticks=1356 threads=68 top=16325:UnityMain=680;16319:UnityGfxDeviceW=616;16282:UnityMain=38;16337:Thread-4=3;16269:Jit thread pool=2;16322:AChoreographer_=2;16330:binder:16261_5=1;16346:Thread-5=1
-grep: results/unity/idle_v1_r2/unity-logcat.txt: No such file or directory
-grep: results/unity/idle_v7_r2/unity-logcat.txt: No such file or directory
-grep: results/unity/idle_none_r3/unity-logcat.txt: No such file or directory
-grep: results/unity/idle_v7_r3/unity-logcat.txt: No such file or directory

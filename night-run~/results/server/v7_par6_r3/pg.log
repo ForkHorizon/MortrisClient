@@ -1,4 +1,0 @@
-2026-10-21 07:20:16.377 CEST [53323] LOG:  starting PostgreSQL 18.6 (Homebrew) on aarch64-apple-darwin27.0.0, compiled by Apple clang version 21.0.0 (clang-2100.3.34.2), 64-bit
-2026-10-21 07:20:16.378 CEST [53323] LOG:  listening on IPv4 address "127.0.0.1", port 54341
-2026-10-21 07:20:16.381 CEST [53329] LOG:  database system was shut down at 2026-10-21 07:20:16 CEST
-2026-10-21 07:20:16.382 CEST [53323] LOG:  database system is ready to accept connections

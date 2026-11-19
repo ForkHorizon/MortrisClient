@@ -1,1 +1,0 @@
-{"sdk": "hyperkit_ctx", "basis": "wire", "sent": 3000, "delivered_unique": 1, "delivered_pct": 0.03333333333333333, "duplicates": 0, "events_fully_preserved": 1, "events_fully_preserved_pct_of_sent": 0.03333333333333333, "props_total": 20, "props_lost": 0, "props_lost_pct": 0.0, "lost_by_kind": {}, "strings_truncated": 0, "type_changed": 0, "value_changed": 0}

@@ -1,7 +1,0 @@
-host_load_at_start=14.93
-host_load_at_end=9.41
---------- beginning of main
-10-21 04:27:04.985  3243  3267 I BENCH   : replay_done sdk=amplitude events=2000 track_mean_us=2 track_max_us=197 wall_ms=21
-10-21 04:27:34.986  3243  3267 I BENCH   : perf init_cpu_ms=2 init_alloc=98400 replay_cpu_ms=277 replay_alloc=15966928 replay_gc=0 total_cpu_ms=5035 total_alloc=165918272 total_gc=15 events=2000
-10-21 04:27:34.990  3243  3267 I BENCH   : perf2 events=2000 cpu_total_ms=5037 cpu_replay_ms=277 alloc_replay=15966928 alloc_total=165918272 gc_replay=0 lat_p50_us=1 lat_p95_us=2 lat_p99_us=38 lat_max_us=197 pss_start_kb=24742 pss_peak_kb=69798 java_peak_kb=46629 native_peak_kb=19345 calib0=15.120 calib_best=1.794 calib_end=1.794 calibs=2000:1.919,
-10-21 04:27:34.990  3243  3267 I BENCH   : tail_done

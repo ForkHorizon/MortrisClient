@@ -1,8 +1,0 @@
-host_load_at_start=2.91
-host_load_at_end=3.69
-gms_cpu_ticks_delta={'com.google.android.gms': 4, 'com.google.android.gms.persistent': 13, 'com.google.android.gms.unstable': 3}
---------- beginning of main
-10-21 04:48:03.567  6700  6721 I BENCH   : replay_done sdk=ga events=6000 track_mean_us=1 track_max_us=70 wall_ms=41
-10-21 04:50:03.569  6700  6721 I BENCH   : perf init_cpu_ms=20 init_alloc=230272 replay_cpu_ms=439 replay_alloc=43278928 replay_gc=1 total_cpu_ms=7279 total_alloc=269579952 total_gc=27 events=6000
-10-21 04:50:03.577  6700  6721 I BENCH   : perf2 events=6000 cpu_total_ms=7299 cpu_replay_ms=439 alloc_replay=43278928 alloc_total=269579952 gc_replay=1 lat_p50_us=0 lat_p95_us=1 lat_p99_us=3 lat_max_us=70 pss_start_kb=34964 pss_peak_kb=107103 java_peak_kb=38325 native_peak_kb=59139 calib0=3.031 calib_best=1.556 calib_end=3.681 calibs=2000:1.624,4000:1.556,6000:1.937,
-10-21 04:50:03.577  6700  6721 I BENCH   : tail_done

@@ -1,5 +1,0 @@
-V7PERF loaded events=1200 mode=v7
-V7PERF threads mode=v7 replay_ms=39996 top=20641:UnityMain=449;20635:UnityGfxDeviceW=404;20596:UnityMain=37;20654:Thread-1186=32;20660:Thread-1185=32;20659:Thread-1184=28;20655:Thread-1187=27;20586:HeapTaskDaemon=8;20585:Jit thread pool=6;20648:Thread-4=2;20639:AChoreographer_=1
-V7PERF result mode=v7 events=1200 accepted=1200 handoff_full_retries=0 other_results=0 replay_ms=39996 drain_ms=35 cpu_ticks_replay=1041 cpu_ticks_drain=1 cpu_ticks_total=1042 track_us_p50=41.8 track_us_p95=102.4 track_us_p99=815.6 track_us_max=5116.2 frame_ms_p50=0.04 frame_ms_p99=0.82 frame_ms_max=5.12 gc0=72 gc1=72 gc2=72 mono_start_kb=5988 mono_end_replay_kb=7736 mono_peak_kb=0 unity_total_start_kb=50573 unity_total_end_kb=52824 pss_start_kb=152473 pss_peak_kb=164117 heap_start_kb=5820 calib_start=1.078 calibs=
-host_load_start=3.72 5.35 5.09 host_load_end=4.34 5.30 5.08
-db_events=1200 packets_v2=13 batches_v1=0
