@@ -1,6 +1,6 @@
 # What the server must accept for the lifecycle events
 
-The SDK now emits session events (`Documentation/EventPipelineAndSessions.md`). The V7-branch server (`MortrisServer`, `feat/v7-transport`) only whitelists three
+The SDK now emits session events (`Documentation/EventPipelineAndSessions.md`). The server (`MortrisServer`) whitelisted only three
 SDK-owned names in `internal/contracts/validate.go`:
 
 ```go
@@ -18,8 +18,8 @@ data is lost). Verified on the emulator: against the unmodified server `sys_app_
 ## Required server changes
 
 1. Add `sys_app_foreground` and `sys_session_end` to `ReservedSystemEvents` (they then get `event_kind = "system"`, no catalog lookup, no drift check).
-2. V7 projects: add the four shapes to the project's catalog (`Native~/transport-tests/tools/add_lifecycle_shapes.py IN.json OUT.json`), then re-import with
-   `import-transport-assets`. Without them a packet that contains one of these events is sent through V1 instead of V7.
+2. V8 registers the four shapes automatically with the first packet that carries them. A `strict_catalog` project refuses new shapes
+   (`422 shape_not_allowed`) and those events go through V1, so allow them in the project's catalog first.
 3. Metrics (`docs/metrics.md`, "Observed session duration"): the file says there is no guaranteed session-end event. There now is one in most cases, so the
    metric can use it. Rules the SDK follows:
    - `sys_session_end` carries `duration_ms` (wall time from session start to the end moment), `active_ms` (time in the foreground), `reason` and `background`.

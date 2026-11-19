@@ -1,5 +1,5 @@
 #!/bin/sh
-# End-to-end: the C# V7 session talks HTTP to a real MortrisServer (feat/v7-transport) backed by a throwaway PostgreSQL.
+# End-to-end: the C# V8 session talks HTTP to a real MortrisServer backed by a throwaway PostgreSQL.
 # Needs: postgres/initdb/pg_ctl/psql, go, dotnet, and the server repository (MORTRIS_SERVER_REPO). Nothing outside a temp dir is touched.
 set -eu
 . "$(dirname "$0")/lib.sh"

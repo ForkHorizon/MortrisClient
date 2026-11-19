@@ -9,14 +9,14 @@ This describes what happens between `Analytics.Track()` and the server, and how 
 2. The record goes into an in-memory **buffer** (`EventBuffer`). A timer (`AnalyticsOptions.EventBufferWindow`, 200 ms by default) or a size threshold
    (128 records) hands the whole buffer to the Android queue in **one call and one SQLite transaction**. The queue numbers the records.
 3. The queue stores each record as a blob. It never parses events; its row counters and the next sequence number live in memory.
-4. The uploader reads rows back as records. Transport V7 packs them into columns directly from the records; V1 renders its JSON batch from them.
+4. The uploader reads rows back as records. Transport V8 packs them into columns directly from the records; V1 renders its JSON batch from them.
    Rows written by earlier SDK versions (JSON payloads) are converted when they are read.
 
 What this means for the game:
 
 - Events are in memory for at most `EventBufferWindow` before they are durable. A process killed without warning loses at most that window.
 - Leaving the game writes immediately (below), so the normal "player minimised the game" path loses nothing.
-- Uploading: `UploadInterval` (120 s), `UploadEventThreshold` (200 queued events start an upload early), `MaxPacketEvents` (200 per V7 packet, 1 to 500; the V1
+- Uploading: `UploadInterval` (120 s), `UploadEventThreshold` (200 queued events start an upload early), `MaxPacketEvents` (200 per V8 packet, 1 to 500; the V1
   fallback never sends more than 100 per request) and `FlushAsync()`, which still forces a write and an upload. After the first packet an upload goes on only
   while a whole packet is waiting, the rest follows with the next due upload.
 - When the game goes to the background or quits (`UploadOnBackground`, on by default) the SDK writes the queue as before and then makes one short upload attempt
@@ -57,9 +57,8 @@ All carry the session id and time they belong to, not the time they were sent. N
 | `sys_app_foreground` | `paused_ms` (int), `new_session` (bool) |
 | `sys_session_end` | `duration_ms` (int), `active_ms` (int), `reason` (string), `background` (bool) |
 
-**Server catalog.** With transport V7 the project's catalog must contain these four shapes, otherwise a packet holding one is sent through V1 (correct,
-but about five times bigger). `Native~/transport-tests/tools/add_lifecycle_shapes.py IN.json OUT.json` adds them to a catalog and keeps the server's
-rules (event ids are alphabetical ranks, keys sorted, masks recomputed); existing shape ids do not move.
+**Server catalog.** With transport V8 these four shapes register themselves with the first packet that carries them. In a `strict_catalog` project they are
+refused and those events go through V1 (correct, but about five times bigger).
 
 ## Costs (measured)
 

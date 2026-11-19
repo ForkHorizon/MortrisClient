@@ -92,23 +92,7 @@ Soak lifecycle, malformed server, queue pressure, clock changes, policy,
 consent reset, upgrade, process-kill, and low-end Android scenarios. Publish
 only when the delivery guarantees and documented loss modes are demonstrated.
 
-## V7 transport (0.2.0, research in `Theory~/transport-v7`)
+## Binary transport
 
-Goal: replace per-event random UUIDs with a durable sequence identity and ship the V7 columnar packet
-(catalog + zstd dictionary). Research status and the accepted decision: `Theory~/transport-v7/12-sequence-identity-architecture.md`.
-The research harness found five gaps in that ADR; each step below closes them in order.
-
-- [x] V7-1 queue foundation: sequence assigned in the enqueue transaction; schema v3 journal of dropped ranges, `stream_base`,
-  `getSequenceState()`; epoch, dropped-version counter, `deleteThroughSequence`, `beginNewStream`; V1 acknowledgements journaled
-  while a stream is open. Device-verified (instrumentation tests).
-- [x] V7-2 contract: implemented in MortrisServer branch `feat/v7-transport` (`docs/v7-transport.md`), not merged to main.
-- [x] V7-3 acknowledgement by sequence in the uploader path (`V7Session`), with V1 fallback.
-- [x] V7-4 M7 codec in C#: native zstd per ABI (ARM64/ARMv7, 16 KB pages) and macOS Editor; parity with the Python reference decoder and
-  the server's Go decoder.
-- [x] V7-5 catalog/dictionary delivery with content-id verification and on-disk cache.
-- [~] V7-6 device proof: IL2CPP emulator runs (4 KB and 16 KB pages; normal, no-catalog and kill/restart scenarios) against the local server, see
-  `Native~/transport-tests/e2e/run-device.sh`. Still open: a physical phone (p95 packing, GC, frame time), executing the ARMv7 library on a
-  32-bit-capable device, and a delivery soak. Default stays `UseTransportV7 = false` until then.
-
-Durability note: the queue runs WAL with `synchronous=NORMAL`: a process crash does not lose committed rows, a power loss
-may lose the most recent transactions. Raise to FULL only after measuring the cost per 32-event batch.
+V8 (`Documentation/V8Transport.md`) is the binary transport and the only one being developed. Sequence identity, the queue journal and native zstd
+from earlier work carry over into it.

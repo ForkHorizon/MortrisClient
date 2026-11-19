@@ -20,6 +20,15 @@ namespace M7Transport.Tests
         }
 
         [Fact]
+        public void AFullV8PacketIsTheOptionNotTheV1Limit()
+        {
+            Assert.Equal(200, PacketSizer.FullPacket(500, 200, binaryTransport: true));   // V8 with the default MaxPacketEvents
+            Assert.Equal(300, PacketSizer.FullPacket(300, 500, binaryTransport: true));   // the server's lower limit wins
+            Assert.Equal(100, PacketSizer.FullPacket(500, 200, binaryTransport: false));  // V1 fallback
+            Assert.Equal(50, PacketSizer.FullPacket(500, 50, binaryTransport: false));
+        }
+
+        [Fact]
         public void ResetStartsOver()
         {
             var b = new RetryBackoff(TimeSpan.FromSeconds(5), TimeSpan.FromMinutes(5), () => 1.0);

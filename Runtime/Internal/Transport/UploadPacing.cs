@@ -69,5 +69,15 @@ namespace Daliys.Analytics.Internal.Transport
         }
 
         internal void OnFailure() => _size = Math.Max(Minimum, _size / 2);
+
+        /// <summary>The V1 batch endpoint takes at most this many events per request.</summary>
+        internal const int V1BatchLimit = 100;
+
+        /// <summary>Events that make a "full" packet: the binary transport (V8) takes up to <paramref name="cap"/>, the V1 fallback at most <see cref="V1BatchLimit"/>.</summary>
+        internal static int FullPacket(int cap, int maxPacketEvents, bool binaryTransport)
+        {
+            var full = Math.Min(cap, maxPacketEvents);
+            return binaryTransport ? full : Math.Min(full, V1BatchLimit);
+        }
     }
 }

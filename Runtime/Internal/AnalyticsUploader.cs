@@ -1,3 +1,4 @@
+// Upload loop of the SDK: V8 packets first, V1 batches as the fallback; back-off, pacing and server policy.
 using System;
 using System.Threading;
 using System.Collections.Generic;
@@ -29,8 +30,6 @@ namespace Daliys.Analytics.Internal
 
     internal sealed class AnalyticsUploader : IDisposable
     {
-        /// <summary>The V1 batch endpoint takes at most this many events per request.</summary>
-        private const int MaximumV1BatchSize = 100;
         private static readonly TimeSpan InitialBackoff = TimeSpan.FromSeconds(5);
         private static readonly TimeSpan MaximumBackoff = TimeSpan.FromMinutes(5);
 
@@ -58,8 +57,8 @@ namespace Daliys.Analytics.Internal
         private bool _installConflict;
         private bool _permanentFailure;
         private ServerPolicy _currentPolicy;
-        private readonly V7Session _v7;
         private readonly V8Session _v8;
+        private readonly V1Client _v1;
         private HttpV7Transport _http;
         /// <summary>Most events the server takes in one packet: the format's 500, lowered for good when the server says it takes fewer.</summary>
         private int _packetCap = PacketLimit;
@@ -73,45 +72,15 @@ namespace Daliys.Analytics.Internal
             _device = device;
             _policyChanged = policyChanged;
             _nextUploadAt = DateTimeOffset.UtcNow.Add(options.UploadInterval);
+            _v1 = new V1Client(options, device, _client, () => _deadline.Token);
             var pi = AnalyticsProf.Begin();
-            _v7 = options.UseTransportV8 ? null : CreateV7Session();
-            AnalyticsProf.End(Stage.InitV7Session, pi);
-            pi = AnalyticsProf.Begin();
             _v8 = options.UseTransportV8 ? CreateV8Session() : null;
             AnalyticsProf.End(Stage.InitV8Session, pi);
         }
 
-        /// <summary>Test seam: a session with injected HTTP, storage and compressor.</summary>
-        internal AnalyticsUploader(AnalyticsOptions options, AnalyticsDeviceContext device, Action<ServerPolicy> policyChanged, V7Session v7) 
-        {
-            _options = options;
-            _device = device;
-            _policyChanged = policyChanged;
-            _nextUploadAt = DateTimeOffset.UtcNow.Add(options.UploadInterval);
-            _v7 = v7;
-            _v8 = null;
-        }
-
-        private V7Session CreateV7Session()
-        {
-            if (!_options.UseTransportV7) return null;
-            try
-            {
-                // Created on the Unity main thread (the worker is constructed by Analytics.Initialize), where persistentDataPath is legal.
-                var directory = Path.Combine(Application.persistentDataPath, "daliys-analytics", "v7");
-                var settings = new V7Settings { ProjectId = _options.ProjectId, SdkName = AnalyticsDeviceContext.SdkName, SdkVersion = AnalyticsDeviceContext.SdkVersion };
-                _http = new HttpV7Transport(_client, _options.ServerUrl);
-                return new V7Session(settings, _http, new FileV7AssetStore(directory));
-            }
-            catch (Exception exception)
-            {
-                if (_options.DebugLogging) Debug.LogException(exception);
-                return null;
-            }
-        }
-
         private V8Session CreateV8Session()
         {
+            if (!_options.UseTransportV8) return null;
             try
             {
                 // Created on the Unity main thread (the worker is constructed by Analytics.Initialize), where persistentDataPath is legal.
@@ -131,13 +100,8 @@ namespace Daliys.Analytics.Internal
             }
         }
 
-        /// <summary>True when <see cref="Flush"/> would return without doing anything (backing off, nothing due): lets the worker skip attaching to the JVM on idle ticks.</summary>
         /// <summary>Events that make a "full" packet for the transport in use.</summary>
-        private int FullPacket()
-        {
-            var cap = Math.Min(_packetCap, _options.MaxPacketEvents);
-            return _v7 != null && !_v7.Disabled ? cap : Math.Min(cap, MaximumV1BatchSize);
-        }
+        private int FullPacket() => PacketSizer.FullPacket(_packetCap, _options.MaxPacketEvents, _v8 != null && !_v8.Disabled);
 
         /// <summary>The size of the next packet: the option while a few events wait, the backlog size while a lot waits, scaled down by what the connection managed so far.</summary>
         private int NextPacketSize(IAnalyticsQueueBridge queue)
@@ -204,32 +168,32 @@ namespace Daliys.Analytics.Internal
         {
             if (!_registered)
             {
-                var registration = RegisterWithCredentialRecovery(queue, state);
+                var registration = _v1.RegisterWithCredentialRecovery(queue, state);
                 state = registration.State;
                 if (!registration.Response.IsSuccess)
                     return HandleFailure(registration.Response, now);
                 _registered = true;
-                return ApplyPolicy(ParseRegistrationPolicy(registration.Response.Body));
+                return ApplyPolicy(V1Client.ParseRegistrationPolicy(registration.Response.Body));
             }
 
             if (now < _nextPolicyCheckAt)
                 return null;
 
-            var policy = FetchPolicy(state);
+            var policy = _v1.FetchPolicy(state);
             if (policy.StatusCode == 401)
             {
                 _registered = false;
-                var registration = RegisterWithCredentialRecovery(queue, state);
+                var registration = _v1.RegisterWithCredentialRecovery(queue, state);
                 state = registration.State;
                 if (!registration.Response.IsSuccess)
                     return HandleFailure(registration.Response, now);
                 _registered = true;
-                return ApplyPolicy(ParseRegistrationPolicy(registration.Response.Body));
+                return ApplyPolicy(V1Client.ParseRegistrationPolicy(registration.Response.Body));
             }
 
             if (!policy.IsSuccess)
                 return HandleFailure(policy, now);
-            return ApplyPolicy(ParsePolicy(policy.Body));
+            return ApplyPolicy(V1Client.ParsePolicy(policy.Body));
         }
 
         private UploadResult FlushCore(IAnalyticsQueueBridge queue, bool force)
@@ -243,183 +207,7 @@ namespace Daliys.Analytics.Internal
             var now = DateTimeOffset.UtcNow;
             if (_installConflict || _permanentFailure || (!force && (now < _nextAttemptAt || !_networkReachable)))
                 return UploadResult.Deferred;
-
-            try
-            {
-                if (_urgent)
-                {
-                    _urgent = false;
-                    if (queue.PendingCount == 0) return UploadResult.Persisted;    // the trigger was only a hint: nothing waits
-                }
-                if (!force && now < _nextUploadAt && queue.PendingCount < _options.UploadEventThreshold)
-                    return UploadResult.Persisted;
-
-                var state = queue.GetState();
-
-                // V8 registers by itself (hello) and learns the policy from the server's version number; the V1 registration waits until a batch has to go through V1.
-                if (!(_v8 != null && !_v8.Disabled))
-                {
-                    var tpp = AnalyticsProf.Begin();
-                    var preparation = PrepareV1(queue, ref state, now);
-                    AnalyticsProf.End(Stage.UploadPolicy, tpp);
-                    if (preparation != null)
-                        return preparation;
-                }
-
-                if (_currentPolicy != null && _currentPolicy.Mode == ServerPolicyMode.PauseUpload)
-                    return UploadResult.Deferred;
-                if (_currentPolicy != null && _currentPolicy.Mode == ServerPolicyMode.DisableCollection)
-                    return UploadResult.Uploaded;
-
-                var batchSize = NextPacketSize(queue);
-                var sent = 0;
-                while (true)
-                {
-                    // Packets compress best when full: after the first one, an upload only goes on while a whole packet is waiting. The rest is sent with the
-                    // next due upload (or at once by FlushAsync), so a burst does not end in a string of small, expensive packets.
-                    if (sent > 0 && !force && queue.PendingCount < FullPacket())
-                    {
-                        ResetBackoff();
-                        return UploadResult.Uploaded;
-                    }
-
-                    var requestWatch = System.Diagnostics.Stopwatch.StartNew();
-                    var v7 = _v8 != null && !_v8.Disabled ? _v8.Send(queue, () => queue.ReadOldest(batchSize))
-                           : _v7 != null && !_v7.Disabled ? _v7.Send(queue, state, () => queue.ReadOldest(batchSize))
-                           : null;
-                    requestWatch.Stop();
-                    if (v7 != null)
-                    {
-                        switch (v7.Kind)
-                        {
-                            case V7ResultKind.Delivered:
-                            {
-                                sent++;
-                                _sizer?.OnSuccess(requestWatch.Elapsed, Math.Min(_packetCap, Math.Max(_options.BacklogPacketEvents, _options.MaxPacketEvents)));
-                                var policyResultAfterPacket = ApplyPolicy(new ServerPolicy(PolicyMode(v7.PolicyMode), v7.DiscardPending, v7.NextCheckSeconds));
-                                if (policyResultAfterPacket != null)
-                                    return policyResultAfterPacket;
-                                batchSize = NextPacketSize(queue);
-                                // draining a backlog: a short pause between packets so the upload does not fight the game for the connection (a forced flush has no pause)
-                                if (!force && _options.BacklogPacketPause > TimeSpan.Zero && queue.PendingCount >= FullPacket())
-                                {
-                                    var tpz = AnalyticsProf.Begin();
-                                    Thread.Sleep(_options.BacklogPacketPause);
-                                    AnalyticsProf.End(Stage.UploadPause, tpz);
-                                }
-                                continue;
-                            }
-                            case V7ResultKind.Empty:
-                                ResetBackoff();
-                                return UploadResult.Uploaded;
-                            case V7ResultKind.Retry:
-                                _sizer?.OnFailure();
-                                return BackOff(now, v7.RetryAfter);
-                            case V7ResultKind.Unauthorized:
-                            {
-                                _registered = false;
-                                var registration = RegisterWithCredentialRecovery(queue, state);
-                                state = registration.State;
-                                if (!registration.Response.IsSuccess)
-                                    return HandleFailure(registration.Response, now);
-                                _registered = true;
-                                var policyResult = ApplyPolicy(ParseRegistrationPolicy(registration.Response.Body));
-                                if (policyResult != null)
-                                    return policyResult;
-                                continue;
-                            }
-                            case V7ResultKind.PayloadTooLarge:
-                                if (batchSize > 1)
-                                {
-                                    batchSize = Math.Max(1, batchSize / 2);
-                                    if (v7.Status == 400) _packetCap = Math.Min(_packetCap, batchSize); // the server's limit on events per packet: remember it
-                                    continue;
-                                }
-                                break; // one event that cannot fit a packet: V1 decides what to do with it
-                            default:
-                                break; // Fallback: this batch goes through V1
-                        }
-                    }
-
-                    if (_v8 != null && !_registered)
-                    {
-                        // V8 let this batch go to V1: the installation it was issued (adopted into the queue) is registered there the first time
-                        var registration = RegisterWithCredentialRecovery(queue, queue.GetState());
-                        if (!registration.Response.IsSuccess)
-                            return HandleFailure(registration.Response, now);
-                        _registered = true;
-                    }
-                    state = queue.GetState();
-
-                    var events = queue.ReadOldest(Math.Min(batchSize, MaximumV1BatchSize));
-                    if (events.Count == 0)
-                    {
-                        ResetBackoff();
-                        return UploadResult.Uploaded;
-                    }
-
-                    var originalIds = EventIds(events);
-                    var sentIds = originalIds;
-                    var tb1 = AnalyticsProf.Begin();
-                    var raw = events.ToJsonArray(_reader);
-                    AnalyticsProf.End(Stage.V1Build, tb1);
-                    Dictionary<string, string> derivedToOriginal = null;
-                    if (TryUseDerivedIds(queue, state, events, out var derivedRaw, out var map))
-                    {
-                        // A V7 stream is open: V1 carries the ids the server derives for the same rows, so a row V7 already stored is a duplicate, not a copy.
-                        raw = derivedRaw;
-                        derivedToOriginal = map;
-                        sentIds = new List<string>(map.Keys);
-                    }
-                    var response = SendBatch(state, raw);
-                    if (response.StatusCode == 401)
-                    {
-                        _registered = false;
-                        var registration = RegisterWithCredentialRecovery(queue, state);
-                        state = registration.State;
-                        if (!registration.Response.IsSuccess)
-                            return HandleFailure(registration.Response, now);
-                        _registered = true;
-                        var policyResult = ApplyPolicy(ParseRegistrationPolicy(registration.Response.Body));
-                        if (policyResult != null)
-                            return policyResult;
-                        // Re-registration may have replaced the installation (and with it the stream): derive the ids again for what is now open.
-                        raw = events.ToJsonArray(_reader);
-                        derivedToOriginal = null;
-                        sentIds = originalIds;
-                        if (TryUseDerivedIds(queue, state, events, out derivedRaw, out map))
-                        {
-                            raw = derivedRaw;
-                            derivedToOriginal = map;
-                            sentIds = new List<string>(map.Keys);
-                        }
-                        response = SendBatch(state, raw);
-                        if (response.StatusCode == 401)
-                            _registered = false;
-                    }
-
-                    if (response.StatusCode == 413)
-                    {
-                        if (events.Count == 1)
-                        {
-                            queue.DeleteAcknowledged(SerializeStrings(originalIds));
-                            continue;
-                        }
-                        batchSize = Math.Max(1, events.Count / 2);
-                        continue;
-                    }
-
-                    if (!response.IsSuccess)
-                        return HandleFailure(response, now);
-
-                    var acknowledgement = ParseAcknowledgement(response.Body, sentIds);
-                    queue.DeleteAcknowledged(SerializeStrings(derivedToOriginal == null ? acknowledgement.EventIds : ToOriginalIds(acknowledgement.EventIds, derivedToOriginal)));
-                    sent++;
-                    var policyResultAfterBatch = ApplyPolicy(acknowledgement.Policy);
-                    if (policyResultAfterBatch != null)
-                        return policyResultAfterBatch;
-                }
-            }
+            try { return Upload(queue, force, now); }
             catch (OperationCanceledException) when (!ReferenceEquals(_deadline, CancellationTokenSourceBox.None))
             {
                 return UploadResult.Deferred; // the background allowance ran out: the events stay queued, no backoff
@@ -430,90 +218,198 @@ namespace Daliys.Analytics.Internal
             }
         }
 
+        private bool BinaryOn => _v8 != null && !_v8.Disabled;
+
+        private UploadResult Upload(IAnalyticsQueueBridge queue, bool force, DateTimeOffset now)
+        {
+            var early = BeforeUpload(queue, force, now);
+            if (early != null) return early;
+            var round = new UploadRound { BatchSize = NextPacketSize(queue) };
+            while (true)
+            {
+                // Packets compress best when full: after the first one, an upload only goes on while a whole packet is waiting. The rest is sent with the
+                // next due upload (or at once by FlushAsync), so a burst does not end in a string of small, expensive packets.
+                if (round.Sent > 0 && !force && queue.PendingCount < FullPacket())
+                {
+                    ResetBackoff();
+                    return UploadResult.Uploaded;
+                }
+                var result = SendBinary(queue, force, now, round) ?? SendV1(queue, now, round);
+                if (!ReferenceEquals(result, Next)) return result;
+            }
+        }
+
+        /// <summary>Whether this upload is due at all, the V1 registration and policy (when V1 is the transport) and the policy's verdict; null = go on.</summary>
+        private UploadResult BeforeUpload(IAnalyticsQueueBridge queue, bool force, DateTimeOffset now)
+        {
+            if (_urgent)
+            {
+                _urgent = false;
+                if (queue.PendingCount == 0) return UploadResult.Persisted;    // the trigger was only a hint: nothing waits
+            }
+            if (!force && now < _nextUploadAt && queue.PendingCount < _options.UploadEventThreshold)
+                return UploadResult.Persisted;
+
+            // V8 registers by itself (hello) and learns the policy from the server's version number; the V1 registration waits until a batch has to go through V1.
+            if (!BinaryOn)
+            {
+                var state = queue.GetState();
+                var tpp = AnalyticsProf.Begin();
+                var preparation = PrepareV1(queue, ref state, now);
+                AnalyticsProf.End(Stage.UploadPolicy, tpp);
+                if (preparation != null) return preparation;
+            }
+            if (_currentPolicy != null && _currentPolicy.Mode == ServerPolicyMode.PauseUpload)
+                return UploadResult.Deferred;
+            return _currentPolicy != null && _currentPolicy.Mode == ServerPolicyMode.DisableCollection ? UploadResult.Uploaded : null;
+        }
+
+        /// <summary>One V8 packet. Returns <see cref="Next"/> to go on, a result to stop, or null when this batch goes through V1.</summary>
+        private UploadResult SendBinary(IAnalyticsQueueBridge queue, bool force, DateTimeOffset now, UploadRound round)
+        {
+            if (!BinaryOn) return null;
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var sent = _v8.Send(queue, () => queue.ReadOldest(round.BatchSize));
+            watch.Stop();
+            switch (sent.Kind)
+            {
+                case V7ResultKind.Delivered:
+                    return OnPacketDelivered(queue, force, round, sent, watch.Elapsed);
+                case V7ResultKind.Empty:
+                    ResetBackoff();
+                    return UploadResult.Uploaded;
+                case V7ResultKind.Retry:
+                    _sizer?.OnFailure();
+                    return BackOff(now, sent.RetryAfter);
+                case V7ResultKind.PayloadTooLarge:
+                    if (round.BatchSize <= 1) return null; // one event that cannot fit a packet: V1 decides what to do with it
+                    round.BatchSize = Math.Max(1, round.BatchSize / 2);
+                    if (sent.Status == 400) _packetCap = Math.Min(_packetCap, round.BatchSize); // the server's limit on events per packet: remember it
+                    return Next;
+                default:
+                    return null; // Fallback: this batch goes through V1
+            }
+        }
+
+        private UploadResult OnPacketDelivered(IAnalyticsQueueBridge queue, bool force, UploadRound round, V7SendResult sent, TimeSpan took)
+        {
+            round.Sent++;
+            _sizer?.OnSuccess(took, Math.Min(_packetCap, Math.Max(_options.BacklogPacketEvents, _options.MaxPacketEvents)));
+            var policyResult = ApplyPolicy(new ServerPolicy(V1Client.PolicyMode(sent.PolicyMode), sent.DiscardPending, sent.NextCheckSeconds));
+            if (policyResult != null) return policyResult;
+            round.BatchSize = NextPacketSize(queue);
+            // draining a backlog: a short pause between packets so the upload does not fight the game for the connection (a forced flush has no pause)
+            if (!force && _options.BacklogPacketPause > TimeSpan.Zero && queue.PendingCount >= FullPacket())
+            {
+                var tpz = AnalyticsProf.Begin();
+                Thread.Sleep(_options.BacklogPacketPause);
+                AnalyticsProf.End(Stage.UploadPause, tpz);
+            }
+            return Next;
+        }
+
+        /// <summary>One V1 batch. Returns <see cref="Next"/> to go on or a result to stop.</summary>
+        private UploadResult SendV1(IAnalyticsQueueBridge queue, DateTimeOffset now, UploadRound round)
+        {
+            if (_v8 != null && !_registered)
+            {
+                // V8 let this batch go to V1: the installation it was issued (adopted into the queue) is registered there the first time
+                var registration = _v1.RegisterWithCredentialRecovery(queue, queue.GetState());
+                if (!registration.Response.IsSuccess) return HandleFailure(registration.Response, now);
+                _registered = true;
+            }
+            var state = queue.GetState();
+            var events = queue.ReadOldest(Math.Min(round.BatchSize, PacketSizer.V1BatchLimit));
+            if (events.Count == 0)
+            {
+                ResetBackoff();
+                return UploadResult.Uploaded;
+            }
+            var batch = BuildV1Batch(queue, state, events);
+            batch.Response = _v1.SendBatch(state, batch.Raw);
+            if (batch.Response.StatusCode == 401)
+            {
+                var stop = ReregisterAndResend(queue, state, events, ref batch, now);
+                if (stop != null) return stop;
+            }
+            var response = batch.Response;
+            if (response.StatusCode == 413)
+                return OnBatchTooLarge(queue, round, events, batch);
+            if (!response.IsSuccess)
+                return HandleFailure(response, now);
+
+            var acknowledgement = V1Client.ParseAcknowledgement(response.Body, batch.SentIds);
+            queue.DeleteAcknowledged(V1Client.SerializeStrings(batch.DerivedToOriginal == null ? acknowledgement.EventIds : ToOriginalIds(acknowledgement.EventIds, batch.DerivedToOriginal)));
+            round.Sent++;
+            return ApplyPolicy(acknowledgement.Policy) ?? Next;
+        }
+
+        private UploadResult OnBatchTooLarge(IAnalyticsQueueBridge queue, UploadRound round, QueueBatch events, V1Batch batch)
+        {
+            if (events.Count == 1)
+                queue.DeleteAcknowledged(V1Client.SerializeStrings(batch.OriginalIds));
+            else
+                round.BatchSize = Math.Max(1, events.Count / 2);
+            return Next;
+        }
+
+        /// <summary>A 401 on a batch: register again and resend once. Returns a result when the upload must stop.</summary>
+        private UploadResult ReregisterAndResend(IAnalyticsQueueBridge queue, AnalyticsQueueState state, QueueBatch events, ref V1Batch batch, DateTimeOffset now)
+        {
+            _registered = false;
+            var registration = _v1.RegisterWithCredentialRecovery(queue, state);
+            state = registration.State;
+            if (!registration.Response.IsSuccess) return HandleFailure(registration.Response, now);
+            _registered = true;
+            var policyResult = ApplyPolicy(V1Client.ParseRegistrationPolicy(registration.Response.Body));
+            if (policyResult != null) return policyResult;
+            // Re-registration may have replaced the installation (and with it the stream): derive the ids again for what is now open.
+            batch = BuildV1Batch(queue, state, events);
+            batch.Response = _v1.SendBatch(state, batch.Raw);
+            if (batch.Response.StatusCode == 401) _registered = false;
+            return null;
+        }
+
+        private V1Batch BuildV1Batch(IAnalyticsQueueBridge queue, AnalyticsQueueState state, QueueBatch events)
+        {
+            var batch = new V1Batch { OriginalIds = EventIds(events) };
+            batch.SentIds = batch.OriginalIds;
+            var tb1 = AnalyticsProf.Begin();
+            batch.Raw = events.ToJsonArray(_reader);
+            AnalyticsProf.End(Stage.V1Build, tb1);
+            if (TryUseDerivedIds(queue, state, events, out var derivedRaw, out var map))
+            {
+                // A V8 stream is open: V1 carries the ids the server derives for the same rows, so a row V8 already stored is a duplicate, not a copy.
+                batch.Raw = derivedRaw;
+                batch.DerivedToOriginal = map;
+                batch.SentIds = new List<string>(map.Keys);
+            }
+            return batch;
+        }
+
+        /// <summary>Returned by a send step to say "go on with the next packet or batch".</summary>
+        private static readonly UploadResult Next = new UploadResult(FlushStatus.Uploaded, null);
+
+        private sealed class UploadRound { internal int BatchSize; internal int Sent; }
+
+        private sealed class V1Batch
+        {
+            internal string Raw;
+            internal IReadOnlyList<string> OriginalIds, SentIds;
+            internal Dictionary<string, string> DerivedToOriginal;
+            internal V1Client.V1Response Response;
+        }
+
+        /// <summary>Kept for the EditMode tests: the V1 acknowledgement parser lives in <see cref="V1Client"/>.</summary>
+        internal static V1Client.Acknowledgement ParseAcknowledgement(string body, IReadOnlyList<string> sentIds) => V1Client.ParseAcknowledgement(body, sentIds);
+
         public void Dispose()
         {
-            _v7?.Dispose();
             _v8?.Dispose();
             _client.Dispose();
         }
 
-        private ServerResponse Register(AnalyticsQueueState state) => PostJson("/v1/installs/register", JsonUtility.ToJson(new RegisterRequest
-        {
-            schema_version = 1, project_id = _options.ProjectId, install_id = state.InstallationId,
-            installation_credential = state.InstallationCredential, sdk_name = AnalyticsDeviceContext.SdkName,
-            sdk_version = AnalyticsDeviceContext.SdkVersion, app_version = _device.AppVersion,
-            build_number = _device.BuildNumber, platform = _device.Platform,
-        }), null, false);
-
-        private RegistrationAttempt RegisterWithCredentialRecovery(IAnalyticsQueueBridge queue, AnalyticsQueueState state)
-        {
-            var response = Register(state);
-            if (response.StatusCode == 400 && response.ErrorCode == "invalid_credential")
-            {
-                state = queue.ResetIdentity();
-                response = Register(state);
-            }
-            return new RegistrationAttempt(state, response);
-        }
-
-        private ServerResponse FetchPolicy(AnalyticsQueueState state) => PostJson("/v1/client/policy", JsonUtility.ToJson(new PolicyRequest
-        {
-            schema_version = 1, project_id = _options.ProjectId, install_id = state.InstallationId,
-            sdk = new SdkInfo { name = AnalyticsDeviceContext.SdkName, version = AnalyticsDeviceContext.SdkVersion },
-            app_version = _device.AppVersion, build_number = _device.BuildNumber, platform = _device.Platform,
-        }), state.InstallationCredential, false);
-
-        private ServerResponse SendBatch(AnalyticsQueueState state, string eventsJson)
-        {
-            var payload = new StringBuilder();
-            payload.Append("{\"schema_version\":1,\"project_id\":"); AppendJsonString(payload, _options.ProjectId);
-            payload.Append(",\"install_id\":"); AppendJsonString(payload, state.InstallationId);
-            payload.Append(",\"sdk\":{\"name\":"); AppendJsonString(payload, AnalyticsDeviceContext.SdkName);
-            payload.Append(",\"version\":"); AppendJsonString(payload, AnalyticsDeviceContext.SdkVersion);
-            payload.Append("},\"sent_at_client\":"); AppendJsonString(payload, DateTimeOffset.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'"));
-            payload.Append(",\"events\":").Append(eventsJson).Append('}');
-            return PostJson("/v1/events/batch", payload.ToString(), state.InstallationCredential, true);
-        }
-
-        private ServerResponse PostJson(string path, string body, string credential, bool gzip)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Post, Endpoint(path)))
-            {
-                var tz = AnalyticsProf.Begin();
-                request.Content = gzip ? GzipContent(body) : new StringContent(body, Encoding.UTF8, "application/json");
-                if (gzip) AnalyticsProf.End(Stage.V1Gzip, tz);
-                if (!string.IsNullOrEmpty(credential))
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", credential);
-
-                var th = AnalyticsProf.Begin();
-                var sent = _client.SendAsync(request, _deadline.Token).GetAwaiter().GetResult();
-                AnalyticsProf.End(Stage.V1Http, th);
-                using (var response = sent)
-                {
-                    var responseBody = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                    return new ServerResponse((int)response.StatusCode, responseBody, RetryAfter(response));
-                }
-            }
-        }
-
-        private Uri Endpoint(string path) => new Uri(_options.ServerUrl.TrimEnd('/') + path, UriKind.Absolute);
-
-        private static HttpContent GzipContent(string body)
-        {
-            using (var bytes = new MemoryStream())
-            {
-                using (var gzip = new GZipStream(bytes, System.IO.Compression.CompressionLevel.Fastest, true))
-                using (var writer = new StreamWriter(gzip, new UTF8Encoding(false)))
-                    writer.Write(body);
-
-                var content = new ByteArrayContent(bytes.ToArray());
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                content.Headers.ContentEncoding.Add("gzip");
-                return content;
-            }
-        }
-
-        private UploadResult HandleFailure(ServerResponse response, DateTimeOffset now)
+        private UploadResult HandleFailure(V1Client.V1Response response, DateTimeOffset now)
         {
             if (response.StatusCode == 409 && response.ErrorCode == "install_conflict")
             {
@@ -564,58 +460,15 @@ namespace Daliys.Analytics.Internal
             return ids;
         }
 
-        internal static Acknowledgement ParseAcknowledgement(string body, IReadOnlyList<string> sentIds)
-        {
-            var payload = JsonUtility.FromJson<BatchResponse>(body);
-            if (payload == null || string.IsNullOrWhiteSpace(payload.server_time))
-                throw new InvalidDataException("Batch response has no server_time.");
-
-            var ids = new List<string>(sentIds.Count);
-            var seen = new HashSet<string>(StringComparer.Ordinal);
-            AddAcknowledgements(payload.accepted, sentIds, seen, ids);
-            AddAcknowledgements(payload.duplicates, sentIds, seen, ids);
-            if (payload.rejected == null)
-                throw new InvalidDataException("Batch response omitted an acknowledgement list.");
-            foreach (var rejected in payload.rejected)
-            {
-                if (string.IsNullOrWhiteSpace(rejected.code))
-                    throw new InvalidDataException("Batch response rejection has no code.");
-                AddAcknowledgement(rejected.event_id, sentIds, seen, ids);
-            }
-            return new Acknowledgement(ids, RequirePolicy(payload.client_policy));
-        }
-
-        private static void AddAcknowledgements(IEnumerable<string> values, IReadOnlyList<string> sentIds, ISet<string> seen, ICollection<string> acknowledgements)
-        {
-            if (values == null)
-                throw new InvalidDataException("Batch response omitted an acknowledgement list.");
-            foreach (var value in values)
-                AddAcknowledgement(value, sentIds, seen, acknowledgements);
-        }
-
-        private static void AddAcknowledgement(string id, IReadOnlyList<string> sentIds, ISet<string> seen, ICollection<string> acknowledgements)
-        {
-            if (string.IsNullOrEmpty(id) || !Contains(sentIds, id) || !seen.Add(id))
-                throw new InvalidDataException("Batch response acknowledgement is invalid.");
-            acknowledgements.Add(id);
-        }
-
-        private static bool Contains(IReadOnlyList<string> values, string candidate)
-        {
-            for (var index = 0; index < values.Count; index++)
-                if (string.Equals(values[index], candidate, StringComparison.Ordinal)) return true;
-            return false;
-        }
-
         /// <summary>
-        /// When transport V7 is enabled and the queue has an open stream, rewrites the batch's event ids to their derived form.
+        /// When transport V8 is enabled and the queue has an open stream, rewrites the batch's event ids to their derived form.
         /// <paramref name="derivedToOriginal"/> maps each derived id back to the queue row's own id. Never throws: on any doubt V1 sends as it is.
         /// </summary>
         private bool TryUseDerivedIds(IAnalyticsQueueBridge queue, AnalyticsQueueState state, QueueBatch batch, out string derivedJson, out Dictionary<string, string> derivedToOriginal)
         {
             derivedJson = null;
             derivedToOriginal = null;
-            if (!_options.UseTransportV7 && !_options.UseTransportV8)
+            if (_v8 == null)
                 return false;
             try
             {
@@ -649,120 +502,7 @@ namespace Daliys.Analytics.Internal
             return originals;
         }
 
-        private static ServerPolicyMode PolicyMode(string mode) =>
-            mode == "active" ? ServerPolicyMode.Active : mode == "pause_upload" ? ServerPolicyMode.PauseUpload : mode == "disable_collection" ? ServerPolicyMode.DisableCollection : throw new InvalidDataException("Unknown client policy mode.");
-
-        private static ServerPolicy ParseRegistrationPolicy(string body)
-        {
-            var payload = JsonUtility.FromJson<RegisterResponse>(body);
-            if (payload == null || string.IsNullOrWhiteSpace(payload.server_time) || payload.installation_status != "registered")
-                throw new InvalidDataException("Registration response is invalid.");
-            return RequirePolicy(payload.client_policy);
-        }
-
-        private static ServerPolicy ParsePolicy(string body)
-        {
-            var payload = JsonUtility.FromJson<PolicyResponse>(body);
-            if (payload == null || string.IsNullOrWhiteSpace(payload.server_time))
-                throw new InvalidDataException("Policy response is invalid.");
-            return RequirePolicy(payload.client_policy);
-        }
-
-        private static ServerPolicy RequirePolicy(PolicyResponsePolicy policy)
-        {
-            if (policy == null)
-                throw new InvalidDataException("Response has no valid client_policy.");
-            if (policy.next_check_seconds < 1)
-                throw new InvalidDataException("Response client_policy has an invalid next_check_seconds.");
-            var mode = policy.mode == "active" ? ServerPolicyMode.Active : policy.mode == "pause_upload" ? ServerPolicyMode.PauseUpload : policy.mode == "disable_collection" ? ServerPolicyMode.DisableCollection : throw new InvalidDataException("Unknown client policy mode.");
-            return new ServerPolicy(mode, policy.discard_pending, policy.next_check_seconds);
-        }
-
-        private static TimeSpan? RetryAfter(HttpResponseMessage response)
-        {
-            var retryAfter = response.Headers.RetryAfter;
-            if (retryAfter?.Delta != null) return retryAfter.Delta;
-            if (retryAfter?.Date != null) return retryAfter.Date.Value - DateTimeOffset.UtcNow;
-            return null;
-        }
-
-        private static string SerializeStrings(IReadOnlyList<string> values)
-        {
-            var payload = new StringBuilder("[");
-            for (var index = 0; index < values.Count; index++)
-            {
-                if (index > 0) payload.Append(',');
-                AppendJsonString(payload, values[index]);
-            }
-            return payload.Append(']').ToString();
-        }
-
-        private static void AppendJsonString(StringBuilder payload, string value)
-        {
-            payload.Append('"');
-            foreach (var character in value)
-            {
-                switch (character)
-                {
-                    case '"': payload.Append("\\\""); break;
-                    case '\\': payload.Append("\\\\"); break;
-                    case '\b': payload.Append("\\b"); break;
-                    case '\f': payload.Append("\\f"); break;
-                    case '\n': payload.Append("\\n"); break;
-                    case '\r': payload.Append("\\r"); break;
-                    case '\t': payload.Append("\\t"); break;
-                    default:
-                        if (character < ' ') payload.Append("\\u").Append(((int)character).ToString("x4"));
-                        else payload.Append(character);
-                        break;
-                }
-            }
-            payload.Append('"');
-        }
-
-        internal sealed class Acknowledgement
-        {
-            internal Acknowledgement(IReadOnlyList<string> eventIds, ServerPolicy policy) { EventIds = eventIds; Policy = policy; }
-            internal IReadOnlyList<string> EventIds { get; }
-            internal ServerPolicy Policy { get; }
-        }
-
-        private sealed class ServerResponse
-        {
-            internal ServerResponse(int statusCode, string body, TimeSpan? retryAfter)
-            {
-                StatusCode = statusCode; Body = body; RetryAfter = retryAfter;
-                try { ErrorCode = JsonUtility.FromJson<ErrorResponse>(body)?.code; } catch (Exception) { }
-            }
-            internal int StatusCode { get; }
-            internal string Body { get; }
-            internal TimeSpan? RetryAfter { get; }
-            internal string ErrorCode { get; }
-            internal bool IsSuccess => StatusCode >= 200 && StatusCode < 300;
-        }
-
-        private sealed class RegistrationAttempt
-        {
-            internal RegistrationAttempt(AnalyticsQueueState state, ServerResponse response)
-            {
-                State = state;
-                Response = response;
-            }
-
-            internal AnalyticsQueueState State { get; }
-            internal ServerResponse Response { get; }
-        }
-
-        [Serializable] private sealed class RegisterRequest { public int schema_version; public string project_id; public string install_id; public string installation_credential; public string sdk_name; public string sdk_version; public string app_version; public string build_number; public string platform; }
-        [Serializable] private sealed class PolicyRequest { public int schema_version; public string project_id; public string install_id; public SdkInfo sdk; public string app_version; public string build_number; public string platform; }
-        [Serializable] private sealed class SdkInfo { public string name; public string version; }
         [Serializable] private sealed class SequenceState { public long stream_epoch; }
-        [Serializable] private sealed class RegisterResponse : PolicyResponse { public string installation_status; }
-        [Serializable] private sealed class BatchResponse : PolicyResponse { public string[] accepted; public string[] duplicates; public RejectedEvent[] rejected; }
-        [Serializable] private class PolicyResponse { public string server_time; public PolicyResponsePolicy client_policy; }
-        [Serializable] private sealed class PolicyResponsePolicy { public string mode; public int next_check_seconds; public bool discard_pending; }
-        [Serializable] private sealed class RejectedEvent { public string event_id; public string code; }
-        [Serializable] private sealed class ErrorResponse { public string code; }
     }
 
     internal sealed class UploadResult

@@ -1,8 +1,8 @@
 #!/bin/sh
 # Device proof: builds an isolated Unity project (IL2CPP, ARM64+ARMv7) that uses this package, runs it on an Android emulator against a local
-# MortrisServer + PostgreSQL, and checks the database: V7 packets stored, a V1 fallback event stored, no gaps in the sequence stream.
+# MortrisServer + PostgreSQL, and checks the database: V8 packets stored (a new event shape registers itself), no gaps in the sequence stream.
 # Usage: run-device.sh [path-to-prebuilt.apk]   (set V7_DEVICE_WORK to keep the Unity project between runs)
-# SCENARIO=normal (default) | nocatalog (project without V7 assets: everything must go through V1) | kill (app is killed mid-run and restarted)
+# SCENARIO=normal (default) | kill (app is killed mid-run and restarted)
 set -eu
 . "$(dirname "$0")/lib.sh"
 UNITY=${UNITY:-/Applications/Unity/Hub/Editor/6000.3.16f1/Unity.app/Contents/MacOS/Unity}
@@ -28,7 +28,6 @@ fi
 [ -f "$APK" ]
 "$ADB" devices | grep -q "device$" || { echo "no Android emulator/device is connected"; exit 1; }
 SCENARIO=${SCENARIO:-normal}
-[ "$SCENARIO" = nocatalog ] && M7_SKIP_ASSETS=1
 start_stack
 "$ADB" install -r "$APK" >/dev/null
 "$ADB" shell pm clear com.daliys.v7device >/dev/null
@@ -54,44 +53,22 @@ EVENTS=$($Q "SELECT COUNT(*) FROM events WHERE project_id = 'synth_indie_runner'
 SEQ=$($Q "SELECT COUNT(DISTINCT sequence) || ',' || MIN(sequence) || ',' || MAX(sequence) FROM events WHERE project_id = 'synth_indie_runner'")
 UNKNOWN=$($Q "SELECT COUNT(*) FROM events WHERE project_id = 'synth_indie_runner' AND properties ? 'mystery'")
 STREAMS=$($Q "SELECT COUNT(*) FROM transport_streams WHERE project_id = 'synth_indie_runner'")
-PACKETS=$(grep -c '"route":"POST /v2/events/packet","status":200' "$TMP/server.log" || true)
+PACKETS=$(grep -c '"route":"POST /v3/packet","status":200' "$TMP/server.log" || true)
 V1BATCHES=$(grep -c '"route":"POST /v1/events/batch","status":200' "$TMP/server.log" || true)
 ACK=$($Q "SELECT high_water || ' ' || received::text FROM transport_streams WHERE project_id = 'synth_indie_runner' ORDER BY epoch DESC LIMIT 1")
-# The V1 fallback row must carry the id the server derives for it (proves the SDK rewrote ids while a stream was open).
-if [ "$SCENARIO" != nocatalog ]; then
-  INSTALL=$($Q "SELECT install_id FROM events WHERE project_id = 'synth_indie_runner' LIMIT 1")
-  EPOCH=$($Q "SELECT epoch FROM transport_streams WHERE project_id = 'synth_indie_runner' ORDER BY epoch DESC LIMIT 1")
-  MYSTERY=$($Q "SELECT sequence || ' ' || event_id FROM events WHERE project_id = 'synth_indie_runner' AND properties ? 'mystery' LIMIT 1")
-  DERIVED=$(python3 - "$INSTALL" "$EPOCH" "${MYSTERY%% *}" <<'PY'
-import hashlib, sys, uuid
-def derive(ns, name):
-    h = bytearray(hashlib.sha1(ns + name.encode()).digest()[:16]); h[6] = (h[6] & 0x0f) | 0x40; h[8] = (h[8] & 0x3f) | 0x80; return bytes(h)
-install, epoch, seq = sys.argv[1:4]
-ns = derive(uuid.NAMESPACE_DNS.bytes, "transport-v7.mortris")
-project = "synth_indie_runner"
-print(uuid.UUID(bytes=derive(ns, f"{len(project)}:{project}|{len(install)}:{install}|{epoch}|{seq}")))
-PY
-)
-  [ "${MYSTERY#* }" = "$DERIVED" ] && echo "V1 fallback row carries its derived id ($DERIVED)" || { echo "FAIL: V1 fallback id ${MYSTERY#* } is not the derived id $DERIVED"; FAILID=1; }
-fi
-echo "events=$EVENTS sequences(distinct,min,max)=$SEQ unknown_shape_events=$UNKNOWN streams=$STREAMS v2_packets=$PACKETS v1_batches=$V1BATCHES stream_state='$ACK'"
-FAIL=${FAILID:-0}
+echo "events=$EVENTS sequences(distinct,min,max)=$SEQ unknown_shape_events=$UNKNOWN streams=$STREAMS v3_packets=$PACKETS v1_batches=$V1BATCHES stream_state='$ACK'"
+FAIL=0
 if [ "$SCENARIO" = normal ]; then
   [ "$EVENTS" = 121 ] || { echo "FAIL: expected 121 events"; FAIL=1; }
   [ "$SEQ" = "121,1,121" ] || { echo "FAIL: sequences are not exactly 1..121"; FAIL=1; }
   [ "$UNKNOWN" = 1 ] || { echo "FAIL: the unknown-shape event did not arrive"; FAIL=1; }
-  [ "$STREAMS" -ge 1 ] || { echo "FAIL: no V7 stream was opened"; FAIL=1; }
-  [ "$PACKETS" -ge 1 ] || { echo "FAIL: no V7 packet was accepted"; FAIL=1; }
-  [ "$V1BATCHES" -ge 1 ] || { echo "FAIL: the V1 fallback never ran"; FAIL=1; }
-elif [ "$SCENARIO" = nocatalog ]; then
-  [ "$EVENTS" = 121 ] || { echo "FAIL: expected 121 events through V1"; FAIL=1; }
-  [ "$PACKETS" = 0 ] || { echo "FAIL: V7 packets were sent although the project has no catalog"; FAIL=1; }
-  [ "$V1BATCHES" -ge 1 ] || { echo "FAIL: V1 never ran"; FAIL=1; }
+  [ "$STREAMS" -ge 1 ] || { echo "FAIL: no V8 stream was opened"; FAIL=1; }
+  [ "$PACKETS" -ge 1 ] || { echo "FAIL: no V8 packet was accepted"; FAIL=1; }
 else
   DISTINCT=$(echo "$SEQ" | cut -d, -f1); MIN=$(echo "$SEQ" | cut -d, -f2); MAX=$(echo "$SEQ" | cut -d, -f3)
   [ "$EVENTS" = "$DISTINCT" ] || { echo "FAIL: duplicate sequence numbers stored"; FAIL=1; }
   [ "$MIN" = 1 ] && [ "$MAX" = "$DISTINCT" ] || { echo "FAIL: the sequence has gaps ($SEQ)"; FAIL=1; }
   [ "$EVENTS" -ge 121 ] || { echo "FAIL: fewer events than the restarted run alone should deliver"; FAIL=1; }
-  [ "$PACKETS" -ge 1 ] || { echo "FAIL: no V7 packet was accepted"; FAIL=1; }
+  [ "$PACKETS" -ge 1 ] || { echo "FAIL: no V8 packet was accepted"; FAIL=1; }
 fi
 [ "$FAIL" = 0 ] && echo "DEVICE PROOF PASSED ($SCENARIO)" || { echo "server log tail:"; tail -5 "$TMP/server.log"; exit 1; }

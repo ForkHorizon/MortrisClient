@@ -18,20 +18,16 @@ namespace Daliys.Analytics
         public string BuildNumber { get; set; }
         public bool DebugLogging { get; set; }
         /// <summary>
-        /// Opt in to the V7 binary transport (sequence streams, catalog + dictionary, zstd). The SDK asks the server whether the
-        /// project supports it and silently keeps using V1 batches when it does not, or when the native library is unavailable.
+        /// The V8 binary transport (short server-issued installation id, token, shapes registered by the SDK, per-project dictionary), on by default. Whatever it
+        /// cannot do (an older server, no keys on the server, a refused shape, no native zstd) goes through V1 batches. Events keep the type of their numbers
+        /// (a float stays a float whatever its value). Set to false to send only V1. See Documentation/V8Transport.md.
         /// </summary>
-        public bool UseTransportV7 { get; set; }
-        /// <summary>
-        /// Opt in to the V8 binary transport (short server-issued installation id, token, shapes registered by the SDK, per-project dictionary). It replaces V7 and
-        /// falls back to V1 the same way. Events keep the type of their numbers (a float stays a float whatever its value). See Theory~/transport-v8.
-        /// </summary>
-        public bool UseTransportV8 { get; set; }
+        public bool UseTransportV8 { get; set; } = true;
         /// <summary>How often the queue is uploaded. Fewer, fuller packets cost fewer bytes and less battery; events wait at most about this long.</summary>
         public TimeSpan UploadInterval { get; set; } = TimeSpan.FromSeconds(120);
         /// <summary>Queued events that start an upload before the interval is up.</summary>
         public int UploadEventThreshold { get; set; } = 200;
-        /// <summary>Most events in one packet (V7 allows up to 500; the V1 fallback never sends more than 100 per request).</summary>
+        /// <summary>Most events in one packet (V8 allows up to 500; the V1 fallback never sends more than 100 per request).</summary>
         public int MaxPacketEvents { get; set; } = 200;
         /// <summary>Most events of one name per second (a burst of that size is allowed); 0 = no limit. Refused events return <see cref="TrackResult.RateLimited"/>.</summary>
         public int MaxEventsPerSecondPerName { get; set; }

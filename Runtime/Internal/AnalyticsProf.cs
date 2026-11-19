@@ -10,7 +10,7 @@ namespace Daliys.Analytics.Internal
     public enum Stage
     {
         // start-up (main thread, inside Analytics.Initialize) and first-use costs
-        InitTotal, InitRuntime, InitLimiter, InitWorker, InitDeviceContext, InitEventContext, InitUploader, InitHttpClient, InitV8Session, InitV7Session, InitTimers,
+        InitTotal, InitRuntime, InitLimiter, InitWorker, InitDeviceContext, InitEventContext, InitUploader, InitHttpClient, InitV8Session, InitTimers,
         InitSessionTracker, InitSessionStart, InitLifecycle, BridgeCreate, SessionRecover, CountersLoad,
         // inside AnalyticsDeviceContext.Create (what the 180 ms of init.device_context are made of)
         DeviceApp, DeviceOs, DeviceModel, DeviceCulture, DeviceTimezone,
@@ -22,7 +22,7 @@ namespace Daliys.Analytics.Internal
         JniEnqueue, JniGetState, JniReadOldest, JniDelete, JniSequenceState, JniMeta, JniSession, JniOther,
         // uploading
         UploadFlush, UploadPolicy, UploadPause, V8Send, V8Hello, V8Catalog, V8Dictionary, V8BuildEncoder, V8Encode, V8Http, V8Interpret, V8Persist, V8Policy,
-        V7Send, V7Encode, V7Http, V1Build, V1Gzip, V1Http, V1Ack,
+        V1Build, V1Gzip, V1Http, V1Ack,
         // leaving the game
         PauseTotal, PersistNow,
         Count
@@ -50,14 +50,14 @@ namespace Daliys.Analytics.Internal
 #endif
         public static readonly string[] Names =
         {
-            "init.total", "init.runtime", "init.limiter", "init.worker", "init.device_context", "init.event_context", "init.uploader", "init.http_client", "init.v8_session", "init.v7_session", "init.timers",
+            "init.total", "init.runtime", "init.limiter", "init.worker", "init.device_context", "init.event_context", "init.uploader", "init.http_client", "init.v8_session", "init.timers",
             "init.session_tracker", "init.session_start", "init.lifecycle", "bridge.create", "session.recover", "counters.load",
             "device.app", "device.os", "device.model", "device.culture", "device.timezone",
             "track.total", "track.validate", "track.limiter", "track.encode", "track.buffer", "track.pressure_flush", "batch.encode", "batch.write",
             "worker.pass", "worker.idle_check", "worker.attach", "worker.write_buffer", "worker.buffer_drain", "worker.save_session", "worker.evicted_read", "worker.upload", "worker.detach", "worker.complete",
             "jni.enqueue", "jni.get_state", "jni.read_oldest", "jni.delete", "jni.sequence_state", "jni.meta", "jni.session", "jni.other",
             "upload.flush", "upload.policy", "upload.pause", "v8.send", "v8.hello", "v8.catalog", "v8.dictionary", "v8.build_encoder", "v8.encode", "v8.http", "v8.interpret", "v8.persist", "v8.policy",
-            "v7.send", "v7.encode", "v7.http", "v1.build", "v1.gzip", "v1.http", "v1.ack",
+            "v1.build", "v1.gzip", "v1.http", "v1.ack",
             "pause.total", "pause.persist_now",
         };
 

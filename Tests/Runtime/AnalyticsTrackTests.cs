@@ -56,10 +56,17 @@ namespace Daliys.Analytics.Tests
         public void HandoffDropsTheNewestEventAtCapacity()
         {
             Analytics.Initialize(ValidOptions());
-            for (var index = 0; index < Internal.AnalyticsPersistenceWorker.BufferCapacity - 1; index++) // one place is taken by the session-start event
-                Assert.That(Analytics.Track("level_start"), Is.EqualTo(TrackResult.AcceptedToHandoff));
+            // the buffer is bounded by bytes (AnalyticsOptions.EventBufferBytes), not by a number of events: fill it until it refuses
+            var accepted = 0;
+            var result = TrackResult.AcceptedToHandoff;
+            while (result == TrackResult.AcceptedToHandoff && accepted < 1_000_000)
+            {
+                result = Analytics.Track("level_start");
+                if (result == TrackResult.AcceptedToHandoff) accepted++;
+            }
 
-            Assert.That(Analytics.Track("level_start"), Is.EqualTo(TrackResult.HandoffFull));
+            Assert.That(accepted, Is.GreaterThan(0));
+            Assert.That(result, Is.EqualTo(TrackResult.HandoffFull));
             Assert.That(Analytics.GetDiagnostics().HandoffDropNewest, Is.EqualTo(1));
         }
 

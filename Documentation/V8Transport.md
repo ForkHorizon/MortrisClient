@@ -1,11 +1,12 @@
-# V8 transport (opt-in)
+# V8 transport
 
-V8 sends events as compact binary packets like V7, and changes everything around them: the server issues a short installation id and a token, the event shapes
-are learned by the SDK as events arrive (no catalog to import), a normal launch sends its first packet without a handshake, the server's answer is a few bytes, and
-the server trains a compression dictionary for the project by itself. The contract is `docs/v8-transport.md` in the MortrisServer repository
-(branch `feat/v8-transport`; a copy is `Theory~/transport-v8/SERVER_CONTRACT.md`); the decisions and measurements are in `Theory~/transport-v8/PROTOCOL.md`.
+V8 is the SDK's binary transport and the one being developed (V1 gzip JSON stays only as the fallback). Events travel as zstd-compressed columns,
+identified by a sequence number instead of a random UUID; the server issues a short installation id and a token, the event shapes are learned by the SDK as
+events arrive (no catalog to import), a normal launch sends its first packet without a handshake, the server's answer is a few bytes, and the server trains a
+compression dictionary for the project by itself. The contract is `docs/v8-transport.md` in the MortrisServer repository (a copy is
+`Theory~/transport-v8/SERVER_CONTRACT.md`); the decisions and measurements are in `Theory~/transport-v8/PROTOCOL.md`.
 
-## Turning it on
+## Turning it off
 
 ```csharp
 Analytics.Initialize(new AnalyticsOptions
@@ -13,7 +14,7 @@ Analytics.Initialize(new AnalyticsOptions
     ServerUrl = "https://analytics.example.com",
     ProjectId = "my-project",
     Environment = "production",
-    UseTransportV8 = true,        // default false; replaces UseTransportV7
+    UseTransportV8 = false,       // default true: V8, with V1 as the fallback
 });
 ```
 
@@ -46,3 +47,26 @@ Bytes per event on the wire (packets only, headers and TLS not included):
 | 17 events, one every 6 s | 445.9 | 253.3 | **197.5** |
 
 Over real HTTP against the Go server on the host, 6000 events of the decided content take 9.07 bytes each, 8.09 once the server has trained its dictionary.
+
+## Identity on the device
+
+The Android queue (`Native~/android`) numbers every event 1, 2, 3, ... in the same SQLite transaction that stores it. The triple (installation, epoch, sequence)
+identifies an event; the server issues the epoch. The server answers with `ack`, and the SDK deletes only rows at or below it; rejected events are final and count
+as settled. While a stream is open, V1 fallback batches carry each row's *derived* event id, so a row V8 already stored is a duplicate on V1, not a copy.
+A counter that went backwards (a restored old queue) is answered with `409 stream_rollback` and the SDK continues under a new epoch. The queue lives in
+`noBackupFilesDir`, so Android backups do not restore it.
+
+## Limits
+
+- Android only. The native zstd plugin ships for `arm64-v8a` and `armeabi-v7a` (and a macOS Editor library); other ABIs, or a device where it cannot load, use V1.
+- Plain `http://` is accepted only for `localhost`, `127.0.0.1` and `10.0.2.2` (development); everything else must be HTTPS.
+- Network errors, 408, 429 and 5xx use the same retry and backoff as V1 (`Retry-After` honoured).
+
+## Verification
+
+| What | Where |
+|---|---|
+| Session state machine against a fake server | `Native~/transport-tests` `V8SessionTests` (`FakeV8Server`) |
+| Client against the real Go server and PostgreSQL | `Native~/transport-tests` `E2EV8Tests`, `e2e/run-e2e.sh` |
+| Allocation per stage | `Native~/transport-tests` `V8StageAllocationTests` |
+| IL2CPP player on an emulator against a local server | `Native~/transport-tests/e2e/run-device.sh` |

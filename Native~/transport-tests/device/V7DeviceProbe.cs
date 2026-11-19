@@ -17,7 +17,7 @@ public sealed class V7DeviceProbe : MonoBehaviour
     {
         Analytics.Initialize(new AnalyticsOptions
         {
-            ServerUrl = Server, ProjectId = Project, Environment = "test", DebugLogging = true, UseTransportV7 = true,
+            ServerUrl = Server, ProjectId = Project, Environment = "test", DebugLogging = true, UseTransportV8 = true,
             UploadInterval = TimeSpan.FromSeconds(5), UploadEventThreshold = 10, AppVersion = "0.2.0-device", BuildNumber = "device-1",
         });
         StartCoroutine(Run());

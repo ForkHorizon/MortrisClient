@@ -1,8 +1,8 @@
-# Shared by run-e2e.sh and run-device.sh: starts a throwaway PostgreSQL and the server from the feat/v7-transport worktree.
+# Shared by run-e2e.sh and run-device.sh: starts a throwaway PostgreSQL and the server (V8, /v3) from the MortrisServer checkout.
 # Sets TMP, PSQL, HTTP_PORT and SERVER_PID; call stack_cleanup (usually from a trap).
-SERVER_REPO=${MORTRIS_SERVER_REPO:-/Users/daliys/Daliys/Web/MortrisServer-v7}
 HERE=$(cd "$(dirname "$0")/.." && pwd)
-PGPORT=${PGPORT:-54331}; HTTP_PORT=${HTTP_PORT:-18082} # the device probe (V7DeviceProbe.cs) sends to 10.0.2.2:18082
+SERVER_REPO=${MORTRIS_SERVER_REPO:-$(cd "$HERE/../../../../../MortrisServer" && pwd)}
+PGPORT=${PGPORT:-54331}; HTTP_PORT=${HTTP_PORT:-18082} # the device probe (DeviceProbe) sends to 10.0.2.2:18082
 export LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
 stack_cleanup() {
   [ -n "${SERVER_PID:-}" ] && kill "$SERVER_PID" 2>/dev/null || true
@@ -21,8 +21,7 @@ start_stack() {
   export MORTRIS_MIGRATOR_DSN=$DSN MORTRIS_WRITER_DSN=$DSN MORTRIS_READER_DSN=$DSN LISTEN_ADDR=127.0.0.1:$HTTP_PORT
   (cd "$SERVER_REPO" && "$TMP/analytics-server" migrate >/dev/null)
   $PSQL -d mortris_e2e -c "INSERT INTO projects (id, environment, display_name, strict_catalog, enabled) VALUES ('synth_indie_runner', 'test', 'synth', false, true)"
-  [ "${M7_SKIP_ASSETS:-0}" = 1 ] || (cd "$SERVER_REPO" && "$TMP/analytics-server" import-transport-assets --project synth_indie_runner --catalog "$HERE/fixtures/catalog-plain.json" --dictionary "$HERE/fixtures/dictionary-plain.bin")
-  # the V8 transport (/v3) needs a master key; servers without V8 simply ignore the variable
+  # the V8 transport (/v3) needs a master key
   export MORTRIS_TRANSPORT_MASTER_KEYS=${MORTRIS_TRANSPORT_MASTER_KEYS:-k:0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20}
   (cd "$SERVER_REPO" && "$TMP/analytics-server" serve >"$TMP/server.log" 2>&1 &); sleep 2
   SERVER_PID=$(pgrep -f "$TMP/analytics-server serve" | head -1)

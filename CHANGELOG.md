@@ -3,6 +3,8 @@
 ## 0.2.0 - Unreleased
 
 - Started the 0.2.0 development line on `develop`.
+- V8 is the default transport (`AnalyticsOptions.UseTransportV8`, default `true`, V1 as the fallback). The V7 transport (`UseTransportV7`, `/v2`) is removed; the entries below that mention V7 describe work that V8 builds on.
+- A full V8 packet is the `MaxPacketEvents` option (200), not the V1 limit of 100: after the first packet an upload goes on only while a whole V8 packet waits.
 - V7 transport (opt-in `AnalyticsOptions.UseTransportV7`): native zstd plugin (arm64-v8a, armeabi-v7a, macOS Editor), C# M7 encoder,
   sequence streams with acknowledgement by sequence, asset/alias handling and automatic V1 fallback. See `Documentation/V7Transport.md`.
 - Event pipeline rewrite: events are written once as binary records and buffered in memory (`AnalyticsOptions.EventBufferWindow`, 200 ms); the Android
