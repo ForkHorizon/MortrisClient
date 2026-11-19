@@ -1,3 +1,4 @@
+// Tests for AnalyticsOptions validation and defaults.
 using System;
 using Daliys.Analytics;
 using Xunit;

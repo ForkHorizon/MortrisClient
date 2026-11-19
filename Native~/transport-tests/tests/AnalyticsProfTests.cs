@@ -1,3 +1,4 @@
+// Tests for the profiling stage timers (AnalyticsProf).
 using System;
 using System.Linq;
 using System.Threading;

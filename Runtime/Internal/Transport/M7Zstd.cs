@@ -1,3 +1,4 @@
+// zstd compression of V7/V8 bodies with an optional project dictionary.
 using System;
 using System.Runtime.InteropServices;
 
@@ -19,11 +20,13 @@ namespace Daliys.Analytics.Internal.Transport
         private const string Library = "daliys_zstd";
         private IntPtr _context;
         private IntPtr _dictionary;
+        private const int CompressionLevelParameter = 100; // ZSTD_c_compressionLevel
 
         [DllImport(Library)] private static extern IntPtr ZSTD_createCCtx();
         [DllImport(Library)] private static extern IntPtr ZSTD_createCDict(byte[] dictionary, UIntPtr size, int level);
-        [DllImport(Library)] private static extern UIntPtr ZSTD_compress_usingCDict(IntPtr context, byte[] destination, UIntPtr capacity, byte[] source, UIntPtr size, IntPtr dictionary);
-        [DllImport(Library)] private static extern UIntPtr ZSTD_compressCCtx(IntPtr context, byte[] destination, UIntPtr capacity, byte[] source, UIntPtr size, int level);
+        [DllImport(Library)] private static extern UIntPtr ZSTD_CCtx_setParameter(IntPtr context, int parameter, int value);
+        [DllImport(Library)] private static extern UIntPtr ZSTD_CCtx_refCDict(IntPtr context, IntPtr dictionary);
+        [DllImport(Library)] private static extern UIntPtr ZSTD_compress2(IntPtr context, byte[] destination, UIntPtr capacity, byte[] source, UIntPtr size);
         [DllImport(Library)] private static extern UIntPtr ZSTD_compressBound(UIntPtr size);
         [DllImport(Library)] private static extern uint ZSTD_isError(UIntPtr code);
         [DllImport(Library)] private static extern UIntPtr ZSTD_freeCCtx(IntPtr context);
@@ -33,15 +36,17 @@ namespace Daliys.Analytics.Internal.Transport
         {
             _context = ZSTD_createCCtx();
             if (_context == IntPtr.Zero) throw new InvalidOperationException("zstd context could not be created.");
-            if (dictionary != null && dictionary.Length > 0)
-            {
-                _dictionary = ZSTD_createCDict(dictionary, (UIntPtr)dictionary.Length, 1);
-                if (_dictionary == IntPtr.Zero)
-                {
-                    Dispose();
-                    throw new InvalidOperationException("zstd dictionary could not be loaded.");
-                }
-            }
+            // Level and dictionary stay on the context for every ZSTD_compress2 call (the advanced API keeps both until a parameter reset).
+            if (ZSTD_isError(ZSTD_CCtx_setParameter(_context, CompressionLevelParameter, 1)) != 0) Fail("zstd level could not be set.");
+            if (dictionary == null || dictionary.Length == 0) return;
+            _dictionary = ZSTD_createCDict(dictionary, (UIntPtr)dictionary.Length, 1);
+            if (_dictionary == IntPtr.Zero || ZSTD_isError(ZSTD_CCtx_refCDict(_context, _dictionary)) != 0) Fail("zstd dictionary could not be loaded.");
+        }
+
+        private void Fail(string message)
+        {
+            Dispose();
+            throw new InvalidOperationException(message);
         }
 
         public byte[] Compress(byte[] source, int length)
@@ -49,9 +54,7 @@ namespace Daliys.Analytics.Internal.Transport
             if (_context == IntPtr.Zero) throw new ObjectDisposedException(nameof(NativeZstdCompressor));
             var capacity = ZSTD_compressBound((UIntPtr)length);
             var buffer = new byte[checked((int)capacity.ToUInt64())];
-            var written = _dictionary != IntPtr.Zero
-                ? ZSTD_compress_usingCDict(_context, buffer, capacity, source, (UIntPtr)length, _dictionary)
-                : ZSTD_compressCCtx(_context, buffer, capacity, source, (UIntPtr)length, 1);
+            var written = ZSTD_compress2(_context, buffer, capacity, source, (UIntPtr)length);
             if (ZSTD_isError(written) != 0) return null;
             var result = new byte[checked((int)written.ToUInt64())];
             Buffer.BlockCopy(buffer, 0, result, 0, result.Length);

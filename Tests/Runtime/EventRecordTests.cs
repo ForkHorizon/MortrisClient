@@ -1,3 +1,4 @@
+// Runs the event record path under Unity's runtime (Mono / IL2CPP behaviour).
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,13 +17,13 @@ namespace Daliys.Analytics.Tests
             var id = new Guid("4e18d837-9ca5-473e-9adb-f403af261ad0");
             var session = new Guid("2504f588-5424-476a-b797-1817c7077e46");
             var device = new AnalyticsDeviceContext("1.2.3", "42", "android", "Android 16", "Pixel", "en-US", 120);
-            var context = EventContext.Build(device.AppVersion, device.BuildNumber, device.Platform, device.OSVersion, device.DeviceClass, device.Locale, device.TimezoneOffsetMinutes);
+            var context = EventContext.Build(device.TimezoneOffsetMinutes, device.AppVersion, device.BuildNumber, device.Platform, device.OSVersion, device.DeviceClass, device.Locale);
             var properties = new Dictionary<string, object>
             {
                 ["house_id"] = "rome_01\nwest", ["wave_index"] = 2, ["is_first"] = true, ["optional_value"] = null, ["ratio"] = 0.25, ["total"] = 3.0,
             };
             var writer = new EventRecordWriter();
-            writer.Begin(id, session, new DateTimeOffset(2026, 7, 18, 18, 0, 0, TimeSpan.Zero).ToUnixTimeMilliseconds(), 42, context, "level_start", properties.Count);
+            writer.Begin(new EventHeader(id, session, new DateTimeOffset(2026, 7, 18, 18, 0, 0, TimeSpan.Zero).ToUnixTimeMilliseconds(), 42, context), "level_start", properties.Count);
             foreach (var property in properties) writer.AddClr(property.Key, property.Value);
             var record = new byte[writer.Finish()];
             Buffer.BlockCopy(writer.Buffer, 0, record, 0, record.Length);
@@ -52,7 +53,7 @@ namespace Daliys.Analytics.Tests
             foreach (var value in new[] { 0.0, 3.0, -7.0, 999999999999999.0 })
             {
                 var writer = new EventRecordWriter();
-                writer.Begin(Guid.NewGuid(), Guid.NewGuid(), 1, 0, EventContext.Build("a", "b", "c", "d", "e", "f", 0), "e", 1);
+                writer.Begin(new EventHeader(Guid.NewGuid(), Guid.NewGuid(), 1, 0, EventContext.Build(0, "a", "b", "c", "d", "e", "f")), "e", 1);
                 writer.AddDouble("n", value);
                 var record = new byte[writer.Finish()];
                 Buffer.BlockCopy(writer.Buffer, 0, record, 0, record.Length);

@@ -1,3 +1,4 @@
+// Batch of events for Analytics.TrackBatchAsync.
 using System;
 using System.Collections.Generic;
 

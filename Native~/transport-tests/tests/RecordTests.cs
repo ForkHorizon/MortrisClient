@@ -1,3 +1,4 @@
+// Tests for writing and reading binary event records.
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -9,12 +10,13 @@ namespace M7Transport.Tests
 {
     public class RecordTests
     {
-        private static readonly byte[] Context = EventContext.Build("1.4.0", "214", "android", "14", "phone", "en-US", -300);
+        private static readonly byte[] Context = EventContext.Build(-300, "1.4.0", "214", "android", "14", "phone", "en-US");
 
-        private static byte[] Write(string name, IReadOnlyDictionary<string, object> properties, Guid? id = null, Guid? session = null, long at = 1790000000123, long elapsed = 4567)
+        private static byte[] Write(string name, IReadOnlyDictionary<string, object> properties, Guid? id = null, Guid? session = null, (long At, long Elapsed)? time = null)
         {
+            var (at, elapsed) = time ?? (1790000000123, 4567);
             var writer = new EventRecordWriter();
-            writer.Begin(id ?? Guid.NewGuid(), session ?? Guid.NewGuid(), at, elapsed, Context, name, properties.Count);
+            writer.Begin(new EventHeader(id ?? Guid.NewGuid(), session ?? Guid.NewGuid(), at, elapsed, Context), name, properties.Count);
             foreach (var property in properties) writer.AddClr(property.Key, property.Value);
             var length = writer.Finish();
             var record = new byte[length];
@@ -158,7 +160,7 @@ namespace M7Transport.Tests
         public void V1JsonCarriesEveryFieldInTheOrderOfTheOldSerializer()
         {
             var id = Guid.NewGuid(); var session = Guid.NewGuid();
-            var parsed = Read(Write("level_end", new Dictionary<string, object> { { "level", 33 }, { "mode", "hard" } }, id, session, 1790000000123, 20000));
+            var parsed = Read(Write("level_end", new Dictionary<string, object> { { "level", 33 }, { "mode", "hard" } }, id, session, (1790000000123, 20000)));
             var json = new System.Text.StringBuilder();
             EventRecordJson.Append(json, parsed, id.ToString("D"), 9);
             var when = DateTimeOffset.FromUnixTimeMilliseconds(1790000000123).ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'", CultureInfo.InvariantCulture);
@@ -218,8 +220,8 @@ namespace M7Transport.Tests
                 var id = Guid.NewGuid();
                 var session = Guid.Parse((string)e["session_id"]);
                 var time = DateTimeOffset.ParseExact((string)e["occurred_at_client"], "yyyy-MM-dd'T'HH:mm:ss.fff'Z'", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal).ToUnixTimeMilliseconds();
-                var context = EventContext.Build((string)e["app_version"], (string)e["build_number"], (string)e["platform"], (string)e["os_version"], (string)e["device_class"], (string)e["locale"], int.Parse(((JsonNumber)e["timezone_offset_minutes"]).Lexeme));
-                writer.Begin(id, session, time, long.Parse(((JsonNumber)e["session_elapsed_ms"]).Lexeme), context, (string)e["name"], properties.Count);
+                var context = EventContext.Build(int.Parse(((JsonNumber)e["timezone_offset_minutes"]).Lexeme), (string)e["app_version"], (string)e["build_number"], (string)e["platform"], (string)e["os_version"], (string)e["device_class"], (string)e["locale"]);
+                writer.Begin(new EventHeader(id, session, time, long.Parse(((JsonNumber)e["session_elapsed_ms"]).Lexeme), context), (string)e["name"], properties.Count);
                 foreach (var p in properties) writer.AddClr(p.Key, p.Value);
                 var length = writer.Finish();
                 frames.AddRange(new[] { (byte)(length >> 24), (byte)(length >> 16), (byte)(length >> 8), (byte)length });
@@ -227,7 +229,7 @@ namespace M7Transport.Tests
             }
 
             var queue = new FakeQueue();
-            queue.EnqueueRecords(frames.ToArray(), events.Count, 10000, 1 << 30, 1 << 30);
+            queue.SetLimits(10000, 1 << 30, 1 << 30); queue.EnqueueRecords(frames.ToArray(), events.Count);
             var oldQueue = new FakeQueue();
             oldQueue.Enqueue("[" + string.Join(",", oldJson) + "]");
 
@@ -330,12 +332,12 @@ namespace M7Transport.Tests
 
     public class TypedNumberTests
     {
-        private static readonly byte[] Ctx = EventContext.Build("1.0", "1", "android", "14", "phone", "en-US", 0);
+        private static readonly byte[] Ctx = EventContext.Build(0, "1.0", "1", "android", "14", "phone", "en-US");
 
         private static ParsedEvent Round(bool typed, params (string key, object value)[] props)
         {
             var writer = new EventRecordWriter { TypedNumbers = typed };
-            writer.Begin(Guid.NewGuid(), Guid.NewGuid(), 1790000000000, 10, Ctx, "e", props.Length);
+            writer.Begin(new EventHeader(Guid.NewGuid(), Guid.NewGuid(), 1790000000000, 10, Ctx), "e", props.Length);
             foreach (var p in props) writer.AddClr(p.key, p.value);
             var length = writer.Finish();
             var record = new byte[length];

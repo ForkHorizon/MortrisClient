@@ -1,3 +1,4 @@
+// V8 transport session: hello, packets, durable state and every error of the server contract.
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -214,27 +215,8 @@ namespace Daliys.Analytics.Internal.Transport
                 sequence = MiniJson.ParseObject(queue.GetSequenceState());
             }
             var openNew = _newEpoch || _epoch == 0 || queueEpoch == 0;
-            var body = new StringBuilder();
-            body.Append("{\"v\":3,\"project_id\":").Append(MiniJson.Escape(_settings.ProjectId));
-            if (string.IsNullOrEmpty(_token)) body.Append(",\"nonce\":").Append(MiniJson.Escape(_nonce));
-            body.Append(",\"sdk\":").Append(MiniJson.Escape(_settings.SdkName + "/" + _settings.SdkVersion))
-                .Append(",\"app_version\":").Append(MiniJson.Escape(_settings.AppVersion ?? ""))
-                .Append(",\"build_number\":").Append(MiniJson.Escape(_settings.BuildNumber ?? ""))
-                .Append(",\"platform\":").Append(MiniJson.Escape(_settings.Platform ?? "unknown"))
-                .Append(",\"epoch\":").Append((openNew ? 0 : _epoch).ToString(CultureInfo.InvariantCulture))
-                .Append(",\"stream\":{\"base\":").Append(ToLong(sequence["stream_base"]).ToString(CultureInfo.InvariantCulture))
-                .Append(",\"high\":").Append((ToLong(sequence["next_sequence"]) - 1).ToString(CultureInfo.InvariantCulture))
-                .Append(",\"dropped\":[");
-            var first = true;
-            foreach (List<object> range in (List<object>)sequence["dropped"])
-            {
-                if (!first) body.Append(',');
-                first = false;
-                body.Append('[').Append(ToLong(range[0]).ToString(CultureInfo.InvariantCulture)).Append(',').Append(ToLong(range[1]).ToString(CultureInfo.InvariantCulture)).Append(']');
-            }
-            body.Append("]}}");
 
-            var response = _http.PostJson("/v3/hello", body.ToString(), string.IsNullOrEmpty(_token) ? null : _token);
+            var response = _http.PostJson("/v3/hello", HelloBody(sequence, openNew), string.IsNullOrEmpty(_token) ? null : _token);
             if (response.Status == 401)
             {
                 // the token is not good (key retired, installation revoked): register again; a second refusal in a row means the nonce itself maps to a bad installation
@@ -256,7 +238,37 @@ namespace Daliys.Analytics.Internal.Transport
                 return Fallback(LastFallbackReason);
             }
 
-            var result = MiniJson.ParseObject(response.Text);
+            return OnHelloAccepted(queue, MiniJson.ParseObject(response.Text), queueEpoch);
+        }
+
+        /// <summary>The hello request: identity, app build, the epoch to resume (0 opens a new one) and the stream bounds with its dropped ranges.</summary>
+        private string HelloBody(Dictionary<string, object> sequence, bool openNew)
+        {
+            var body = new StringBuilder();
+            body.Append("{\"v\":3,\"project_id\":").Append(MiniJson.Escape(_settings.ProjectId));
+            if (string.IsNullOrEmpty(_token)) body.Append(",\"nonce\":").Append(MiniJson.Escape(_nonce));
+            body.Append(",\"sdk\":").Append(MiniJson.Escape(_settings.SdkName + "/" + _settings.SdkVersion))
+                .Append(",\"app_version\":").Append(MiniJson.Escape(_settings.AppVersion ?? ""))
+                .Append(",\"build_number\":").Append(MiniJson.Escape(_settings.BuildNumber ?? ""))
+                .Append(",\"platform\":").Append(MiniJson.Escape(_settings.Platform ?? "unknown"))
+                .Append(",\"epoch\":").Append((openNew ? 0 : _epoch).ToString(CultureInfo.InvariantCulture))
+                .Append(",\"stream\":{\"base\":").Append(ToLong(sequence["stream_base"]).ToString(CultureInfo.InvariantCulture))
+                .Append(",\"high\":").Append((ToLong(sequence["next_sequence"]) - 1).ToString(CultureInfo.InvariantCulture))
+                .Append(",\"dropped\":[");
+            var first = true;
+            foreach (List<object> range in (List<object>)sequence["dropped"])
+            {
+                if (!first) body.Append(',');
+                first = false;
+                body.Append('[').Append(ToLong(range[0]).ToString(CultureInfo.InvariantCulture)).Append(',').Append(ToLong(range[1]).ToString(CultureInfo.InvariantCulture)).Append(']');
+            }
+            body.Append("]}}");
+            return body.ToString();
+        }
+
+        /// <summary>Takes what an accepted hello returned: token, epoch, V1 identity, acknowledgement, server table counts, catalog and dictionary.</summary>
+        private V7SendResult OnHelloAccepted(IAnalyticsQueueBridge queue, Dictionary<string, object> result, long queueEpoch)
+        {
             var token = (string)result["token"];
             var epoch = ToLong(result["epoch"]);
             if (string.IsNullOrEmpty(token) || epoch < 1) throw new FormatException("hello returned no token or epoch");
@@ -380,39 +392,7 @@ namespace Daliys.Analytics.Internal.Transport
             if (status == 503) return V7SendResult.Retry(status, response.RetryAfter, "packet: " + status);
             if (status == 404 && response.ErrorCode == "unknown_stream") { queue.BeginNewStream(); _newEpoch = true; _needHello = true; again = true; return null; }
             if (status == 404) { MarkUnavailable("this server has no V8 routes"); return Fallback(LastFallbackReason); }
-            if (status == 409)
-            {
-                switch (response.ErrorCode)
-                {
-                    case "stream_rollback":
-                    case "stream_conflict":
-                    case "alias_conflict":
-                        queue.BeginNewStream(); _newEpoch = true; _needHello = true; again = true; return null;
-                    case "shapes_missing":
-                    {
-                        var held = DetailCount(response.Text, "shapes");
-                        _serverShapes = Math.Max(0, Math.Min(held, _shapes.Count));
-                        if (held > _shapes.Count) { var fetched = AdoptCatalog(); if (fetched != null) return fetched; }
-                        again = true; return null;
-                    }
-                    case "aliases_missing":
-                    {
-                        var held = DetailCount(response.Text, "aliases");
-                        if (held < _aliases.Base) { _newEpoch = true; _needHello = true; queue.BeginNewStream(); }   // the server lost slots this process builds on
-                        else _serverAliases = held;
-                        again = true; return null;
-                    }
-                    case "shape_conflict":
-                    {
-                        // another installation registered a different shape at that position first: take the server's table and re-resolve
-                        var fetched = AdoptCatalog();
-                        if (fetched != null) return fetched;
-                        again = true; return null;
-                    }
-                    case "transport_assets_unknown":
-                        _dictionaryId = NoDictionary; _dictionary = null; _encoder?.Dispose(); _encoder = null; again = true; return null;
-                }
-            }
+            if (status == 409 && TryConflict(queue, response, out var conflict, out again)) return conflict;
             if (status == 422)
             {
                 _shapes.TruncateTo(_serverShapes);       // the server will not take this shape; do not carry it into later packets
@@ -424,6 +404,50 @@ namespace Daliys.Analytics.Internal.Transport
                 return Fallback("packet answered " + status + " " + response.ErrorCode);
             }
 
+            return OnPacketAccepted(queue, response, encoded);
+        }
+
+        /// <summary>A 409 the session can repair (new stream, missing or conflicting tables, unknown assets): true with the result to return (null = send again).</summary>
+        private bool TryConflict(IAnalyticsQueueBridge queue, V7Response response, out V7SendResult result, out bool again)
+        {
+            result = null;
+            again = false;
+            switch (response.ErrorCode)
+            {
+                case "stream_rollback":
+                case "stream_conflict":
+                case "alias_conflict":
+                    queue.BeginNewStream(); _newEpoch = true; _needHello = true; again = true; return true;
+                case "shapes_missing":
+                {
+                    var held = DetailCount(response.Text, "shapes");
+                    _serverShapes = Math.Max(0, Math.Min(held, _shapes.Count));
+                    if (held > _shapes.Count) { var fetched = AdoptCatalog(); if (fetched != null) { result = fetched; return true; } }
+                    again = true; return true;
+                }
+                case "aliases_missing":
+                {
+                    var held = DetailCount(response.Text, "aliases");
+                    if (held < _aliases.Base) { _newEpoch = true; _needHello = true; queue.BeginNewStream(); }   // the server lost slots this process builds on
+                    else _serverAliases = held;
+                    again = true; return true;
+                }
+                case "shape_conflict":
+                {
+                    // another installation registered a different shape at that position first: take the server's table and re-resolve
+                    var fetched = AdoptCatalog();
+                    if (fetched != null) { result = fetched; return true; }
+                    again = true; return true;
+                }
+                case "transport_assets_unknown":
+                    _dictionaryId = NoDictionary; _dictionary = null; _encoder?.Dispose(); _encoder = null; again = true; return true;
+            }
+            return false;
+        }
+
+        /// <summary>An accepted packet: settle the acknowledged rows, follow a new dictionary or policy, and record what the server now holds.</summary>
+        private V7SendResult OnPacketAccepted(IAnalyticsQueueBridge queue, V7Response response, M7EncodeResult encoded)
+        {
             var result = MiniJson.ParseObject(response.Text);
             var ack = ToLong(result["ack"]);
             var removed = queue.DeleteThroughSequence(ack);

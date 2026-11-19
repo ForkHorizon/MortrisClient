@@ -1,3 +1,4 @@
+// Tests that the allocation-free validator reaches exactly the verdicts of the original.
 using System;
 using System.Collections.Generic;
 using System.Text;

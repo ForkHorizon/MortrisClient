@@ -1,3 +1,4 @@
+// Tests for the memory buffer size limits between Track() and the queue.
 using Daliys.Analytics.Internal.Transport;
 using Xunit;
 

@@ -1,3 +1,0 @@
-10-18 00:32:23.225  4339  4359 I BENCH   : replay_done sdk=amplitude events=600 track_mean_us=83 track_max_us=535 wall_ms=61260
-10-18 00:33:08.226  4339  4359 I BENCH   : perf init_cpu_ms=2 init_alloc=32864 replay_cpu_ms=2383 replay_alloc=51935104 replay_gc=13 total_cpu_ms=2391 total_alloc=52144000 total_gc=13 events=600
-10-18 00:33:08.226  4339  4359 I BENCH   : tail_done

@@ -1,3 +1,4 @@
+// Encodes queued event records into V7 rows and columns.
 using System;
 using System.Collections.Generic;
 

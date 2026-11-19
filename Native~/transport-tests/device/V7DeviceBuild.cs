@@ -1,3 +1,4 @@
+// Editor build script for the V7 device probe player used by the transport device tests.
 #if UNITY_EDITOR
 using System.IO;
 using UnityEditor;

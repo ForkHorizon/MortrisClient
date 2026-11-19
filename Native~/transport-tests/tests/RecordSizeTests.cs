@@ -1,3 +1,4 @@
+// Diagnostic: size of the stored binary record per event for a JSONL corpus.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +16,7 @@ namespace M7Transport.Tests
         {
             var dir = Environment.GetEnvironmentVariable("M8_CORPUS_DIR");
             if (string.IsNullOrEmpty(dir)) return;
-            var context = EventContext.Build("1.1.14", "214", "android", "Android 15", "Pixel 8", "en-US", 60);
+            var context = EventContext.Build(60, "1.1.14", "214", "android", "Android 15", "Pixel 8", "en-US");
             foreach (var file in Directory.GetFiles(dir, "*.jsonl").OrderBy(f => f))
             {
                 var writer = new EventRecordWriter { TypedNumbers = true };
@@ -30,7 +31,7 @@ namespace M7Transport.Tests
                                 : kv.Value.ValueKind == System.Text.Json.JsonValueKind.True ? true : kv.Value.ValueKind == System.Text.Json.JsonValueKind.False ? false
                                 : kv.Value.TryGetInt64(out var l) ? (object)l : kv.Value.GetDouble();
                         if (props.Count > 32) continue; // the SDK rejects these
-                        writer.Begin(Guid.NewGuid(), Guid.NewGuid(), 1700000000000, 1000, context, doc.RootElement.GetProperty("name").GetString(), props.Count);
+                        writer.Begin(new EventHeader(Guid.NewGuid(), Guid.NewGuid(), 1700000000000, 1000, context), doc.RootElement.GetProperty("name").GetString(), props.Count);
                         foreach (var p in props) writer.AddClr(p.Key, p.Value);
                         sizes.Add(writer.Finish());
                     }

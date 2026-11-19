@@ -1,3 +1,4 @@
+// Columnar packing of event rows for V7/V8 packets.
 using System;
 using System.Collections.Generic;
 
@@ -276,10 +277,17 @@ namespace Daliys.Analytics.Internal.Transport
                 Values(n, types[order[k]]);
             }
         }
-        internal int Pack(M7Row[] rows, int[] types, bool ids, byte[] destination, bool numeric = false, bool stringsModel = false)
+        /// <summary>Value models of the following packs: integer columns as numeric deltas, string columns as dictionaries (the frame flags announce both).</summary>
+        internal M7Columns Models(bool numeric, bool stringsModel)
+        {
+            integerModel = numeric; stringModel = stringsModel;
+            return this;
+        }
+
+        internal int Pack(M7Row[] rows, int[] types, bool ids, byte[] destination)
         {
             if (rows.Length < 1 || rows.Length > 500 || types.Length > seen.Length) throw new ArgumentException("bounds");
-            integerModel = numeric; stringModel = stringsModel; output = destination; pos = 0; Array.Clear(seen, 0, seen.Length); Array.Clear(previousSeen, 0, previousSeen.Length);
+            output = destination; pos = 0; Array.Clear(seen, 0, seen.Length); Array.Clear(previousSeen, 0, previousSeen.Length);
             for (int col = 0; col < 5; col++)
             {
                 for (int i = 0; i < rows.Length; i++)

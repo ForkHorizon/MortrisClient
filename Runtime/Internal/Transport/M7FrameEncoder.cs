@@ -1,3 +1,4 @@
+// Builds one M7 packet: header, catalog and dictionary ids, and the optionally zstd-compressed body.
 using System;
 using System.Security.Cryptography;
 
@@ -44,7 +45,7 @@ namespace Daliys.Analytics.Internal.Transport
             int rawLength;
             while (true)
             {
-                try { rawLength = _columns.Pack(rows, columnTypes, false, _raw, _numeric, _strings); break; }
+                try { rawLength = _columns.Models(_numeric, _strings).Pack(rows, columnTypes, false, _raw); break; }
                 catch (M7CapacityException)
                 {
                     if (_raw.Length >= MaxRaw) return false;

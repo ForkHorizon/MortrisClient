@@ -1,3 +1,4 @@
+// Derived V7 event ids, computed like the server so V1 and V7 rows of one event match.
 using System;
 using System.Collections.Generic;
 using System.Globalization;

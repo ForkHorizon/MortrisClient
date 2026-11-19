@@ -1,3 +1,4 @@
+// Allocation and CPU per event for each stage of the event pipeline on a replay of real events.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -64,7 +65,7 @@ namespace M7Transport.Tests
         {
             var events = Load(5000);
             if (events.Count == 0) return;
-            var context = EventContext.Build("1.1.14", "perf-1", "android", "Android 16", "Nothing A142", "en-US", 120);
+            var context = EventContext.Build(120, "1.1.14", "perf-1", "android", "Android 16", "Nothing A142", "en-US");
             var session = Guid.NewGuid(); var writer = new EventRecordWriter();
 
             // Track(): validation + record. This is what the game thread pays.
@@ -73,7 +74,7 @@ namespace M7Transport.Tests
             {
                 foreach (var e in events)
                 {
-                    writer.Begin(Guid.NewGuid(), session, 1790000000000, 1234, context, e.Name, e.Props.Count);
+                    writer.Begin(new EventHeader(Guid.NewGuid(), session, 1790000000000, 1234, context), e.Name, e.Props.Count);
                     foreach (var p in e.Props) writer.AddClr(p.Key, p.Value);
                     writer.Finish();
                 }
@@ -85,7 +86,7 @@ namespace M7Transport.Tests
             {
                 foreach (var e in events)
                 {
-                    writer.Begin(Guid.NewGuid(), session, 1790000000000, 1234, context, e.Name, e.Props.Count);
+                    writer.Begin(new EventHeader(Guid.NewGuid(), session, 1790000000000, 1234, context), e.Name, e.Props.Count);
                     foreach (var p in e.Props) writer.AddClr(p.Key, p.Value);
                     buffer.TryAppend(writer.Buffer, writer.Finish());
                 }
@@ -97,13 +98,13 @@ namespace M7Transport.Tests
             var frames = new List<byte>();
             foreach (var e in events)
             {
-                writer.Begin(Guid.NewGuid(), session, 1790000000000, 1234, context, e.Name, e.Props.Count);
+                writer.Begin(new EventHeader(Guid.NewGuid(), session, 1790000000000, 1234, context), e.Name, e.Props.Count);
                 foreach (var p in e.Props) writer.AddClr(p.Key, p.Value);
                 var length = writer.Finish();
                 frames.AddRange(new[] { (byte)(length >> 24), (byte)(length >> 16), (byte)(length >> 8), (byte)length });
                 frames.AddRange(writer.Buffer.Take(length));
             }
-            queue.EnqueueRecords(frames.ToArray(), events.Count, 1000000, 1L << 40, 1L << 40);
+            queue.SetLimits(1000000, 1L << 40, 1L << 40); queue.EnqueueRecords(frames.ToArray(), events.Count);
 
             var catalog = M7Catalog.Parse(File.ReadAllBytes(Work("catalog.json")));
             var dictionary = File.ReadAllBytes(Work("dictionary.bin"));

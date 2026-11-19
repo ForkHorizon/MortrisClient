@@ -1,3 +1,4 @@
+// Per-name token buckets that cap how often one event name may be tracked.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

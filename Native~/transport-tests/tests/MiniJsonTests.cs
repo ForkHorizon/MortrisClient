@@ -1,3 +1,4 @@
+// Tests for the minimal JSON reader used by the transports.
 using System;
 using System.Collections.Generic;
 using Daliys.Analytics.Internal.Transport;

@@ -1,3 +1,4 @@
+// Minimal JSON reader that keeps numbers as source text so integers and floats stay distinct.
 using System;
 using System.Collections.Generic;
 using System.Globalization;

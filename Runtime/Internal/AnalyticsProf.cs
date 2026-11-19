@@ -1,3 +1,4 @@
+// Stage timers for the profiling build of the SDK (no cost in the shipped build).
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;

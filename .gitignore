@@ -47,3 +47,11 @@
 /comparison-run~/
 /profiling-run~/
 /.codex/
+
+# Theory~ keeps notes and figures only; experiment code, logs and data stay local (archive in ../../../MortrisClient-data)
+/Theory~/**
+!/Theory~/**/
+!/Theory~/**/*.md
+!/Theory~/**/*.png
+!/Theory~/**/*.svg
+!/Theory~/**/*.jpg

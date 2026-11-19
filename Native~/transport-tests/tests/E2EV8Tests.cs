@@ -1,3 +1,4 @@
+// V8 end-to-end tests: the C# session against the real Go server with real zstd and a trained dictionary.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,7 +17,7 @@ namespace M7Transport.Tests
     /// </summary>
     public class E2EV8Tests
     {
-        private static readonly byte[] Context = EventContext.Build("1.1.14", "214", "android", "Android 15", "Pixel 8", "en-US", 60);
+        private static readonly byte[] Context = EventContext.Build(60, "1.1.14", "214", "android", "Android 15", "Pixel 8", "en-US");
 
         private sealed class Rig : IDisposable
         {
@@ -64,13 +65,13 @@ namespace M7Transport.Tests
                 for (var i = 0; i < count; i++, _written++)
                 {
                     var (name, props) = make(_written);
-                    writer.Begin(Guid.NewGuid(), SessionId, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 1000 + i, 10 + _written * 3, Context, name, props.Count);
+                    writer.Begin(new EventHeader(Guid.NewGuid(), SessionId, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 1000 + i, 10 + _written * 3, Context), name, props.Count);
                     foreach (var p in props) writer.AddClr(p.Key, p.Value);
                     var length = writer.Finish();
                     frames.AddRange(new[] { (byte)(length >> 24), (byte)(length >> 16), (byte)(length >> 8), (byte)length });
                     frames.AddRange(writer.Buffer.Take(length));
                 }
-                Queue.EnqueueRecords(frames.ToArray(), count, 1000000, 1L << 40, 1L << 40);
+                Queue.SetLimits(1000000, 1L << 40, 1L << 40); Queue.EnqueueRecords(frames.ToArray(), count);
             }
 
             internal V7SendResult Send(int max = 100) => Session.Send(Queue, () => Queue.ReadOldest(max));

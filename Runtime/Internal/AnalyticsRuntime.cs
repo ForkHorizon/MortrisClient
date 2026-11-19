@@ -77,7 +77,7 @@ namespace Daliys.Analytics.Internal
             var now = NowMs();
             try
             {
-                return Write(eventName, properties, session.Id, now, now - session.StartUnixMs, false)
+                return Write(eventName, properties, Header(eventName, session.Id, now, now - session.StartUnixMs), false)
                     ? TrackResult.AcceptedToHandoff
                     : CountDropped();
             }
@@ -105,19 +105,23 @@ namespace Daliys.Analytics.Internal
         }
 
         /// <summary>Encodes the event once into its binary record and hands it to the buffer.</summary>
-        private bool Write(string name, IReadOnlyDictionary<string, object> properties, Guid sessionId, long occurredAtUnixMs, long sessionElapsedMs, bool priority)
+        private bool Write(string name, IReadOnlyDictionary<string, object> properties, EventHeader header, bool priority)
         {
             var writer = EventRecordWriter.ForThread;
             var te = AnalyticsProf.Begin();
-            var length = Encode(writer, name, properties, sessionId, occurredAtUnixMs, sessionElapsedMs);
+            var length = Encode(writer, name, properties, header);
             AnalyticsProf.End(Stage.TrackEncode, te);
             return _persistenceWorker.TryEnqueue(writer.Buffer, length, priority);
         }
 
-        private int Encode(EventRecordWriter writer, string name, IReadOnlyDictionary<string, object> properties, Guid sessionId, long occurredAtUnixMs, long sessionElapsedMs)
+        /// <summary>The record header of an event of this process: a fresh id (the fixed one for a session end) and the device context.</summary>
+        private EventHeader Header(string name, Guid sessionId, long occurredAtUnixMs, long sessionElapsedMs) =>
+            new EventHeader(name == "sys_session_end" ? SessionEndId(sessionId) : Guid.NewGuid(), sessionId, occurredAtUnixMs, sessionElapsedMs, _persistenceWorker.ContextBytes);
+
+        private int Encode(EventRecordWriter writer, string name, IReadOnlyDictionary<string, object> properties, EventHeader header)
         {
             writer.TypedNumbers = _typedNumbers;
-            writer.Begin(name == "sys_session_end" ? SessionEndId(sessionId) : Guid.NewGuid(), sessionId, occurredAtUnixMs, sessionElapsedMs, _persistenceWorker.ContextBytes, name, properties == null ? 0 : properties.Count);
+            writer.Begin(header, name, properties == null ? 0 : properties.Count);
             if (properties is Dictionary<string, object> map)
             {
                 foreach (var property in map)
@@ -165,7 +169,7 @@ namespace Daliys.Analytics.Internal
                     var at = item.Time.HasValue ? item.Time.Value.ToUnixTimeMilliseconds() : callTime;
                     int length;
                     var tbe = AnalyticsProf.Begin();
-                    try { length = Encode(writer, item.Name, item.Properties, session.Id, at, Math.Max(0, at - session.StartUnixMs)); AnalyticsProf.End(Stage.BatchEncode, tbe); }
+                    try { length = Encode(writer, item.Name, item.Properties, Header(item.Name, session.Id, at, Math.Max(0, at - session.StartUnixMs))); AnalyticsProf.End(Stage.BatchEncode, tbe); }
                     catch (InvalidOperationException) { invalid++; Interlocked.Increment(ref _invalidEvents); continue; }
                     frame.WriteByte((byte)(length >> 24)); frame.WriteByte((byte)(length >> 16)); frame.WriteByte((byte)(length >> 8)); frame.WriteByte((byte)length);
                     frame.Write(writer.Buffer, 0, length);
@@ -183,7 +187,7 @@ namespace Daliys.Analytics.Internal
         {
             if (!IsCollectionEnabled)
                 return;
-            try { Write(name, properties, sessionId, occurredAtUnixMs, sessionElapsedMs, true); }
+            try { Write(name, properties, Header(name, sessionId, occurredAtUnixMs, sessionElapsedMs), true); }
             catch (InvalidOperationException) { Interlocked.Increment(ref _invalidEvents); }
         }
 

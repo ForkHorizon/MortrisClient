@@ -1,8 +1,0 @@
-{
-  "equivalent_events": 8233,
-  "boundary_cases": 9,
-  "malformed_checks": 4,
-  "mutations_rejected": 1851,
-  "mutations_decoded": 149,
-  "note": "TLS supplies integrity; decodable mutations need not be rejected. Payload parser fuzz still required."
-}

@@ -1,3 +1,4 @@
+// Tests that export encoded frames and tables for comparison with the research tools.
 using System;
 using System.IO;
 using Daliys.Analytics.Internal.Transport;

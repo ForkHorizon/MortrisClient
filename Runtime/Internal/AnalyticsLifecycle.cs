@@ -1,3 +1,4 @@
+// Hidden persistent object that forwards Unity's application callbacks to the analytics runtime.
 using UnityEngine;
 
 namespace Daliys.Analytics.Internal

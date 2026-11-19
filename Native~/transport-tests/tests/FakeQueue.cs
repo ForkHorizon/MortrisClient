@@ -1,3 +1,4 @@
+// In-memory model of the Android queue with the same sequence, journal and epoch rules, for host tests.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +51,11 @@ namespace M7Transport.Tests
             if (evicted > 0) _droppedVersion++;
         }
 
-        public void EnqueueRecords(byte[] frames, int count, int eventLimit, long byteLimit, long maxAgeMilliseconds, string counters = null)
+        private int _eventLimit = int.MaxValue;
+
+        public void SetLimits(int eventLimit, long byteLimit, long maxAgeMilliseconds) => _eventLimit = eventLimit == 0 ? int.MaxValue : eventLimit;
+
+        public void EnqueueRecords(byte[] frames, int count, string counters = null)
         {
             Calls.Add("EnqueueRecords " + count);
             if (counters != null) Meta["counters"] = counters;
@@ -64,7 +69,7 @@ namespace M7Transport.Tests
                 if (_rows.Any(r => r.EventId == EventRecordFormat.UuidText(record, EventRecordFormat.IdOffset))) continue;
                 Add(record);
             }
-            Trim(eventLimit);
+            Trim(_eventLimit);
         }
 
         public int PendingCount => _rows.Count;

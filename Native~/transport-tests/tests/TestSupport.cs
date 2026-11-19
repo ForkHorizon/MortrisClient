@@ -1,3 +1,4 @@
+// Shared helpers for the transport host tests.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -45,7 +46,8 @@ namespace M7Transport.Tests
         }
 
         /// <summary>Runs the research Python decoder over a frame; returns its stdout, or null when no interpreter is configured.</summary>
-        internal static string PythonDecode(string catalogFile, string dictionaryFile, string aliasesFile, string frameFile, string expectedFile, out int exitCode)
+        /// <remarks><paramref name="frameDir"/> holds frame.bin, dictionary.bin and aliases.json.</remarks>
+        internal static string PythonDecode(string catalogFile, string frameDir, string expectedFile, out int exitCode)
         {
             var python = Environment.GetEnvironmentVariable("M7_PYTHON");
             exitCode = 0;
@@ -53,7 +55,7 @@ namespace M7Transport.Tests
             var start = new ProcessStartInfo(python) { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false };
             start.Environment["PYTHONDONTWRITEBYTECODE"] = "1";
             start.Environment["M7_SCRIPTS"] = Path.GetFullPath(Path.Combine(Root, "../../../../../Theory~/transport-v7/comparison/scripts"));
-            foreach (var argument in new[] { Path.Combine(Root, "tools", "py_decode.py"), catalogFile, dictionaryFile, aliasesFile, frameFile, expectedFile }) start.ArgumentList.Add(argument);
+            foreach (var argument in new[] { Path.Combine(Root, "tools", "py_decode.py"), catalogFile, Path.Combine(frameDir, "dictionary.bin"), Path.Combine(frameDir, "aliases.json"), Path.Combine(frameDir, "frame.bin"), expectedFile }) start.ArgumentList.Add(argument);
             using (var process = Process.Start(start))
             {
                 var output = process.StandardOutput.ReadToEnd() + process.StandardError.ReadToEnd();

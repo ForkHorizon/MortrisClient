@@ -1,7 +1,0 @@
-__pycache__/
-.venv/
-native/bin/
-native/obj/
-results/private/
-native/obj-unity/
-results/dict-real-*.bin

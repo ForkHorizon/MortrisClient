@@ -1,3 +1,4 @@
+// V8 shape and alias tables kept in step with the server.
 using System;
 using System.Collections.Generic;
 using System.Globalization;

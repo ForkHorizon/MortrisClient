@@ -1,3 +1,4 @@
+// One event and its typed property values as the V7/V8 encoders see them.
 using System;
 using System.Collections.Generic;
 using System.Globalization;

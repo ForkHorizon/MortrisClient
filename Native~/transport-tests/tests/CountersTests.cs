@@ -1,3 +1,4 @@
+// Tests for the named game id counters (Analytics.NextId).
 using System;
 using Daliys.Analytics.Internal;
 using Xunit;

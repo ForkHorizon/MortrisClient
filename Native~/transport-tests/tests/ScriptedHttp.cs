@@ -1,3 +1,4 @@
+// Scripted HTTP transport for host tests: records requests and replays prepared responses.
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -48,16 +49,15 @@ namespace M7Transport.Tests
         internal IEnumerable<Call> Where(string method, string path) { foreach (var c in Calls) if (c.Method == method && c.Path.StartsWith(path, StringComparison.Ordinal)) yield return c; }
         internal int Count(string method, string path) { var n = 0; foreach (var _ in Where(method, path)) n++; return n; }
 
-        private V7Response Record(string method, string path, string body, byte[] packet, IReadOnlyDictionary<string, string> headers, string credential)
+        private V7Response Record(Call call)
         {
-            var call = new Call { Method = method, Path = path, Body = body, Packet = packet, Headers = headers, Credential = credential };
             Calls.Add(call);
             return Override?.Invoke(call) ?? Default(call);
         }
 
-        public V7Response PostJson(string path, string json, string credential) => Record("POST", path, json, null, null, credential);
-        public V7Response PutJson(string path, string json, string credential) => Record("PUT", path, json, null, null, credential);
-        public V7Response PostPacket(string path, byte[] packet, IReadOnlyDictionary<string, string> headers, string credential) => Record("POST", path, null, packet, headers, credential);
+        public V7Response PostJson(string path, string json, string credential) => Record(new Call { Method = "POST", Path = path, Body = json, Credential = credential });
+        public V7Response PutJson(string path, string json, string credential) => Record(new Call { Method = "PUT", Path = path, Body = json, Credential = credential });
+        public V7Response PostPacket(string path, byte[] packet, IReadOnlyDictionary<string, string> headers, string credential) => Record(new Call { Method = "POST", Path = path, Packet = packet, Headers = headers, Credential = credential });
         internal readonly List<Call> BinaryCalls = new List<Call>();
         public V7Response PostBinary(string path, byte[] body, string contentType, string credential)
         {
@@ -65,7 +65,7 @@ namespace M7Transport.Tests
             Calls.Add(call); BinaryCalls.Add(call);
             return Override?.Invoke(call) ?? Error(404, "not_found");
         }
-        public V7Response Get(string pathAndQuery, string credential) => Record("GET", pathAndQuery, null, null, null, credential);
+        public V7Response Get(string pathAndQuery, string credential) => Record(new Call { Method = "GET", Path = pathAndQuery, Credential = credential });
 
         private V7Response Default(Call call)
         {

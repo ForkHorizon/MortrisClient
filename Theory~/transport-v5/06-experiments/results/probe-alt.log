@@ -1,1 +1,0 @@
-{"profile": "alt", "table_bytes": 65536, "raw_prior_bytes": 219587, "compressed_prior_bytes": 72551, "body": {"events": 5400, "batches": 54, "bytes": 658016, "B_per_event": 121.85481481481482}}

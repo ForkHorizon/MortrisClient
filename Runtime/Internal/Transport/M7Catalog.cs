@@ -1,3 +1,4 @@
+// A project's V7 catalog: the event shapes the server will decode.
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;

@@ -1,3 +1,4 @@
+// Tests for the V8 frame encoder, shape and alias tables.
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -11,7 +12,7 @@ namespace M7Transport.Tests
 {
     public class M8EncoderTests
     {
-        private static readonly byte[] Context = EventContext.Build("1.1.14", "214", "android", "Android 15", "Pixel 8", "en-US", 60);
+        private static readonly byte[] Context = EventContext.Build(60, "1.1.14", "214", "android", "Android 15", "Pixel 8", "en-US");
         private static readonly Guid[] Sessions = { Guid.Parse("7b1f3c52-9a44-4e0e-8d61-2f5c0a9e1b77"), Guid.Parse("7b1f3c52-9a44-4e0e-8d61-2f5c0a9e1b78") };
         private const long T0 = 1790000000000;
 
@@ -46,13 +47,13 @@ namespace M7Transport.Tests
             for (var i = 0; i < specs.Count; i++)
             {
                 var s = specs[i];
-                writer.Begin(Guid.NewGuid(), Sessions[s.Session], T0 + i * 40, s.ElapsedMs, Context, s.Name, s.Props.Count);
+                writer.Begin(new EventHeader(Guid.NewGuid(), Sessions[s.Session], T0 + i * 40, s.ElapsedMs, Context), s.Name, s.Props.Count);
                 foreach (var p in s.Props) writer.AddClr(p.Key, p.Value);
                 var length = writer.Finish();
                 frames.AddRange(new[] { (byte)(length >> 24), (byte)(length >> 16), (byte)(length >> 8), (byte)length });
                 frames.AddRange(writer.Buffer.Take(length));
             }
-            queue.EnqueueRecords(frames.ToArray(), specs.Count, 1000000, 1L << 40, 1L << 40);
+            queue.SetLimits(1000000, 1L << 40, 1L << 40); queue.EnqueueRecords(frames.ToArray(), specs.Count);
             return queue;
         }
 

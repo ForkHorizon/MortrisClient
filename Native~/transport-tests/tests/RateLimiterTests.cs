@@ -1,3 +1,4 @@
+// Tests for the per-name event rate limiter.
 using Daliys.Analytics.Internal;
 using Xunit;
 

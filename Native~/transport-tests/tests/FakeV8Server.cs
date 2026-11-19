@@ -1,3 +1,4 @@
+// Model of the V8 server for host tests: frame headers, sections and the sequence column.
 using System;
 using System.Collections.Generic;
 using System.Globalization;

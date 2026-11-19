@@ -1,3 +1,4 @@
+// In-memory buffer between Track() and the durable queue, flushed in one call.
 using System;
 
 namespace Daliys.Analytics.Internal.Transport

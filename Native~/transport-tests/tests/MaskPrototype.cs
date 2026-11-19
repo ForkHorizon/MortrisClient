@@ -1,3 +1,4 @@
+// Prototype of the V8 presence mask (tests only, not part of the shipped protocol).
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,10 +17,10 @@ namespace Daliys.Analytics.Internal.Transport
     /// </summary>
     internal sealed partial class M7Columns
     {
-        private void PrepareHeader(M7Row[] rows, bool numeric, bool stringsModel, byte[] destination)
+        private void PrepareHeader(M7Row[] rows, byte[] destination)
         {
             if (rows.Length < 1 || rows.Length > 500) throw new ArgumentException("bounds");
-            integerModel = numeric; stringModel = stringsModel; output = destination; pos = 0; Array.Clear(seen, 0, seen.Length); Array.Clear(previousSeen, 0, previousSeen.Length);
+            output = destination; pos = 0; Array.Clear(seen, 0, seen.Length); Array.Clear(previousSeen, 0, previousSeen.Length);
         }
 
         private void StructuralColumns(M7Row[] rows)
@@ -42,9 +43,9 @@ namespace Daliys.Analytics.Internal.Transport
         }
 
         /// <summary>The shipped format (shape id column), faster gather.</summary>
-        internal int PackBucketed(M7Row[] rows, int[] types, byte[] destination, bool numeric = false, bool stringsModel = false)
+        internal int PackBucketed(M7Row[] rows, int[] types, byte[] destination)
         {
-            PrepareHeader(rows, numeric, stringsModel, destination);
+            PrepareHeader(rows, destination);
             StructuralColumns(rows);
             ValueColumnsBucketed(rows, types);
             return pos;
@@ -54,9 +55,9 @@ namespace Daliys.Analytics.Internal.Transport
         /// The mask format: column 3 holds the event-name id; then a flag per row (1 = this row's mask differs from the previous row of the same name), then the masks of the flagged rows.
         /// <paramref name="masks"/> holds each row's presence mask over its name's columns (at most 64 per name in the prototype).
         /// </summary>
-        internal int PackMasked(M7Row[] rows, ulong[] masks, bool[] explicitMask, int[] types, byte[] destination, bool numeric = false, bool stringsModel = false)
+        internal int PackMasked(M7Row[] rows, ulong[] masks, bool[] explicitMask, int[] types, byte[] destination)
         {
-            PrepareHeader(rows, numeric, stringsModel, destination);
+            PrepareHeader(rows, destination);
             StructuralColumns(rows);
             for (var i = 0; i < rows.Length; i++) work[i] = explicitMask[i] ? 1 : 0;
             Ints(rows.Length);
@@ -139,19 +140,8 @@ namespace M7Transport.Tests
                 else
                 {
                     if (!_names.TryGetValue(e.Name, out var entry)) { entry = new NameEntry { Id = _names.Count }; _names.Add(e.Name, entry); }
-                    var columns = new int[_fields.Count]; ulong m = 0;
-                    for (var j = 0; j < _fields.Count; j++)
-                    {
-                        var key = _fields[j].Key + "\u0001" + _fields[j].Value;
-                        if (!_columnOf.TryGetValue(key, out var column)) { column = ColumnTypes.Count; _columnOf.Add(key, column); ColumnTypes.Add(_fields[j].Value); }
-                        if (!entry.BitOf.TryGetValue(column, out var bit))
-                        {
-                            bit = entry.Columns.Count;
-                            if (bit >= 64) throw new NotSupportedException("the prototype keeps at most 64 columns per event name");
-                            entry.BitOf.Add(column, bit); entry.Columns.Add(column);
-                        }
-                        columns[j] = column; m |= 1UL << bit;
-                    }
+                    var columns = new int[_fields.Count];
+                    var m = MaskOf(entry, columns);
                     row.Shape = entry.Id; row.Columns = columns; masks[i] = m; nameIds[i] = entry.Id;
                     if (!entry.HasLast || entry.LastMask != m) { flags[i] = true; entry.LastMask = m; entry.HasLast = true; explicitCount++; }
                 }
@@ -160,11 +150,33 @@ namespace M7Transport.Tests
             return new Packed { Rows = rows, Masks = masks, ExplicitMask = flags, NameIds = nameIds, Fields = fieldsPerRow, Events = count, Explicit = explicitCount };
         }
 
+        /// <summary>The presence mask of the current fields over the name's columns; fills <paramref name="columns"/> with each field's column.</summary>
+        private ulong MaskOf(NameEntry entry, int[] columns)
+        {
+            ulong m = 0;
+            for (var j = 0; j < _fields.Count; j++)
+            {
+                var key = _fields[j].Key + "\u0001" + _fields[j].Value;
+                if (!_columnOf.TryGetValue(key, out var column)) { column = ColumnTypes.Count; _columnOf.Add(key, column); ColumnTypes.Add(_fields[j].Value); }
+                columns[j] = column; m |= 1UL << BitOf(entry, column);
+            }
+            return m;
+        }
+
+        private static int BitOf(NameEntry entry, int column)
+        {
+            if (entry.BitOf.TryGetValue(column, out var bit)) return bit;
+            bit = entry.Columns.Count;
+            if (bit >= 64) throw new NotSupportedException("the prototype keeps at most 64 columns per event name");
+            entry.BitOf.Add(column, bit); entry.Columns.Add(column);
+            return bit;
+        }
+
         internal Packed Pack(QueueBatch batch, bool mask, bool bucketedShape = true)
         {
             var packed = Build(batch, mask);
-            packed.RawLength = mask ? _columns.PackMasked(packed.Rows, packed.Masks, packed.ExplicitMask, MaskColumnTypes(), _raw, true, true)
-                : bucketedShape ? _columns.PackBucketed(packed.Rows, Shapes.ColumnTypes, _raw, true, true) : _columns.Pack(packed.Rows, Shapes.ColumnTypes, false, _raw, true, true);
+            packed.RawLength = mask ? _columns.Models(true, true).PackMasked(packed.Rows, packed.Masks, packed.ExplicitMask, MaskColumnTypes(), _raw)
+                : bucketedShape ? _columns.Models(true, true).PackBucketed(packed.Rows, Shapes.ColumnTypes, _raw) : _columns.Models(true, true).Pack(packed.Rows, Shapes.ColumnTypes, false, _raw);
             var compressed = _zstd.Compress(_raw, packed.RawLength);
             packed.CompressedLength = compressed != null && compressed.Length < packed.RawLength ? compressed.Length : packed.RawLength;
             return packed;
@@ -173,7 +185,7 @@ namespace M7Transport.Tests
         /// <summary>Packs already-built shape rows with the shipped column coder (for the byte-equality check against <see cref="M7Columns.PackBucketed"/>).</summary>
         internal byte[] PackShipped(Packed built, bool bucketed)
         {
-            var length = bucketed ? _columns.PackBucketed(built.Rows, Shapes.ColumnTypes, _raw, true, true) : _columns.Pack(built.Rows, Shapes.ColumnTypes, false, _raw, true, true);
+            var length = bucketed ? _columns.Models(true, true).PackBucketed(built.Rows, Shapes.ColumnTypes, _raw) : _columns.Models(true, true).Pack(built.Rows, Shapes.ColumnTypes, false, _raw);
             return _raw.Take(length).ToArray();
         }
 
@@ -198,7 +210,7 @@ namespace M7Transport.Tests
     {
         private readonly ITestOutputHelper _out;
         public MaskPrototypeTests(ITestOutputHelper output) { _out = output; }
-        private static readonly byte[] Context = EventContext.Build("1.1.14", "214", "android", "Android 15", "Pixel 8", "en-US", 60);
+        private static readonly byte[] Context = EventContext.Build(60, "1.1.14", "214", "android", "Android 15", "Pixel 8", "en-US");
 
         private static (FakeQueue queue, int count) Fill(string file, int limit)
         {
@@ -215,13 +227,13 @@ namespace M7Transport.Tests
                             : kv.Value.ValueKind == System.Text.Json.JsonValueKind.Null ? null
                             : kv.Value.TryGetInt64(out var l) ? (object)l : kv.Value.GetDouble();
                     if (props.Count > 32) continue;
-                    writer.Begin(Guid.NewGuid(), Guid.Parse("7b1f3c52-9a44-4e0e-8d61-2f5c0a9e1b77"), 1790000000000 + n * 40, n * 40 + 10, Context, doc.RootElement.GetProperty("name").GetString(), props.Count);
+                    writer.Begin(new EventHeader(Guid.NewGuid(), Guid.Parse("7b1f3c52-9a44-4e0e-8d61-2f5c0a9e1b77"), 1790000000000 + n * 40, n * 40 + 10, Context), doc.RootElement.GetProperty("name").GetString(), props.Count);
                     foreach (var p in props) writer.AddClr(p.Key, p.Value);
                     var length = writer.Finish();
                     frames.AddRange(new[] { (byte)(length >> 24), (byte)(length >> 16), (byte)(length >> 8), (byte)length }); frames.AddRange(writer.Buffer.Take(length)); n++;
                 }
             }
-            var queue = new FakeQueue(); queue.EnqueueRecords(frames.ToArray(), n, 1000000, 1L << 40, 1L << 40);
+            var queue = new FakeQueue(); queue.SetLimits(1000000, 1L << 40, 1L << 40); queue.EnqueueRecords(frames.ToArray(), n);
             return (queue, n);
         }
 

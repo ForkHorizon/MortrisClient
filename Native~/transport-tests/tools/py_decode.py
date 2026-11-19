@@ -1,10 +1,11 @@
+# Decodes a V7 frame with the research decoder to cross-check the C# encoder.
 """Decodes an M7 frame with the Python reference decoder and compares it with the expected events.
 Exit code 0 and 'OK <n>' on success. Usage: py_decode.py CATALOG DICTIONARY ALIASES FRAME EXPECTED"""
 import importlib.util, json, os, sys
 from pathlib import Path
 COMPARISON = Path(os.environ['M7_SCRIPTS'])  # Theory~/transport-v7/comparison/scripts
 spec = importlib.util.spec_from_file_location('sb', COMPARISON / 'synth_bench.py'); sb = importlib.util.module_from_spec(spec); spec.loader.exec_module(sb)
-from transport7 import Catalog, decode  # noqa: E402
+from transport7 import Catalog, decode
 
 catalog_path, dict_path, aliases_path, frame_path, expected_path = sys.argv[1:6]
 catalog = Catalog.load(Path(catalog_path).read_bytes())

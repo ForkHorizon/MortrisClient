@@ -1,3 +1,4 @@
+# Generates the binary transport test fixtures from the research encoder.
 """Generates synthetic fixtures for the C# V7 encoder tests with the Python reference implementation.
 Usage (research virtualenv): PYTHONDONTWRITEBYTECODE=1 python gen_fixtures.py ../fixtures
 Everything is synthetic; no Puzzle data. Outputs, per catalog variant ('plain' and 'logical' strings):
@@ -10,7 +11,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 COMPARISON = HERE.parents[2] / 'Theory~/transport-v7/comparison/scripts'
 spec = importlib.util.spec_from_file_location('sb', COMPARISON / 'synth_bench.py'); sb = importlib.util.module_from_spec(spec); spec.loader.exec_module(sb)
-from support7 import core  # noqa: E402  (added to sys.path by synth_bench)
+from support7 import core
 
 out = Path(sys.argv[1]); out.mkdir(parents=True, exist_ok=True)
 

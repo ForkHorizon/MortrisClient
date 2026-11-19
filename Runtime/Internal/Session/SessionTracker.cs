@@ -1,3 +1,4 @@
+// Tracks play sessions and produces the session lifecycle events.
 using System;
 using System.Collections.Generic;
 using System.Globalization;

@@ -1,3 +1,4 @@
+// Tests for the upload schedule and retry backoff.
 using System;
 using Daliys.Analytics.Internal.Transport;
 using Xunit;

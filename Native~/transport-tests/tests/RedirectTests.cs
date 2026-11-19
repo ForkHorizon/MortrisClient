@@ -1,3 +1,4 @@
+// Tests that the uploader never follows HTTP redirects.
 using System;
 using System.Net;
 using System.Net.Sockets;

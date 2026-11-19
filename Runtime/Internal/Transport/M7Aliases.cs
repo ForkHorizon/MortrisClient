@@ -1,3 +1,4 @@
+// Per-process alias table for repeated event context (session, app version, device).
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;

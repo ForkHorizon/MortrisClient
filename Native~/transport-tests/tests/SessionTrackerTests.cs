@@ -1,3 +1,4 @@
+// Tests for the session tracker and its lifecycle events.
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,3 +1,4 @@
+// Tests for the V8 transport session: hello, packets, durable state and contract errors.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace M7Transport.Tests
 {
     public class V8SessionTests
     {
-        private static readonly byte[] Context = EventContext.Build("1.1.14", "214", "android", "Android 15", "Pixel 8", "en-US", 60);
+        private static readonly byte[] Context = EventContext.Build(60, "1.1.14", "214", "android", "Android 15", "Pixel 8", "en-US");
         private static readonly Guid Session = Guid.Parse("7b1f3c52-9a44-4e0e-8d61-2f5c0a9e1b77");
 
         private sealed class NoCompressor : IM7Compressor { public byte[] Compress(byte[] s, int n) => null; public void Dispose() { } }
@@ -40,13 +41,13 @@ namespace M7Transport.Tests
                 for (var i = 0; i < count; i++)
                 {
                     var (name, props) = make != null ? make(i) : ("tick", new Dictionary<string, object> { ["n"] = (long)i, ["x"] = 0.5f * i });
-                    writer.Begin(Guid.NewGuid(), Session, 1790000000000 + (start + i) * 40, 10 + (start + i) * 40, Context, name, props.Count);
+                    writer.Begin(new EventHeader(Guid.NewGuid(), Session, 1790000000000 + (start + i) * 40, 10 + (start + i) * 40, Context), name, props.Count);
                     foreach (var p in props) writer.AddClr(p.Key, p.Value);
                     var length = writer.Finish();
                     frames.AddRange(new[] { (byte)(length >> 24), (byte)(length >> 16), (byte)(length >> 8), (byte)length });
                     frames.AddRange(writer.Buffer.Take(length));
                 }
-                Queue.EnqueueRecords(frames.ToArray(), count, limit, 1L << 40, 1L << 40);
+                Queue.SetLimits(limit, 1L << 40, 1L << 40); Queue.EnqueueRecords(frames.ToArray(), count);
             }
 
             internal V7SendResult Send(int batch = 100) => V8.Send(Queue, () => Queue.ReadOldest(batch));

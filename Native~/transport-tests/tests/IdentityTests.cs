@@ -1,3 +1,4 @@
+// Tests for derived event ids and installation identity across transports.
 using System.Collections.Generic;
 using Daliys.Analytics.Internal.Transport;
 using Xunit;

@@ -1,3 +1,4 @@
+// Tests that property values are classified into V7/V8 types like the reference classifier.
 using System.Collections.Generic;
 using Daliys.Analytics.Internal.Transport;
 using Xunit;

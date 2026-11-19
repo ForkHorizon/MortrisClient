@@ -1,3 +1,4 @@
+// Host allocation and CPU per event for the managed stages of the V8 path.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,7 +21,7 @@ namespace M7Transport.Tests
         private readonly ITestOutputHelper _out;
         public V8StageAllocationTests(ITestOutputHelper output) { _out = output; }
 
-        private static readonly byte[] Context = EventContext.Build("1.1.14", "214", "android", "Android 15", "Pixel 8", "en-US", 60);
+        private static readonly byte[] Context = EventContext.Build(60, "1.1.14", "214", "android", "Android 15", "Pixel 8", "en-US");
 
         private static List<(string Name, Dictionary<string, object> Props)> Load(string file, int limit)
         {
@@ -64,22 +65,22 @@ namespace M7Transport.Tests
                 if (events.Count < 400) continue;
                 var session = Guid.NewGuid(); var writer = new EventRecordWriter { TypedNumbers = true };
                 var validated = Measure(events.Count, () => { foreach (var e in events) EventValidator.HasValidProperties(e.Props); });
-                var recorded = Measure(events.Count, () => { foreach (var e in events) { writer.Begin(Guid.NewGuid(), session, 1790000000000, 1234, Context, e.Name, e.Props.Count); foreach (var p in e.Props) writer.AddClr(p.Key, p.Value); writer.Finish(); } });
+                var recorded = Measure(events.Count, () => { foreach (var e in events) { writer.Begin(new EventHeader(Guid.NewGuid(), session, 1790000000000, 1234, Context), e.Name, e.Props.Count); foreach (var p in e.Props) writer.AddClr(p.Key, p.Value); writer.Finish(); } });
                 var buffer = new EventBuffer(1 << 30, 64 * 1024 * 1024);
                 var buffered = Measure(events.Count, () =>
                 {
-                    foreach (var e in events) { writer.Begin(Guid.NewGuid(), session, 1790000000000, 1234, Context, e.Name, e.Props.Count); foreach (var p in e.Props) writer.AddClr(p.Key, p.Value); buffer.TryAppend(writer.Buffer, writer.Finish()); }
+                    foreach (var e in events) { writer.Begin(new EventHeader(Guid.NewGuid(), session, 1790000000000, 1234, Context), e.Name, e.Props.Count); foreach (var p in e.Props) writer.AddClr(p.Key, p.Value); buffer.TryAppend(writer.Buffer, writer.Finish()); }
                     buffer.Drain(out _);
                 });
                 var queue = new FakeQueue(); var frames = new List<byte>();
                 foreach (var e in events)
                 {
-                    writer.Begin(Guid.NewGuid(), session, 1790000000000, 1234, Context, e.Name, e.Props.Count);
+                    writer.Begin(new EventHeader(Guid.NewGuid(), session, 1790000000000, 1234, Context), e.Name, e.Props.Count);
                     foreach (var p in e.Props) writer.AddClr(p.Key, p.Value);
                     var length = writer.Finish();
                     frames.AddRange(new[] { (byte)(length >> 24), (byte)(length >> 16), (byte)(length >> 8), (byte)length }); frames.AddRange(writer.Buffer.Take(length));
                 }
-                queue.EnqueueRecords(frames.ToArray(), events.Count, 1000000, 1L << 40, 1L << 40);
+                queue.SetLimits(1000000, 1L << 40, 1L << 40); queue.EnqueueRecords(frames.ToArray(), events.Count);
                 var shapes = new M8Shapes(); var aliases = new M8Aliases();
                 foreach (var size in new[] { 20, 200, 500 })
                 {

@@ -1,3 +1,4 @@
+// Builds one V8 frame from queued event records.
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -64,6 +65,46 @@ namespace Daliys.Analytics.Internal.Transport
 
             var rows = new M7Row[count];
             var sequences = new long[count];
+            var failure = BuildRows(batch, info, rows, sequences);
+            if (failure != null) return Fail(failure);
+
+            if (_shapes.Count - info.ServerShapes > MaxShapesPerFrame) return Fail("too many unsent shapes");
+            if (_aliases.Count - info.ServerAliases > MaxAliasesPerFrame) return Fail("too many unsent aliases");
+            if (info.ServerAliases < _aliases.Base) return Fail("the server lacks alias slots this process builds on");
+
+            failure = PackRows(rows, out var rawLength);
+            if (failure != null) return Fail(failure);
+            var compressed = _compressor.Compress(_raw, rawLength);
+            var useCompressed = compressed != null && compressed.Length < rawLength;
+            var body = useCompressed ? compressed : _raw;
+            var bodyLength = useCompressed ? compressed.Length : rawLength;
+
+            var w = new FrameWriter(_frame);
+            w.Byte((byte)'M'); w.Byte((byte)'8');
+            var newShapes = _shapes.Count - info.ServerShapes;
+            var newAliases = _aliases.Count - info.ServerAliases;
+            var hasDropped = info.Dropped != null && info.Dropped.Count > 0;
+            if (hasDropped && info.Dropped.Count > MaxRanges) return Fail("too many dropped ranges");
+            w.Byte((byte)(_modelFlags | (useCompressed ? 1 : 0) | (newAliases > 0 ? 8 : 0) | (newShapes > 0 ? 16 : 0) | (hasDropped ? 32 : 0)));
+            w.Bytes(_dictionaryId, 8);
+            w.Var((ulong)info.Epoch); w.Var((ulong)info.SentAtMs); w.Var((ulong)info.StreamBase); w.Var((ulong)info.HighWater);
+            w.Var((ulong)_shapes.Count); w.Var((ulong)_aliases.Count);
+            WriteTables(ref w, info, newAliases, newShapes);
+            w.Var((ulong)count); w.Var((ulong)rawLength);
+            w.Bytes(body, bodyLength);
+            if (w.Length + 4 > MaxFrame) return Fail("the frame exceeds " + MaxFrame + " bytes");
+            var crc = M7FrameEncoder.Crc(w.Buffer, w.Length);
+            for (var i = 0; i < 4; i++) w.Byte((byte)(crc >> (i * 8)));
+            _frame = w.Buffer;
+            var frame = new byte[w.Length];
+            Buffer.BlockCopy(w.Buffer, 0, frame, 0, w.Length);
+            return new M7EncodeResult { Ok = true, Frame = frame, Count = count, Sequences = sequences, ShapeCount = _shapes.Count, AliasCount = _aliases.Count };
+        }
+
+        /// <summary>Turns the batch into shape rows (registering new shapes, aliases and sessions); returns the failure, or null.</summary>
+        private string BuildRows(QueueBatch batch, M8StreamInfo info, M7Row[] rows, long[] sequences)
+        {
+            var count = batch.Count;
             var sessions = _sessions; sessions.Clear();
             for (var i = 0; i < count; i++)
             {
@@ -73,19 +114,19 @@ namespace Daliys.Analytics.Internal.Transport
                     batch.Parse(_reader, i, _parsed);
                     e = _event.Fill(_parsed, batch.Sequence(i), logicalStrings: true, typedNumbers: true);
                 }
-                catch (FormatException error) { return Fail("event " + i + ": " + error.Message); }
-                if (i > 0 && e.Sequence <= sequences[i - 1]) return Fail("sequences are not strictly increasing");
-                if (e.Sequence < info.StreamBase || e.Sequence > info.HighWater) return Fail("sequence " + e.Sequence + " is outside the stream " + info.StreamBase + ".." + info.HighWater);
+                catch (FormatException error) { return "event " + i + ": " + error.Message; }
+                if (i > 0 && e.Sequence <= sequences[i - 1]) return "sequences are not strictly increasing";
+                if (e.Sequence < info.StreamBase || e.Sequence > info.HighWater) return "sequence " + e.Sequence + " is outside the stream " + info.StreamBase + ".." + info.HighWater;
 
                 _fields.Clear();
                 foreach (var property in e.Properties) _fields.Add(new KeyValuePair<string, int>(property.Key, property.Value.Type));
                 var shape = _shapes.Find(e.Name, _fields);
-                if (shape < 0 && (shape = _shapes.Add(e.Name, _fields)) < 0) return Fail("event " + e.Name + " cannot be described as a shape");
-                if (!_aliases.TryRegister(e, _sdk, out var alias)) return Fail("alias table is full");
+                if (shape < 0 && (shape = _shapes.Add(e.Name, _fields)) < 0) return "event " + e.Name + " cannot be described as a shape";
+                if (!_aliases.TryRegister(e, _sdk, out var alias)) return "alias table is full";
                 if (!sessions.TryGetValue(e.SessionId, out var session))
                 {
                     session = sessions.Count;
-                    if (session >= M7Columns.MaxSessions) return Fail("too many sessions in one batch");
+                    if (session >= M7Columns.MaxSessions) return "too many sessions in one batch";
                     sessions.Add(e.SessionId, session);
                 }
 
@@ -103,37 +144,31 @@ namespace Daliys.Analytics.Internal.Transport
                 sequences[i] = e.Sequence;
             }
 
-            if (_shapes.Count - info.ServerShapes > MaxShapesPerFrame) return Fail("too many unsent shapes");
-            if (_aliases.Count - info.ServerAliases > MaxAliasesPerFrame) return Fail("too many unsent aliases");
-            if (info.ServerAliases < _aliases.Base) return Fail("the server lacks alias slots this process builds on");
+            return null;
+        }
 
-            int rawLength;
+        /// <summary>Packs the rows, growing the raw buffer up to <see cref="MaxRaw"/>; returns the failure, or null.</summary>
+        private string PackRows(M7Row[] rows, out int rawLength)
+        {
+            rawLength = 0;
             while (true)
             {
-                try { rawLength = _columns.Pack(rows, _shapes.ColumnTypes, false, _raw, _integerModel, _stringModel); break; }
+                try { rawLength = _columns.Models(_integerModel, _stringModel).Pack(rows, _shapes.ColumnTypes, false, _raw); break; }
                 catch (M7CapacityException)
                 {
-                    if (_raw.Length >= MaxRaw) return Fail("the batch does not fit a packet");
+                    if (_raw.Length >= MaxRaw) return "the batch does not fit a packet";
                     _raw = new byte[Math.Min(MaxRaw, _raw.Length * 2)];
                 }
-                catch (ArgumentException) { return Fail("a value is out of range"); }
-                catch (OverflowException) { return Fail("a value is out of range"); }
+                catch (ArgumentException) { return "a value is out of range"; }
+                catch (OverflowException) { return "a value is out of range"; }
             }
-            var compressed = _compressor.Compress(_raw, rawLength);
-            var useCompressed = compressed != null && compressed.Length < rawLength;
-            var body = useCompressed ? compressed : _raw;
-            var bodyLength = useCompressed ? compressed.Length : rawLength;
+            return null;
+        }
 
-            var w = new FrameWriter(_frame);
-            w.Byte((byte)'M'); w.Byte((byte)'8');
-            var newShapes = _shapes.Count - info.ServerShapes;
-            var newAliases = _aliases.Count - info.ServerAliases;
+        /// <summary>The frame's table sections: aliases and shapes the server does not hold yet, and the dropped ranges.</summary>
+        private void WriteTables(ref FrameWriter w, M8StreamInfo info, int newAliases, int newShapes)
+        {
             var hasDropped = info.Dropped != null && info.Dropped.Count > 0;
-            if (hasDropped && info.Dropped.Count > MaxRanges) return Fail("too many dropped ranges");
-            w.Byte((byte)(_modelFlags | (useCompressed ? 1 : 0) | (newAliases > 0 ? 8 : 0) | (newShapes > 0 ? 16 : 0) | (hasDropped ? 32 : 0)));
-            w.Bytes(_dictionaryId, 8);
-            w.Var((ulong)info.Epoch); w.Var((ulong)info.SentAtMs); w.Var((ulong)info.StreamBase); w.Var((ulong)info.HighWater);
-            w.Var((ulong)_shapes.Count); w.Var((ulong)_aliases.Count);
             if (newAliases > 0)
             {
                 w.Var((ulong)info.ServerAliases); w.Var((ulong)newAliases);
@@ -160,15 +195,6 @@ namespace Daliys.Analytics.Internal.Transport
                 w.Var((ulong)info.Dropped.Count);
                 foreach (var range in info.Dropped) { w.Var((ulong)range.Key); w.Var((ulong)range.Value); }
             }
-            w.Var((ulong)count); w.Var((ulong)rawLength);
-            w.Bytes(body, bodyLength);
-            if (w.Length + 4 > MaxFrame) return Fail("the frame exceeds " + MaxFrame + " bytes");
-            var crc = M7FrameEncoder.Crc(w.Buffer, w.Length);
-            for (var i = 0; i < 4; i++) w.Byte((byte)(crc >> (i * 8)));
-            _frame = w.Buffer;
-            var frame = new byte[w.Length];
-            Buffer.BlockCopy(w.Buffer, 0, frame, 0, w.Length);
-            return new M7EncodeResult { Ok = true, Frame = frame, Count = count, Sequences = sequences, ShapeCount = _shapes.Count, AliasCount = _aliases.Count };
         }
 
         public void Dispose() => _compressor.Dispose();

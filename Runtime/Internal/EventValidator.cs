@@ -108,15 +108,7 @@ namespace Daliys.Analytics.Internal
             var bytes = 2; // {}
             var first = true;
             foreach (var property in properties)
-            {
-                if (!first)
-                    bytes++;
-                first = false;
-                bytes += 2 + EscapedStringBytes(property.Key) + 1;
-                bytes += ValueBytes(property.Value);
-                if (bytes > MaxPropertiesBytes)
-                    return bytes;
-            }
+                if (AddPropertyBytes(ref bytes, ref first, property)) return bytes;
             return bytes;
         }
 
@@ -125,16 +117,19 @@ namespace Daliys.Analytics.Internal
             var bytes = 2; // {}
             var first = true;
             foreach (var property in properties)
-            {
-                if (!first)
-                    bytes++;
-                first = false;
-                bytes += 2 + EscapedStringBytes(property.Key) + 1;
-                bytes += ValueBytes(property.Value);
-                if (bytes > MaxPropertiesBytes)
-                    return bytes;
-            }
+                if (AddPropertyBytes(ref bytes, ref first, property)) return bytes;
             return bytes;
+        }
+
+        /// <summary>Adds one encoded "key":value (and its comma) to <paramref name="bytes"/>; true once the limit is exceeded. Shared by both overloads, which differ only in the enumerator.</summary>
+        private static bool AddPropertyBytes(ref int bytes, ref bool first, KeyValuePair<string, object> property)
+        {
+            if (!first)
+                bytes++;
+            first = false;
+            bytes += 2 + EscapedStringBytes(property.Key) + 1;
+            bytes += ValueBytes(property.Value);
+            return bytes > MaxPropertiesBytes;
         }
 
         private static int ValueBytes(object value)

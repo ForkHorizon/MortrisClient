@@ -1,3 +1,4 @@
+// Device probe for V7: sends catalog shapes, then an unknown shape, and checks the server response on a real device.
 using System;
 using System.Collections;
 using System.Collections.Generic;

@@ -6,7 +6,9 @@ namespace Daliys.Analytics.Internal
     internal interface IAnalyticsQueueBridge : IDisposable
     {
         /// <summary>Stores <paramref name="count"/> event records (frame layout of <see cref="EventBuffer"/>) in one transaction; the queue numbers them.</summary>
-        void EnqueueRecords(byte[] frames, int count, int eventLimit, long byteLimit, long maxAgeMilliseconds, string counters = null);
+        void EnqueueRecords(byte[] frames, int count, string counters = null);
+        /// <summary>Bounds every later <see cref="EnqueueRecords"/> applies: event count (0 = none), bytes (positive), age in ms (0 = no expiry). Set once before the first write.</summary>
+        void SetLimits(int eventLimit, long byteLimit, long maxAgeMilliseconds);
         AnalyticsQueueState GetState();
         AnalyticsQueueState ResetIdentity();
         /// <summary>Rows queued, as last reported by the queue (kept in step by every call that changes it); no round trip.</summary>
@@ -75,7 +77,7 @@ namespace Daliys.Analytics.Internal
             private System.IntPtr _classRef;
             // The Java calls that change the row count and the cached count are one step, so the cache never ends up behind the queue.
             private readonly object _countSync = new object();
-            private readonly UnityEngine.jvalue[] _enqueueArgs = new UnityEngine.jvalue[6], _readArgs = new UnityEngine.jvalue[1];
+            private readonly UnityEngine.jvalue[] _enqueueArgs = new UnityEngine.jvalue[3], _readArgs = new UnityEngine.jvalue[1];
 
             internal AndroidQueueBridgeInstance(UnityEngine.AndroidJavaObject activity)
             {
@@ -86,7 +88,7 @@ namespace Daliys.Analytics.Internal
                     var local = UnityEngine.AndroidJNI.GetObjectClass(_handle);
                     var type = _classRef = UnityEngine.AndroidJNI.NewGlobalRef(local); // keeps the class (and so its method ids) alive
                     UnityEngine.AndroidJNI.DeleteLocalRef(local);
-                    _enqueueId = UnityEngine.AndroidJNI.GetMethodID(type, "enqueueRecords", "([BIIJJLjava/lang/String;)I");
+                    _enqueueId = UnityEngine.AndroidJNI.GetMethodID(type, "enqueueRecords", "([BILjava/lang/String;)I");
                     _readId = UnityEngine.AndroidJNI.GetMethodID(type, "readOldest", "(I)[B");
                     _lowLevel = _enqueueId != System.IntPtr.Zero && _readId != System.IntPtr.Zero;
                 }
@@ -105,13 +107,13 @@ namespace Daliys.Analytics.Internal
                 throw new System.InvalidOperationException("The Android analytics queue rejected the call.");
             }
 
-            private int EnqueueLowLevel(byte[] frames, int count, int eventLimit, long byteLimit, long maxAgeMilliseconds, string counters)
+            private int EnqueueLowLevel(byte[] frames, int count, string counters)
             {
                 var array = UnityEngine.AndroidJNI.ToByteArray(frames);
                 var text = counters == null ? System.IntPtr.Zero : UnityEngine.AndroidJNI.NewStringUTF(counters);
                 try
                 {
-                    _enqueueArgs[0].l = array; _enqueueArgs[1].i = count; _enqueueArgs[2].i = eventLimit; _enqueueArgs[3].j = byteLimit; _enqueueArgs[4].j = maxAgeMilliseconds; _enqueueArgs[5].l = text;
+                    _enqueueArgs[0].l = array; _enqueueArgs[1].i = count; _enqueueArgs[2].l = text;
                     var pending = UnityEngine.AndroidJNI.CallIntMethod(_handle, _enqueueId, _enqueueArgs);
                     ThrowIfJavaFailed();
                     return pending;
@@ -144,13 +146,13 @@ namespace Daliys.Analytics.Internal
 
             public int PendingCount => System.Threading.Volatile.Read(ref _pending);
 
-            public void EnqueueRecords(byte[] frames, int count, int eventLimit, long byteLimit, long maxAgeMilliseconds, string counters = null)
+            public void EnqueueRecords(byte[] frames, int count, string counters = null)
             {
                 lock (_countSync)
-                    _pending = _lowLevel
-                        ? EnqueueLowLevel(frames, count, eventLimit, byteLimit, maxAgeMilliseconds, counters)
-                        : _queue.Call<int>("enqueueRecords", frames, count, eventLimit, byteLimit, maxAgeMilliseconds, counters ?? "");
+                    _pending = _lowLevel ? EnqueueLowLevel(frames, count, counters) : _queue.Call<int>("enqueueRecords", frames, count, counters ?? "");
             }
+
+            public void SetLimits(int eventLimit, long byteLimit, long maxAgeMilliseconds) => _queue.Call("setLimits", eventLimit, byteLimit, maxAgeMilliseconds);
 
             public AnalyticsQueueState GetState()
             {

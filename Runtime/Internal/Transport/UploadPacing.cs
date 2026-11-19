@@ -1,3 +1,4 @@
+// Upload schedule and retry backoff after a failed upload.
 using System;
 
 namespace Daliys.Analytics.Internal.Transport

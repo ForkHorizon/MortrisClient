@@ -1,3 +1,4 @@
+// Queue bridge with every call timed; created only by the profiling build.
 using Daliys.Analytics.Internal.Transport;
 
 namespace Daliys.Analytics.Internal
@@ -25,8 +26,8 @@ namespace Daliys.Analytics.Internal
             try { call(); } finally { AnalyticsProf.End(stage, t); }
         }
 
-        public void EnqueueRecords(byte[] frames, int count, int eventLimit, long byteLimit, long maxAgeMilliseconds, string counters = null) =>
-            Timed(Stage.JniEnqueue, () => _inner.EnqueueRecords(frames, count, eventLimit, byteLimit, maxAgeMilliseconds, counters));
+        public void EnqueueRecords(byte[] frames, int count, string counters = null) => Timed(Stage.JniEnqueue, () => _inner.EnqueueRecords(frames, count, counters));
+        public void SetLimits(int eventLimit, long byteLimit, long maxAgeMilliseconds) => Timed(Stage.JniOther, () => _inner.SetLimits(eventLimit, byteLimit, maxAgeMilliseconds));
         public AnalyticsQueueState GetState() => Timed(Stage.JniGetState, () => _inner.GetState());
         public AnalyticsQueueState ResetIdentity() => Timed(Stage.JniOther, () => _inner.ResetIdentity());
         public QueueBatch ReadOldest(int maxEvents) => Timed(Stage.JniReadOldest, () => _inner.ReadOldest(maxEvents));

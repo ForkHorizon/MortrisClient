@@ -1,3 +1,4 @@
+// Tests for the M7 column and frame encoders.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -70,8 +71,7 @@ namespace M7Transport.Tests
                             File.WriteAllBytes(Path.Combine(dir, "frame.bin"), result.Frame);
                             File.WriteAllText(Path.Combine(dir, "aliases.json"), "{\"epoch\":\"" + s.Aliases.EpochHex + "\",\"records\":" + s.Aliases.RecordsJson(0, s.Aliases.Count) + "}");
                             File.WriteAllBytes(Path.Combine(dir, "dictionary.bin"), s.Dictionary ?? new byte[0]);
-                            var output = TestSupport.PythonDecode(TestSupport.Fixture("catalog-" + variant + ".json"), Path.Combine(dir, "dictionary.bin"), Path.Combine(dir, "aliases.json"),
-                                Path.Combine(dir, "frame.bin"), TestSupport.Fixture("expected-" + profile + ".json"), out var exit);
+                            var output = TestSupport.PythonDecode(TestSupport.Fixture("catalog-" + variant + ".json"), dir, TestSupport.Fixture("expected-" + profile + ".json"), out var exit);
                             if (output == null) return; // no interpreter configured: structure is still checked by the other tests
                             Assert.True(exit == 0 && output.StartsWith("OK 100"), $"{variant}/{profile} numeric={numeric} strings={strings} dict={dictionary}: {output}");
                         }

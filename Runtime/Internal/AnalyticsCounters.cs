@@ -1,3 +1,4 @@
+// Named counters for the game's own ids (Analytics.NextId).
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -32,18 +33,20 @@ namespace Daliys.Analytics.Internal
         {
             lock (_sync)
             {
-                if (!string.IsNullOrEmpty(json))
-                {
-                    try
-                    {
-                        foreach (var pair in MiniJson.ParseObject(json))
-                            if (ValidName(pair.Key) && pair.Value is JsonNumber n && long.TryParse(n.Lexeme, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var value) && value >= 0)
-                                _values[pair.Key] = _values.TryGetValue(pair.Key, out var current) && current > value ? current : value;
-                    }
-                    catch (FormatException) { /* damaged: start from what is in memory */ }
-                }
+                if (!string.IsNullOrEmpty(json)) Merge(json);
                 _loaded = true;
             }
+        }
+
+        private void Merge(string json)
+        {
+            try
+            {
+                foreach (var pair in MiniJson.ParseObject(json))
+                    if (ValidName(pair.Key) && pair.Value is JsonNumber n && long.TryParse(n.Lexeme, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var value) && value >= 0)
+                        _values[pair.Key] = _values.TryGetValue(pair.Key, out var current) && current > value ? current : value;
+            }
+            catch (FormatException) { /* damaged: start from what is in memory */ }
         }
 
         /// <summary>The next number of the counter (1 for a counter never used).</summary>

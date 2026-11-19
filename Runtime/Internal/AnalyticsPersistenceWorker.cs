@@ -56,7 +56,7 @@ namespace Daliys.Analytics.Internal
             _device = AnalyticsDeviceContext.Create(options);
             AnalyticsProf.End(Stage.InitDeviceContext, pi);
             pi = AnalyticsProf.Begin();
-            ContextBytes = EventContext.Build(_device.AppVersion, _device.BuildNumber, _device.Platform, _device.OSVersion, _device.DeviceClass, _device.Locale, _device.TimezoneOffsetMinutes);
+            ContextBytes = EventContext.Build(_device.TimezoneOffsetMinutes, _device.AppVersion, _device.BuildNumber, _device.Platform, _device.OSVersion, _device.DeviceClass, _device.Locale);
             AnalyticsProf.End(Stage.InitEventContext, pi);
             _policyChanged = policyChanged;
             pi = AnalyticsProf.Begin();
@@ -164,7 +164,7 @@ namespace Daliys.Analytics.Internal
                     RecoverPreviousSession();
                     while (_buffer.Count > 0) WriteBuffer();
                     var counters = _counters.Snapshot();
-                    _bridge.EnqueueRecords(frames, count, _options.DurableEventLimit, _options.DurableByteLimit, (long)_options.MaxEventAge.TotalMilliseconds, counters);
+                    _bridge.EnqueueRecords(frames, count, counters);
                 }
                 return true;
             }
@@ -347,32 +347,10 @@ namespace Daliys.Analytics.Internal
                     throw new InvalidOperationException("Unable to attach the analytics persistence worker to the Android JVM.");
                 jniAttached = true;
 #endif
-                lock (_writeSync)
+                if (!WriteStep(mine.Count > 0))
                 {
-                    if (EnsureBridge() == null)
-                    {
-                        status = FlushStatus.PersistenceUnavailable;
-                        return;
-                    }
-
-                    RecoverPreviousSession();
-                    var force = mine.Count > 0;
-                    while (Volatile.Read(ref _isDisposed) == 0)
-                    {
-                        if (Interlocked.Exchange(ref _clearRequested, 0) == 1)
-                            _bridge.ClearAllPendingEvents();
-
-                        WriteBuffer();
-                        // A window write moves what is buffered; a forced one empties the buffer, including what arrives meanwhile.
-                        if (!force || _buffer.Count == 0)
-                            break;
-                    }
-                    var ts = AnalyticsProf.Begin();
-                    SaveSessionState(false);
-                    AnalyticsProf.End(Stage.WorkerSaveSession, ts);
-                    ts = AnalyticsProf.Begin();
-                    RefreshEvictedCount();
-                    AnalyticsProf.End(Stage.WorkerEvictedRead, ts);
+                    status = FlushStatus.PersistenceUnavailable;
+                    return;
                 }
 
                 // A clear requested after the write step above must not let the upload send what it was meant to remove; the finally block reschedules.
@@ -420,6 +398,33 @@ namespace Daliys.Analytics.Internal
             }
         }
 
+        /// <summary>The write step of a pass, under the write lock: pending clear, buffered records, session state, evicted count. False when the queue is unavailable.</summary>
+        private bool WriteStep(bool force)
+        {
+            lock (_writeSync)
+            {
+                if (EnsureBridge() == null) return false;
+                RecoverPreviousSession();
+                while (Volatile.Read(ref _isDisposed) == 0)
+                {
+                    if (Interlocked.Exchange(ref _clearRequested, 0) == 1)
+                        _bridge.ClearAllPendingEvents();
+
+                    WriteBuffer();
+                    // A window write moves what is buffered; a forced one empties the buffer, including what arrives meanwhile.
+                    if (!force || _buffer.Count == 0)
+                        break;
+                }
+                var ts = AnalyticsProf.Begin();
+                SaveSessionState(false);
+                AnalyticsProf.End(Stage.WorkerSaveSession, ts);
+                ts = AnalyticsProf.Begin();
+                RefreshEvictedCount();
+                AnalyticsProf.End(Stage.WorkerEvictedRead, ts);
+                return true;
+            }
+        }
+
         private void WriteBuffer()
         {
             var tw = AnalyticsProf.Begin();
@@ -440,7 +445,7 @@ namespace Daliys.Analytics.Internal
             var counters = _counters.Snapshot();
             try
             {
-                _bridge.EnqueueRecords(frames, count, _options.DurableEventLimit, _options.DurableByteLimit, (long)_options.MaxEventAge.TotalMilliseconds, counters);
+                _bridge.EnqueueRecords(frames, count, counters);
             }
             catch
             {
@@ -468,9 +473,18 @@ namespace Daliys.Analytics.Internal
         {
             if (_bridge != null) return _bridge;
             var t = AnalyticsProf.Begin();
-            _bridge = AndroidQueueBridge.TryCreate();
+            var bridge = AndroidQueueBridge.TryCreate();
+            try
+            {
+                bridge?.SetLimits(_options.DurableEventLimit, _options.DurableByteLimit, (long)_options.MaxEventAge.TotalMilliseconds);
+            }
+            catch
+            {
+                bridge.Dispose(); // a queue without limits must not be written to
+                throw;
+            }
             AnalyticsProf.End(Stage.BridgeCreate, t);
-            return _bridge;
+            return _bridge = bridge;
         }
 
         /// <summary>The first run of a process closes the session its predecessor left open (see SessionTracker.Recover).</summary>
