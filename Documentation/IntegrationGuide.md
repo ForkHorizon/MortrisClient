@@ -15,7 +15,7 @@ Unity Package Manager display name is **Mortris Analytics**.
 Use **Window > Package Manager > + > Add package from git URL**:
 
 ```text
-git@github.com:ForkHorizon/MortrisClient.git#v0.1.4
+git@github.com:ForkHorizon/MortrisClient.git#v0.2.0
 ```
 
 Pinning a tag is required for reproducible game builds. Do not install from a
