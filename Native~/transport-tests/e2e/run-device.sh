@@ -50,17 +50,18 @@ if grep -E "FATAL EXCEPTION|DllNotFound|EntryPointNotFound" "$WORK/full-logcat.t
 
 Q="psql -h 127.0.0.1 -p $PGPORT -U postgres -d mortris_e2e -tA -c"
 EVENTS=$($Q "SELECT COUNT(*) FROM events WHERE project_id = 'synth_indie_runner'")
+GAME=$($Q "SELECT COUNT(*) FROM events WHERE project_id = 'synth_indie_runner' AND name NOT LIKE 'sys\_%'")   # the probe's own events; the SDK adds sys_* (session start)
 SEQ=$($Q "SELECT COUNT(DISTINCT sequence) || ',' || MIN(sequence) || ',' || MAX(sequence) FROM events WHERE project_id = 'synth_indie_runner'")
 UNKNOWN=$($Q "SELECT COUNT(*) FROM events WHERE project_id = 'synth_indie_runner' AND properties ? 'mystery'")
 STREAMS=$($Q "SELECT COUNT(*) FROM transport_streams WHERE project_id = 'synth_indie_runner'")
 PACKETS=$(grep -c '"route":"POST /v3/packet","status":200' "$TMP/server.log" || true)
 V1BATCHES=$(grep -c '"route":"POST /v1/events/batch","status":200' "$TMP/server.log" || true)
 ACK=$($Q "SELECT high_water || ' ' || received::text FROM transport_streams WHERE project_id = 'synth_indie_runner' ORDER BY epoch DESC LIMIT 1")
-echo "events=$EVENTS sequences(distinct,min,max)=$SEQ unknown_shape_events=$UNKNOWN streams=$STREAMS v3_packets=$PACKETS v1_batches=$V1BATCHES stream_state='$ACK'"
+echo "events=$EVENTS game_events=$GAME sequences(distinct,min,max)=$SEQ unknown_shape_events=$UNKNOWN streams=$STREAMS v3_packets=$PACKETS v1_batches=$V1BATCHES stream_state='$ACK'"
 FAIL=0
 if [ "$SCENARIO" = normal ]; then
-  [ "$EVENTS" = 121 ] || { echo "FAIL: expected 121 events"; FAIL=1; }
-  [ "$SEQ" = "121,1,121" ] || { echo "FAIL: sequences are not exactly 1..121"; FAIL=1; }
+  [ "$GAME" = 121 ] || { echo "FAIL: expected the probe's 121 events, got $GAME"; FAIL=1; }
+  [ "$SEQ" = "$EVENTS,1,$EVENTS" ] || { echo "FAIL: sequences are not exactly 1..$EVENTS ($SEQ)"; FAIL=1; }
   [ "$UNKNOWN" = 1 ] || { echo "FAIL: the unknown-shape event did not arrive"; FAIL=1; }
   [ "$STREAMS" -ge 1 ] || { echo "FAIL: no V8 stream was opened"; FAIL=1; }
   [ "$PACKETS" -ge 1 ] || { echo "FAIL: no V8 packet was accepted"; FAIL=1; }
