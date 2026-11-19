@@ -27,7 +27,7 @@ In Unity Package Manager, choose **Add package from git URL** and use the
 current release tag:
 
 ```text
-git@github.com:ForkHorizon/MortrisClient.git#v0.1.4
+git@github.com:ForkHorizon/MortrisClient.git#v0.2.0
 ```
 
 For a local checkout during SDK development:

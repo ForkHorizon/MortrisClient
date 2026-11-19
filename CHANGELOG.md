@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.2.0 - Unreleased
+## 0.2.0 - 2026-11-19
 
-- Started the 0.2.0 development line on `develop`.
+- First release of the 0.2.0 line (V8 transport, event-pipeline rewrite, sessions, WebGL players).
 - WebGL players (browser portals such as CrazyGames): a main-thread pipeline with a `localStorage` queue, V1 gzip batches through `UnityWebRequest`,
   page-visibility session handling and a `fetch` keepalive on page hide (`Runtime/Internal/Web`, `Runtime/Plugins/WebGL/MortrisWeb.jslib`). Android is
   unchanged behind the new `IEventPipeline` seam. See "WebGL" in `Documentation/IntegrationGuide.md`; the server needs `MORTRIS_CORS_ORIGINS`.
