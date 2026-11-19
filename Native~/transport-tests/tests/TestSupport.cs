@@ -1,0 +1,68 @@
+// Shared helpers for the transport host tests.
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using Daliys.Analytics.Internal.Transport;
+
+namespace M7Transport.Tests
+{
+    internal static class TestSupport
+    {
+        internal static string Root => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        internal static string Fixture(string name) => Path.Combine(Root, "fixtures", name);
+        internal static byte[] FixtureBytes(string name) => File.ReadAllBytes(Fixture(name));
+        internal static string FixtureText(string name) => File.ReadAllText(Fixture(name));
+
+        [ModuleInitializer]
+        internal static void ResolveNativeZstd()
+        {
+            NativeLibrary.SetDllImportResolver(typeof(NativeZstdCompressor).Assembly, (name, assembly, path) =>
+            {
+                if (name != "daliys_zstd") return IntPtr.Zero;
+                var dylib = Environment.GetEnvironmentVariable("DALIYS_ZSTD") ?? Path.GetFullPath(Path.Combine(Root, "../../../../../Runtime/Plugins/macOS/libdaliys_zstd.dylib"));
+                return NativeLibrary.Load(dylib);
+            });
+        }
+
+        internal static string Serialize(object value)
+        {
+            switch (value)
+            {
+                case null: return "null";
+                case bool b: return b ? "true" : "false";
+                case string text: return MiniJson.Escape(text);
+                case JsonNumber number: return number.Lexeme;
+                case List<object> list: return "[" + string.Join(",", list.ConvertAll(Serialize)) + "]";
+                case Dictionary<string, object> map:
+                    var parts = new List<string>();
+                    foreach (var pair in map) parts.Add(MiniJson.Escape(pair.Key) + ":" + Serialize(pair.Value));
+                    return "{" + string.Join(",", parts) + "}";
+                default: throw new InvalidOperationException();
+            }
+        }
+
+        /// <summary>Runs the research Python decoder over a frame; returns its stdout, or null when no interpreter is configured.</summary>
+        /// <remarks><paramref name="frameDir"/> holds frame.bin, dictionary.bin and aliases.json.</remarks>
+        internal static string PythonDecode(string catalogFile, string frameDir, string expectedFile, out int exitCode)
+        {
+            var python = Environment.GetEnvironmentVariable("M7_PYTHON");
+            exitCode = 0;
+            if (string.IsNullOrEmpty(python)) return null;
+            var start = new ProcessStartInfo(python) { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false };
+            start.Environment["PYTHONDONTWRITEBYTECODE"] = "1";
+            start.Environment["M7_SCRIPTS"] = Path.GetFullPath(Path.Combine(Root, "../../../../../Theory~/transport-v7/comparison/scripts"));
+            foreach (var argument in new[] { Path.Combine(Root, "tools", "py_decode.py"), catalogFile, Path.Combine(frameDir, "dictionary.bin"), Path.Combine(frameDir, "aliases.json"), Path.Combine(frameDir, "frame.bin"), expectedFile }) start.ArgumentList.Add(argument);
+            using (var process = Process.Start(start))
+            {
+                var output = process.StandardOutput.ReadToEnd() + process.StandardError.ReadToEnd();
+                process.WaitForExit();
+                exitCode = process.ExitCode;
+                return output;
+            }
+        }
+    }
+}

@@ -23,23 +23,9 @@
 /*.opendb
 *.VC.db
 
-# ProjectMem runtime and derived state (configuration and curated map/plan stay tracked)
-/.projectmem/.current_issue
-/.projectmem/events.jsonl
-/.projectmem/issues/
-/.projectmem/summary.md
-/.projectmem/structure.json
-/.projectmem/watch.pid
-/.projectmem/watch.log
-/.projectmem/CLAUDE.md
-
 # Local Serena state
 /.serena/cache/
 /.serena/project.local.yml
-
-# Graphify output is regenerated locally.
-/graphify-out/*
-/graphify-out.meta
 
 # Android AAR build state
 /Native~/android/.gradle/
@@ -49,3 +35,23 @@
 # Local MCP connection files can contain credentials.
 /.mcp.json
 /.mcp.json.bak-*
+
+
+# Run data and raw datasets never go into git (kept outside the package in ../../../MortrisClient-data)
+/MortrisV7Data/
+/night-run~/work/
+/night-run~/unitywork/
+
+# Run results, benchmark harness output and review dumps: local only (archive in ../../../MortrisClient-data)
+/night-run~/
+/comparison-run~/
+/profiling-run~/
+/.codex/
+
+# Theory~ keeps notes and figures only; experiment code, logs and data stay local (archive in ../../../MortrisClient-data)
+/Theory~/**
+!/Theory~/**/
+!/Theory~/**/*.md
+!/Theory~/**/*.png
+!/Theory~/**/*.svg
+!/Theory~/**/*.jpg

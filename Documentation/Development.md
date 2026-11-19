@@ -67,3 +67,22 @@ and launch verification on API 25, 35, and 37.
 5. Create and publish a matching immutable `vX.Y.Z` Git tag.
 6. Install that tag in a clean Unity project to verify Package Manager metadata
    and absence of immutable-folder warnings.
+
+## Transport (V8) checks
+
+```bash
+# Native compression library (only when the pinned zstd or the toolchain changes); output goes to Runtime/Plugins
+Native~/zstd/build.sh
+
+# Codec, cross-language and session tests (host). M7_PYTHON is the research virtualenv's interpreter:
+cd Native~/transport-tests
+M7_PYTHON=../../Theory~/transport-v3/06-experiments/.venv/bin/python dotnet test
+
+# The same plus the real server (needs the MortrisServer checkout, PostgreSQL binaries, Go)
+./e2e/run-e2e.sh   # server: MORTRIS_SERVER_REPO, default the MortrisServer checkout next to MortrisUnity
+
+# Device proof: Unity IL2CPP build of an isolated probe project, run on a connected emulator against the local server
+HTTP_PORT=18082 ./e2e/run-device.sh
+```
+
+Fixtures are synthetic (`tools/gen_fixtures.py`, Python reference encoder). Never put Puzzle data in them.
