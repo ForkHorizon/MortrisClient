@@ -3,16 +3,16 @@
 ## 0.2.0 - Unreleased
 
 - Started the 0.2.0 development line on `develop`.
-- V8 is the default transport (`AnalyticsOptions.UseTransportV8`, default `true`, V1 as the fallback). The V7 transport (`UseTransportV7`, `/v2`) is removed; the entries below that mention V7 describe work that V8 builds on.
+- V8 is the default transport (`AnalyticsOptions.UseTransportV8`, default `true`, V1 as the fallback). The V7 transport (`UseTransportV7`, `/v2`) is removed.
 - A full V8 packet is the `MaxPacketEvents` option (200), not the V1 limit of 100: after the first packet an upload goes on only while a whole V8 packet waits.
-- V7 transport (opt-in `AnalyticsOptions.UseTransportV7`): native zstd plugin (arm64-v8a, armeabi-v7a, macOS Editor), C# M7 encoder,
-  sequence streams with acknowledgement by sequence, asset/alias handling and automatic V1 fallback. See `Documentation/V7Transport.md`.
+- Binary transport groundwork that V8 is built on: native zstd plugin (arm64-v8a, armeabi-v7a, macOS Editor), C# column encoder,
+  sequence streams with acknowledgement by sequence, alias handling and automatic V1 fallback. See `Documentation/V8Transport.md`.
 - Event pipeline rewrite: events are written once as binary records and buffered in memory (`AnalyticsOptions.EventBufferWindow`, 200 ms); the Android
-  queue (schema v4) stores them as blobs in one transaction per window and keeps its counters in memory; transport V7 and V1 both read the records, so no
+  queue (schema v4) stores them as blobs in one transaction per window and keeps its counters in memory; V8 and V1 both read the records, so no
   JSON is built or parsed on the way. Rows queued by older versions are migrated. See `Documentation/EventPipelineAndSessions.md`.
 - Sessions: the SDK now observes pause/focus/quit, emits `sys_session_start`, `sys_app_background`, `sys_app_foreground` and `sys_session_end`, writes buffered
   events before the game is suspended, and closes the session of a process that died (Android exit reason). New options `EventBufferWindow` and
-  `SessionTimeout`. Projects using V7 need the four lifecycle shapes in their catalog.
+  `SessionTimeout`.
 - Start-up: the UTC offset is read from `java.util.TimeZone` on an Android device instead of `TimeZoneInfo.Local`, which took about 100 ms on first use on the main thread during `Analytics.Initialize`.
 - M7/M8 encoder: value columns are gathered in one pass over the rows (counting sort by column) instead of one pass per column; same bytes, about three times faster on catalogs with many shapes (944 shapes: 34 -> 11 µs per event on the host).
 - Profiling support (never on in the shipped SDK): `AnalyticsProf` stage timers, compiled in only with the scripting define `DALIYS_ANALYTICS_PROFILE` (every call is empty without it), a timed queue bridge, stage timers inside the Java queue (`setProfiling` / `getProfile`), `Analytics.DumpProfile()`; the profiling build also trusts the local TLS meter's certificate. See `Theory~/profiling-v2/PROFILING_PLAN.md`.
