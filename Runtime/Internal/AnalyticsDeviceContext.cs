@@ -41,7 +41,7 @@ namespace Daliys.Analytics.Internal
             AnalyticsProf.End(Stage.DeviceModel, t); t = AnalyticsProf.Begin();
             var locale = FirstNonEmpty(CultureInfo.CurrentCulture.Name, Application.systemLanguage.ToString(), "und");
             AnalyticsProf.End(Stage.DeviceCulture, t); t = AnalyticsProf.Begin();
-            var timezoneOffsetMinutes = TimezoneOffsetMinutes();
+            var timezoneOffsetMinutes = CurrentUtcOffsetMinutes();
             AnalyticsProf.End(Stage.DeviceTimezone, t);
             return new AnalyticsDeviceContext(appVersion, buildNumber, platform, osVersion, deviceClass, locale, timezoneOffsetMinutes);
         }
@@ -50,7 +50,7 @@ namespace Daliys.Analytics.Internal
         /// The offset from UTC in minutes now. <c>TimeZoneInfo.Local</c> costs about 100 ms on first use in an IL2CPP Android player (it loads the time zone database), so on a device
         /// the offset comes from <c>java.util.TimeZone</c> (well under a millisecond); anywhere else, or if the call fails, it is the .NET value.
         /// </summary>
-        private static int TimezoneOffsetMinutes()
+        private static int CurrentUtcOffsetMinutes()
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
             try
