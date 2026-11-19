@@ -10,7 +10,7 @@ namespace Daliys.Analytics.Internal
     internal sealed class AnalyticsRuntime : ISessionEventSink
     {
         private readonly AnalyticsOptions _options;
-        private readonly AnalyticsPersistenceWorker _persistenceWorker;
+        private readonly IEventPipeline _persistenceWorker;
         private readonly SessionTracker _session;
         private int _localCollectionEnabled = 1;
         private int _serverCollectionEnabled = 1;
@@ -19,7 +19,10 @@ namespace Daliys.Analytics.Internal
         private readonly EventRateLimiter _limiter;
         private readonly bool _typedNumbers;
 
-        internal AnalyticsRuntime(AnalyticsOptions options)
+        internal AnalyticsRuntime(AnalyticsOptions options) : this(options, null) { }
+
+        /// <summary>Test seam: <paramref name="pipeline"/> builds the pipeline (given the policy callback) instead of the platform's own.</summary>
+        internal AnalyticsRuntime(AnalyticsOptions options, Func<Action<ServerPolicy>, IEventPipeline> pipeline)
         {
             _options = options;
             var pi = AnalyticsProf.Begin();
@@ -27,7 +30,9 @@ namespace Daliys.Analytics.Internal
             AnalyticsProf.End(Stage.InitLimiter, pi);
             _typedNumbers = options.UseTransportV8;
             pi = AnalyticsProf.Begin();
-            _persistenceWorker = new AnalyticsPersistenceWorker(options, ApplyServerPolicy);
+            _persistenceWorker = pipeline != null ? pipeline(ApplyServerPolicy) : Web.WebPlatform.IsSupported
+                ? Web.WebPlatform.CreatePipeline(options, ApplyServerPolicy)
+                : (IEventPipeline)new AnalyticsPersistenceWorker(options, ApplyServerPolicy);
             AnalyticsProf.End(Stage.InitWorker, pi);
             pi = AnalyticsProf.Begin();
             _session = new SessionTracker(NowMs, options.SessionTimeout, this);
@@ -145,7 +150,7 @@ namespace Daliys.Analytics.Internal
                 return Task.FromResult(new BatchResult(events.Count, 0, 0, 0, true, collectionDisabled: true));
             var session = _session.Current;
             var callTime = NowMs();
-            return Task.Run(() =>
+            BatchResult Run()
             {
                 const int ChunkEvents = 500, ChunkBytes = 1024 * 1024;
                 var writer = new EventRecordWriter { TypedNumbers = _typedNumbers };
@@ -179,7 +184,11 @@ namespace Daliys.Analytics.Internal
                 Flush();
                 _persistenceWorker.WakeUp();
                 return new BatchResult(events.Count, accepted, invalid, lost, completed);
-            }, cancellationToken);
+            }
+            // A WebGL player has no pool threads: the batch is encoded on the calling frame.
+            if (!_persistenceWorker.MainThreadOnly) return Task.Run(Run, cancellationToken);
+            try { return Task.FromResult(Run()); }
+            catch (Exception exception) { return Task.FromException<BatchResult>(exception); } // same contract as Task.Run: failures arrive through the task
         }
 
         /// <summary>A lifecycle event (session start/end, background/foreground): stamped with the session and moment the tracker names, never dropped for want of room.</summary>
@@ -192,6 +201,9 @@ namespace Daliys.Analytics.Internal
         }
 
         internal void SetNetworkReachable(bool reachable) => _persistenceWorker.SetNetworkReachable(reachable);
+
+        /// <summary>Every frame, on the main thread (AnalyticsLifecycle.Update).</summary>
+        internal void Tick() => _persistenceWorker.Tick();
 
         internal long NextId(string counter) => _persistenceWorker.NextId(counter);
 

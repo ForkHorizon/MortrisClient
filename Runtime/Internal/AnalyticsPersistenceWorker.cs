@@ -13,7 +13,7 @@ namespace Daliys.Analytics.Internal
     /// timer (the buffer window, 200 ms by default) or a size threshold hands the buffer to the Java queue in one transaction. Lifecycle callers can ask
     /// for an immediate, awaited write (<see cref="PersistNow"/>); the upload still follows its own schedule.
     /// </summary>
-    internal sealed class AnalyticsPersistenceWorker : IDisposable
+    internal sealed class AnalyticsPersistenceWorker : IEventPipeline
     {
         /// <summary>Records that make the buffer write straight away instead of waiting for the window.</summary>
         private const int ImmediateThreshold = 128;
@@ -71,17 +71,17 @@ namespace Daliys.Analytics.Internal
         }
 
         /// <summary>The device fields every record carries, encoded once.</summary>
-        internal byte[] ContextBytes { get; }
+        public byte[] ContextBytes { get; }
 
         /// <summary>Connects the session tracker whose state is saved with the queue and whose predecessor is recovered on the first run.</summary>
-        internal void AttachSession(SessionTracker session) => _session = session;
+        public void AttachSession(SessionTracker session) => _session = session;
 
-        internal int HandoffCount => _buffer.Count;
+        public int HandoffCount => _buffer.Count;
 
-        internal long BufferFlushedByTrack => Interlocked.Read(ref _bufferFlushedByTrack);
-        internal long QueueEvicted => Interlocked.Read(ref _queueEvicted);
+        public long BufferFlushedByTrack => Interlocked.Read(ref _bufferFlushedByTrack);
+        public long QueueEvicted => Interlocked.Read(ref _queueEvicted);
 
-        internal bool TryEnqueue(byte[] record, int length, bool priority = false)
+        public bool TryEnqueue(byte[] record, int length, bool priority = false)
         {
             if (Volatile.Read(ref _isDisposed) != 0)
                 return false;
@@ -112,7 +112,7 @@ namespace Daliys.Analytics.Internal
         /// The game is leaving the foreground or quitting: after the durable write, try one short upload of what is queued (no waiting for the interval).
         /// Skipped when the option is off or the previous such upload was less than <see cref="AnalyticsOptions.BackgroundUploadMinGap"/> ago.
         /// </summary>
-        internal void RequestBackgroundUpload()
+        public void RequestBackgroundUpload()
         {
             if (!_options.UploadOnBackground || !AndroidQueueBridge.IsSupported || Volatile.Read(ref _isDisposed) != 0)
                 return;
@@ -150,7 +150,7 @@ namespace Daliys.Analytics.Internal
         /// Writes records that were already encoded (a frame: per record int32 length then the record) straight to the durable queue from any thread, after what the buffer
         /// holds, so events tracked before the batch keep their place. Used by <c>TrackBatchAsync</c>; returns false when the queue is unavailable or refused the write.
         /// </summary>
-        internal bool WriteFramesDirect(byte[] frames, int count)
+        public bool WriteFramesDirect(byte[] frames, int count)
         {
             if (!AndroidQueueBridge.IsSupported || Volatile.Read(ref _isDisposed) != 0) return false;
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -185,7 +185,7 @@ namespace Daliys.Analytics.Internal
         /// The platform says whether there is a network at all (<c>Application.internetReachability</c>, polled on the main thread; it needs no permission). While there is none
         /// nothing is attempted. When it comes back an upload follows after 0-5 seconds of random delay, so a region that lost its network does not return in one instant.
         /// </summary>
-        internal void SetNetworkReachable(bool reachable)
+        public void SetNetworkReachable(bool reachable)
         {
             var was = Interlocked.Exchange(ref _networkReachable, reachable ? 1 : 0) == 1;
             _uploader.SetNetworkReachable(reachable);
@@ -197,7 +197,7 @@ namespace Daliys.Analytics.Internal
         }
 
         /// <summary>The player came back to the game: forget the back-off so what is due is sent without waiting for the old retry time.</summary>
-        internal void OnForeground()
+        public void OnForeground()
         {
             if (Volatile.Read(ref _isDisposed) != 0) return;
             _uploader.ForgetBackoff();
@@ -212,13 +212,13 @@ namespace Daliys.Analytics.Internal
         }
 
         /// <summary>Wakes the worker (upload logic included) after records were written behind its back.</summary>
-        internal void WakeUp() => Schedule();
+        public void WakeUp() => Schedule();
 
         /// <summary>
         /// The next number of a named counter (see <see cref="AnalyticsCounters"/>). The first call loads the stored values from the durable queue, which creates the
         /// queue on the calling thread; after that it is a lock and an increment.
         /// </summary>
-        internal long NextId(string counter)
+        public long NextId(string counter)
         {
             if (!_counters.IsLoaded)
             {
@@ -238,7 +238,7 @@ namespace Daliys.Analytics.Internal
             return _counters.Next(counter);
         }
 
-        internal void ClearPending()
+        public void ClearPending()
         {
             _buffer.Clear();
             Interlocked.Exchange(ref _clearRequested, 1);
@@ -249,7 +249,7 @@ namespace Daliys.Analytics.Internal
         /// Writes everything buffered (and the session state) to the durable queue on the calling thread, before returning. Used when the game is leaving the
         /// foreground: it must not wait for the worker, which may be inside a network call. Does not upload anything.
         /// </summary>
-        internal bool PersistNow()
+        public bool PersistNow()
         {
             var tn = AnalyticsProf.Begin();
             try { return PersistNowCore(); } finally { AnalyticsProf.End(Stage.PersistNow, tn); }
@@ -276,7 +276,7 @@ namespace Daliys.Analytics.Internal
             }
         }
 
-        internal Task<FlushResult> FlushAsync(CancellationToken cancellationToken)
+        public Task<FlushResult> FlushAsync(CancellationToken cancellationToken)
         {
             if (!AndroidQueueBridge.IsSupported)
                 return Task.FromResult(new FlushResult(FlushStatus.PersistenceUnavailable, HandoffCount));
@@ -291,6 +291,10 @@ namespace Daliys.Analytics.Internal
             Schedule();
             return completion.Task;
         }
+
+        public bool MainThreadOnly => false;
+
+        public void Tick() { } // the worker runs on its own timers
 
         public void Dispose()
         {

@@ -146,8 +146,49 @@ installation credentials or event content.
 5. Compare event count, properties, ordering, and offline delay against the
    existing provider before retiring it.
 
-## Supported platform
+## Supported platforms
 
-The durable delivery runtime is Android API 25+. In the Unity Editor and on
-other platforms, `FlushAsync` returns `PersistenceUnavailable`; this is useful
-for compilation and wiring checks but is not an upload test.
+The durable delivery runtime is Android API 25+ and WebGL (browser) players. In
+the Unity Editor and on other platforms, `FlushAsync` returns
+`PersistenceUnavailable`; this is useful for compilation and wiring checks but
+is not an upload test.
+
+### WebGL (browser, e.g. CrazyGames)
+
+The public API is the same. Underneath, a WebGL player has no threads, no
+SQLite and no `HttpClient`, so it runs its own pipeline on the main thread:
+
+- Events are kept in `localStorage` (keys `mortris:<project>:<environment>:*`,
+  at most 512 K characters, about 1 100 events; `DurableEventLimit` still
+  applies, `MaxEventAge` does not) and saved every 5 s and whenever the page is
+  hidden. If the browser refuses storage, uploads go on from memory.
+- Uploads are V1 gzip batches through `UnityWebRequest` (at most 100 events);
+  `UseTransportV8` is ignored. `GZipStream` works in a Unity 6000.3 WebGL
+  player (verified); if a player lacks it, the SDK falls back to uncompressed
+  gzip framing. The identity registers on the first frame, so
+  even a short first visit can send.
+- When the page is hidden (tab switch, minimise, close) the SDK ends the
+  foreground stretch (`sys_app_background`), saves, and sends the oldest events
+  once with `fetch(..., {keepalive: true})`. They stay queued until a regular
+  upload is acknowledged, so the server may report them as duplicates. Chrome
+  supports this preflighted keepalive request; Firefox and Safari are not
+  verified, and where it is refused the events wait for the next visit.
+- `TrackBatchAsync` runs on the calling frame.
+
+Server side (see the server's `docs/client-integration.md`): the game's origin
+must be in `MORTRIS_CORS_ORIGINS` (CrazyGames:
+`https://*.crazygames.com,capacitor://app.crazygames.com`), and the server must
+be HTTPS on a neutral hostname (no "analytics" or "track", which ad blockers
+match).
+
+Known limits on the web:
+
+- Every new browser, cleared storage or private window is a new installation,
+  and Safari may clear script storage after 7 days without a visit: install
+  counts run higher and retention lower than on Android.
+- Two tabs of the same game share one queue and identity; saves merge, but a
+  new tab ends the other tab's still-running session in its records.
+- The installation id is kept on the player's device. Collect only anonymous
+  events (never a portal user id), link a privacy policy from the game menu,
+  and check whether your audience needs consent before `Initialize`; use
+  `SetCollectionEnabled(false)` until then.
