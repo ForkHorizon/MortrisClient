@@ -1,9 +1,25 @@
 # V8 transport (`/v3`)
 
-The successor of the V7 binary transport (`docs/v7-transport.md`). It keeps V7's columns, zstd and sequence identity and changes everything around
-them to cut the bytes that surround the events: a short server-issued installation id, one `Authorization` header, a frame that carries its own
-context, a minimal acknowledgement, an automatic catalog and a per-project dictionary. V1 (`/v1`) and V7 (`/v2`) stay supported and unchanged; V8 is
-additive (`/v3`, migration `0034_transport_v8.sql`).
+The binary transport of the Unity SDK, and the only one being developed. Events travel as columns compressed with zstd and a per-project
+dictionary, identified by a sequence number instead of a random UUID, around them a short server-issued installation id, one `Authorization`
+header, a frame that carries its own context, a minimal acknowledgement and a catalog of event shapes the server learns by itself. V1 (`/v1`, gzip JSON)
+stays as the fallback. Migration `0034_transport_v8.sql`. Code: `internal/transportv8`, `internal/ingest/transport_v8.go`,
+`internal/httpapi/transport_v8_handlers.go`; the column decoder and `DerivedEventID` live in `internal/transportv7` (package name only, it is V8's codec).
+
+## 0. Event identity and acknowledgement
+
+An event is identified by **`(project, installation, epoch, sequence)`**. The client numbers events 1, 2, 3, ... in the same SQLite transaction that
+enqueues them, so a crash never reuses or skips a number silently, and the packet carries no event UUID (16 random, incompressible bytes saved per event).
+The `events` table is keyed `(project_id, event_id uuid)`, so each event is stored under `DerivedEventID(project, internal install UUID, epoch, sequence)`: a
+deterministic version-4-shaped UUID (SHA-1 over a fixed namespace). Retries deduplicate with `ON CONFLICT (project_id, event_id) DO NOTHING` and every dashboard
+query keeps working. A row the client sends through V1 carries the same derived id, so a row V8 already stored is a duplicate there too.
+
+**Epoch** separates counter incarnations of one installation (after a reset, an overflow or a `stream_rollback`); the server allocates it. Queued events keep the
+epoch they were numbered under.
+
+For each stream the server keeps `received` ranges (accepted, duplicate or permanently rejected) and `dropped` ranges (numbers the client discarded locally:
+evicted, expired, cleared). `ack` is the highest `n` with every sequence in `[base, n]` received or dropped: **the client may delete everything up to `ack`**.
+`missing` lists the gaps in `[base, high]`; a lost tail is visible only because the client reports its own `high`.
 
 Design record and measurements: MortrisClient `Theory~/transport-v8/PROTOCOL.md` (decisions D1 to D20).
 
@@ -66,13 +82,14 @@ Response `200`:
 
 ```json
 {"token":"3a.AbCdEfGhIjK0","epoch":1,"ack":0,"missing":[[1,120]],
- "shapes":18,"aliases":0,"catalog":"2ad37cc11bf52506","dict":"9f0c1d2e3a4b5c6d","p":402113}
+ "shapes":18,"aliases":0,"catalog":"2ad37cc11bf52506","dict":"9f0c1d2e3a4b5c6d","p":402113,
+ "install":"6f1c9b0e-2d44-4f6a-9a31-0c5d7e8b9a10","credential":"<43 base64url characters>"}
 ```
 
 `token` is returned on every call (so a client that lost it can recover it by repeating `hello` with its nonce within the retention window). `ack` is the
 highest sequence with every number in `[base, ack]` received or dropped; `missing` the gaps in `[base, high]`. `shapes` and `aliases` are the counts the
 server holds for this stream (see 3.3 and 3.4). `catalog` and `dict` are the asset ids (`dict` is sixteen zeros when the project has no dictionary).
-`p` is the policy version (see 5).
+`p` is the policy version (see 5). `install` and `credential` are the installation's V1 identity (its internal id and the credential `/v1/events/batch` checks): a client that has to send a batch through V1 adopts them, so the batch belongs to the same installation and carries the ids this server derives (`DerivedEventID(project, install, epoch, sequence)`), and a row V8 already stored is a duplicate, not a copy.
 
 | Status | `code` | |
 |---|---|---|
@@ -93,8 +110,8 @@ offset  size  field
 0       2     magic "M8"
 2       1     flags
                 bit 0 (1)   body is one zstd frame (else raw)
-                bit 1 (2)   integer model   (as V7 flag 2)
-                bit 2 (4)   string model    (as V7 flag 4)
+                bit 1 (2)   integer model
+                bit 2 (4)   string model
                 bit 3 (8)   alias section present
                 bit 4 (16)  shape section present
                 bit 5 (32)  stream section present
@@ -136,7 +153,7 @@ is accepted only when the project's `strict_catalog` is false (`422 shape_not_al
 **Stream section**: `ranges` (uvarint), then `ranges` pairs of `from`, `to` (uvarint, `from <= to`): sequences the client discarded locally since it last told the
 server. They are merged into the stream's `dropped` set.
 
-**Body**: the V7 raw layout, unchanged: five integer columns (sequence, time, elapsed residual, shape id, alias index), then the property columns in the order of
+**Body**: five integer columns (sequence, time, elapsed residual, shape id, alias index), then the property columns in the order of
 first appearance. A row's shape id must be below `shape_count`, its alias index below `alias_count`. The server resolves `shape_count` and `alias_count`
 against its own tables, so the frame needs neither a catalog id nor an alias epoch. A float32 value (kind 3) means **the shortest decimal that reads back as
 that float32** (the same text a V1 JSON writer prints), converted to float64 for storage; a float64 (kind 4) is stored as is.
@@ -151,7 +168,7 @@ that float32** (the same text a V1 JSON writer prints), converted to float64 for
    server holds after the sections, `409 shapes_missing` / `409 aliases_missing`; the error body carries `details: {"shapes":N,"aliases":M,"catalog":"<id>"}` so the client resends from there.
 5. Decode the body with the first `shape_count` shapes, the first `alias_count` aliases and the project's dictionary; run the events through the same validation, strict-catalog,
    clock-quality (with `sent_at`) and persistence path as a V1 batch (in chunks of 100 events, the V1 limit); derive each event id as
-   `transportv7.DerivedEventID(project, internal install UUID, epoch, sequence)`.
+   `DerivedEventID(project, internal install UUID, epoch, sequence)` (section 0).
 6. In one transaction, under a per-project lock for shapes: re-check and store the shape and alias sections, store the dropped ranges and high water, settle the
    accepted, duplicate and rejected sequences, and answer. A crash before this commit only causes a harmless duplicate resend.
 
@@ -162,7 +179,7 @@ that float32** (the same text a V1 JSON writer prints), converted to float64 for
 ```
 
 `ack`: every sequence in `[stream_base, ack]` is received or dropped; the client may delete up to it. Added only when non-empty:
-`"rejected":[{"s":17,"n":"level_end","c":"property_too_large"}]` (final, counted as settled), `"missing":[[a,b]]`. `p` is the policy version (section 5).
+`"rejected":[{"s":17,"n":"level_end","c":"property_too_large"}]` (final, counted as settled), `"missing":[[a,b]]`, and `"dict":"<id>"` when the project's newest dictionary is not the one the packet named (a dictionary was trained since the client last said hello: it fetches `GET /v3/assets/dictionary/<id>` and uses it from the next packet; the id is cached on the server for a minute). `p` is the policy version (section 5).
 
 ### 3.4 Errors
 
@@ -208,7 +225,7 @@ no dictionary 11.49; the dictionary built here, read by the C zstd, gave 8.27 on
 
 1. `analytics-server migrate` (adds `0034_transport_v8.sql`).
 2. Set `MORTRIS_TRANSPORT_MASTER_KEYS`; without it `/v3` answers `503 transport_unavailable`.
-3. Roll the SDK out; V1 and V7 clients are unaffected. A project's `strict_catalog` decides whether clients may register new shapes.
+3. Roll the SDK out; V1 clients are unaffected. A project's `strict_catalog` decides whether clients may register new shapes.
 4. Project purge removes `transport_streams`, `transport_shapes` and `transport_samples` (and with the installations, `transport_installs`).
 
 ## 8. Limits
